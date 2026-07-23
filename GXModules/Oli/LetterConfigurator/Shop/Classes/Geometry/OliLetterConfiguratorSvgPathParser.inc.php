@@ -2,9 +2,6 @@
 
 /**
  * Converts SVG path tokens into normalized path commands.
- *
- * This milestone supports moveto, line and close-path commands. Curve and arc
- * commands remain explicitly unavailable until the next parser milestone.
  */
 class OliLetterConfiguratorSvgPathParser
 {
@@ -60,12 +57,6 @@ class OliLetterConfiguratorSvgPathParser
             if (!array_key_exists($command, self::COMMAND_PARAMETER_COUNTS)) {
                 throw new OliLetterConfiguratorGeometryException(
                     'Unknown SVG path command at token index ' . $position . '.'
-                );
-            }
-
-            if (in_array($command, ['C', 'S', 'Q', 'T', 'A'], true)) {
-                throw new OliLetterConfiguratorGeometryException(
-                    'SVG path command ' . $command . ' is not implemented yet at token index ' . $position . '.'
                 );
             }
 
