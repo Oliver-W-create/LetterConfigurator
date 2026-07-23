@@ -1,0 +1,709 @@
+{block name="product_info_template_standard_sticky_box_price_include"}
+    {if $OLI_LC_CONFIGURATOR}
+        <div class="oli-lc-main-price" aria-live="polite">
+            <div class="oli-lc-main-price__gross-container">
+                <span class="oli-lc-main-price__gross" id="oli-lc-main-price-gross">Preis nach Konfiguration</span>
+            </div>
+            <p class="tax-shipping-text text-small oli-lc-main-price__tax-shipping">
+                {$PRODUCTS_TAX_INFO}{$PRODUCTS_SHIPPING_LINK}
+            </p>
+        </div>
+    {else}
+        {$smarty.block.parent}
+    {/if}
+{/block}
+
+{block name="product_info_template_standard_sticky_box_graduated_price_if" append}
+    {if $OLI_LC_CONFIGURATOR}
+        <div class="oli-lc-configurator" aria-labelledby="oli-lc-configurator-title"
+            {if $OLI_LC_CONFIGURATOR.pricing}
+                data-price-material-id="{$OLI_LC_CONFIGURATOR.pricing.material_id|intval}"
+                data-price-method-id="{$OLI_LC_CONFIGURATOR.pricing.production_method_id|intval}"
+                data-area-price="{$OLI_LC_CONFIGURATOR.pricing.area_price_per_m2|escape}"
+                data-contour-price="{$OLI_LC_CONFIGURATOR.pricing.contour_price_per_mm|escape}"
+                data-character-price="{$OLI_LC_CONFIGURATOR.pricing.price_per_character|escape}"
+                data-fixed-price="{$OLI_LC_CONFIGURATOR.pricing.fixed_price|escape}"
+                data-minimum-price="{$OLI_LC_CONFIGURATOR.pricing.minimum_price|escape}"
+                data-setup-fee="{$OLI_LC_CONFIGURATOR.pricing.setup_fee|escape}"
+                data-waste-percent="{$OLI_LC_CONFIGURATOR.pricing.waste_percent|escape}"
+                data-tax-rate="{$OLI_LC_CONFIGURATOR.pricing.tax_rate|escape}"
+            {/if}
+            data-text-max-length="{$OLI_LC_CONFIGURATOR.limits.text_max_length|intval}"
+            data-dimension-min="{$OLI_LC_CONFIGURATOR.limits.dimension_min_mm|escape}"
+            data-dimension-max="{$OLI_LC_CONFIGURATOR.limits.dimension_max_mm|escape}">
+            {literal}
+            <style>
+                .product-info-details .oli-lc-configurator{width:100%;max-width:100%;margin:20px 0;padding:18px 0 4px;border-top:1px solid #e5e5e5;box-sizing:border-box;clear:both}
+                .product-info-details .oli-lc-configurator,.product-info-details .oli-lc-configurator *{box-sizing:border-box}
+                .product-info-details .oli-lc-configurator__title{margin:0 0 6px;font-size:18px;line-height:1.35;font-weight:600}
+                .product-info-details .oli-lc-configurator__description{margin:0 0 15px;color:#777;font-size:13px;line-height:1.45}
+                .product-info-details .oli-lc-configurator__field{width:100%;max-width:100%;margin-bottom:13px}
+                .product-info-details .oli-lc-configurator__field-row{display:flex;gap:12px;width:100%}
+                .product-info-details .oli-lc-configurator__field-row>.oli-lc-configurator__field{flex:1 1 0;min-width:0}
+                .product-info-details .oli-lc-configurator label{display:block;margin:0 0 5px;font-size:13px;font-weight:600;line-height:1.35}
+                .product-info-details .oli-lc-configurator .form-control{display:block;width:100%;max-width:100%;height:40px;margin:0}
+                .product-info-details .oli-lc-configurator__note{margin:3px 0 12px;color:#888;font-size:12px;line-height:1.4}
+                .product-info-details .oli-lc-configurator__error{display:none;margin:5px 0 0;color:#b42318;font-size:12px;line-height:1.35}
+                .product-info-details .oli-lc-configurator__field.is-invalid .oli-lc-configurator__error{display:block}
+                .product-info-details .oli-lc-configurator__field.is-invalid .form-control{border-color:#b42318;box-shadow:0 0 0 1px rgba(180,35,24,.12)}
+                .product-info-details .oli-lc-configurator__alert{margin:0 0 14px;padding:10px 12px;border:1px solid #e7a9a3;background:#fff4f2;color:#8a1c13;font-size:13px;line-height:1.4}
+                .product-info-details .oli-lc-svg-preview{display:none;margin:8px 0 13px;padding:12px;border:1px solid #d8d8d8;background:#fafafa;text-align:center;overflow:hidden}
+                .product-info-details .oli-lc-svg-preview.is-visible{display:block}
+                .product-info-details .oli-lc-svg-preview svg{display:block;width:100%;max-width:100%;height:auto;max-height:260px;margin:auto}
+                .product-info-details .oli-lc-svg-preview__meta{margin:8px 0 0;color:#777;font-size:12px;line-height:1.4;text-align:left}
+                .product-info-details .oli-lc-svg-analysis{display:none;margin:0 0 15px;padding:13px;border:1px solid #d8d8d8;background:#fff}
+                .product-info-details .oli-lc-svg-analysis.is-visible{display:block}
+                .product-info-details .oli-lc-svg-analysis__title{margin:0 0 10px;font-size:15px;font-weight:600}
+                .product-info-details .oli-lc-svg-analysis__grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 14px;margin:0}
+                .product-info-details .oli-lc-svg-analysis__grid dt,.product-info-details .oli-lc-svg-analysis__grid dd{margin:0;font-size:12px;line-height:1.45}
+                .product-info-details .oli-lc-svg-analysis__grid dd{text-align:right;font-weight:600}
+                .product-info-details .oli-lc-svg-analysis__section{grid-column:1/-1;margin-top:7px;padding-top:7px;border-top:1px solid #ececec;font-weight:600}
+                .product-info-details .oli-lc-svg-analysis__warnings{margin:10px 0 0;padding:8px 10px;background:#fff8e6;border:1px solid #edd79c;color:#6b5200;font-size:12px;line-height:1.45}
+                .product-info-details .oli-lc-svg-analysis__warnings:empty{display:none}
+                .product-info-details .oli-lc-price{display:none!important}
+                .product-info-details .oli-lc-price.is-visible{display:none!important}
+                .product-info-details .oli-lc-price__row{display:flex;justify-content:space-between;gap:12px;padding:3px 0;font-size:13px}
+                .product-info-details .oli-lc-price__row--total{margin-top:8px;padding-top:10px;border-top:1px solid #d8d8d8;font-size:17px;font-weight:700}
+                .product-info-details .oli-lc-price__gross{margin-top:3px;text-align:right;color:#777;font-size:12px}
+                .product-info-details .oli-lc-price__message{margin:0;color:#777;font-size:12px;line-height:1.4}
+                .product-info-details .oli-lc-main-price{text-align:right}
+                .product-info-details .oli-lc-main-price__gross-container{text-align:right}
+                .product-info-details .oli-lc-main-price__gross{display:block;width:100%;font-size:28px;font-weight:700;line-height:1.2;text-align:right}
+                .product-info-details .oli-lc-main-price .tax-shipping-text{margin:4px 0 0;font-size:12px;color:#777;text-align:right}
+                @media (max-width:480px){.product-info-details .oli-lc-configurator__field-row{display:block}.product-info-details .oli-lc-configurator__field-row>.oli-lc-configurator__field{width:100%}}
+            </style>
+            {/literal}
+
+            {if $OLI_LC_CONFIGURATOR.cart_error}
+                <div class="oli-lc-configurator__alert" role="alert">{$OLI_LC_CONFIGURATOR.cart_error|escape}</div>
+            {/if}
+
+            <input type="hidden" name="oli_lc_product_template_id" value="{$OLI_LC_CONFIGURATOR.product_template_id|intval}">
+            <h2 class="oli-lc-configurator__title" id="oli-lc-configurator-title">Produkt konfigurieren</h2>
+            {if $OLI_LC_CONFIGURATOR.description}
+                <p class="oli-lc-configurator__description">{$OLI_LC_CONFIGURATOR.description|escape}</p>
+            {/if}
+
+            <div class="oli-lc-configurator__field">
+                <label for="oli-lc-text">Text</label>
+                <input class="form-control" type="text" id="oli-lc-text" name="oli_lc_text" required maxlength="255" autocomplete="off" aria-describedby="oli-lc-text-error">
+                <p class="oli-lc-configurator__error" id="oli-lc-text-error">Bitte einen Text mit maximal 255 Zeichen eingeben.</p>
+            </div>
+
+            <div class="oli-lc-configurator__field-row">
+                <div class="oli-lc-configurator__field">
+                    <label for="oli-lc-width">Breite (mm)</label>
+                    <input class="form-control" type="number" id="oli-lc-width" name="oli_lc_width" required min="1" max="100000" step="1" inputmode="decimal" aria-describedby="oli-lc-width-error">
+                    <p class="oli-lc-configurator__error" id="oli-lc-width-error">Bitte eine Breite zwischen 1 und 100.000 mm eingeben.</p>
+                </div>
+                <div class="oli-lc-configurator__field">
+                    <label for="oli-lc-height">Höhe (mm)</label>
+                    <input class="form-control" type="number" id="oli-lc-height" name="oli_lc_height" required min="1" max="100000" step="1" inputmode="decimal" aria-describedby="oli-lc-height-error">
+                    <p class="oli-lc-configurator__error" id="oli-lc-height-error">Bitte eine Höhe zwischen 1 und 100.000 mm eingeben.</p>
+                </div>
+            </div>
+
+            <div class="oli-lc-configurator__field">
+                <label for="oli-lc-material">Material</label>
+                <select class="form-control" id="oli-lc-material" name="oli_lc_material" required>
+                    <option value="">Bitte auswählen</option>
+                    {foreach $OLI_LC_CONFIGURATOR.materials as $material}
+                        <option value="{$material.material_id|intval}" data-material-id="{$material.material_id|intval}">{$material.name|escape}</option>
+                    {/foreach}
+                </select>
+                <p class="oli-lc-configurator__error">Bitte ein Material auswählen.</p>
+            </div>
+
+            <div class="oli-lc-configurator__field">
+                <label for="oli-lc-method">Fertigungsart</label>
+                <select class="form-control" id="oli-lc-method" name="oli_lc_method" required>
+                    <option value="">Bitte auswählen</option>
+                    {foreach $OLI_LC_CONFIGURATOR.production_methods as $method}
+                        <option value="{$method.production_method_id|intval}" data-method-id="{$method.production_method_id|intval}">{$method.name|escape}</option>
+                    {/foreach}
+                </select>
+                <p class="oli-lc-configurator__error">Bitte eine Fertigungsart auswählen.</p>
+            </div>
+
+            <div class="oli-lc-configurator__field">
+                <label for="oli-lc-color">Farbe</label>
+                <select class="form-control" id="oli-lc-color" name="oli_lc_color" required>
+                    <option value="">Bitte auswählen</option>
+                    {foreach $OLI_LC_CONFIGURATOR.colors as $color}
+                        <option value="{$color.color_id|intval}" data-material-id="{$color.material_id|intval}">{$color.name|escape}</option>
+                    {/foreach}
+                </select>
+                <p class="oli-lc-configurator__error">Bitte eine Farbe auswählen.</p>
+            </div>
+
+            <div class="oli-lc-configurator__field">
+                <label for="oli-lc-thickness">Materialstärke</label>
+                <select class="form-control" id="oli-lc-thickness" name="oli_lc_thickness" required>
+                    <option value="">Bitte auswählen</option>
+                    {foreach $OLI_LC_CONFIGURATOR.thicknesses as $thickness}
+                        <option value="{$thickness.thickness_id|intval}" data-material-id="{$thickness.material_id|intval}" data-method-id="{$thickness.production_method_id|intval}">{$thickness.display_name|escape}</option>
+                    {/foreach}
+                </select>
+                <p class="oli-lc-configurator__error">Bitte eine Materialstärke auswählen.</p>
+            </div>
+
+            <div class="oli-lc-configurator__field" id="oli-lc-svg-field">
+                <label for="oli-lc-svg">SVG-Datei (optional)</label>
+                <input class="form-control" type="file" id="oli-lc-svg" name="oli_lc_svg" accept=".svg,image/svg+xml" aria-describedby="oli-lc-svg-note oli-lc-svg-error">
+                <p class="oli-lc-configurator__note" id="oli-lc-svg-note">Maximal 2 MB. Die Datei wird lokal analysiert und noch nicht in den Warenkorb übernommen.</p>
+                <p class="oli-lc-configurator__error" id="oli-lc-svg-error">Bitte eine gültige, sichere SVG-Datei mit maximal 2 MB auswählen.</p>
+            </div>
+            <div class="oli-lc-svg-preview" id="oli-lc-svg-preview" aria-live="polite">
+                <div id="oli-lc-svg-preview-canvas"></div>
+                <p class="oli-lc-svg-preview__meta" id="oli-lc-svg-preview-meta"></p>
+            </div>
+            <section class="oli-lc-svg-analysis" id="oli-lc-svg-analysis" aria-live="polite">
+                <h3 class="oli-lc-svg-analysis__title">SVG-Analyse</h3>
+                <dl class="oli-lc-svg-analysis__grid" id="oli-lc-svg-analysis-grid"></dl>
+                <div class="oli-lc-svg-analysis__warnings" id="oli-lc-svg-analysis-warnings"></div>
+            </section>
+
+            <div class="oli-lc-price" id="oli-lc-price" aria-live="polite">
+                <p class="oli-lc-price__message" id="oli-lc-price-message">Bitte Text, Maße und die passende Ausführung auswählen.</p>
+                <div id="oli-lc-price-details" hidden>
+                    <div class="oli-lc-price__row"><span>Material</span><strong id="oli-lc-price-material">0,00 €</strong></div>
+                    <div class="oli-lc-price__row"><span>Kontur</span><strong id="oli-lc-price-contour">0,00 €</strong></div>
+                    <div class="oli-lc-price__row"><span>Zeichen</span><strong id="oli-lc-price-characters">0,00 €</strong></div>
+                    <div class="oli-lc-price__row"><span>Grundpreis</span><strong id="oli-lc-price-fixed">0,00 €</strong></div>
+                    <div class="oli-lc-price__row"><span>Rüstkosten</span><strong id="oli-lc-price-setup">0,00 €</strong></div>
+                    <div class="oli-lc-price__row oli-lc-price__row--total"><span>Gesamt inkl. USt.</span><strong id="oli-lc-price-gross">0,00 €</strong></div>
+                    <div class="oli-lc-price__gross"><span id="oli-lc-price-net">0,00 €</span> netto</div>
+                </div>
+            </div>
+
+            {literal}
+            <script>
+                (function () {
+                    'use strict';
+
+                    function initLetterConfigurator() {
+                        var root = document.querySelector('.product-info-details .oli-lc-configurator');
+                        if (!root || root.getAttribute('data-oli-lc-initialized') === '1') {
+                            return;
+                        }
+                        root.setAttribute('data-oli-lc-initialized', '1');
+
+                        var materialSelect = root.querySelector('#oli-lc-material');
+                        var methodSelect = root.querySelector('#oli-lc-method');
+                        var colorSelect = root.querySelector('#oli-lc-color');
+                        var thicknessSelect = root.querySelector('#oli-lc-thickness');
+                        var textInput = root.querySelector('#oli-lc-text');
+                        var widthInput = root.querySelector('#oli-lc-width');
+                        var heightInput = root.querySelector('#oli-lc-height');
+                        var priceBox = root.querySelector('#oli-lc-price');
+                        var priceMessage = root.querySelector('#oli-lc-price-message');
+                        var priceDetails = root.querySelector('#oli-lc-price-details');
+                        var mainGrossPrice = document.querySelector('#oli-lc-main-price-gross');
+                        var svgInput = root.querySelector('#oli-lc-svg');
+                        var svgField = root.querySelector('#oli-lc-svg-field');
+                        var svgPreview = root.querySelector('#oli-lc-svg-preview');
+                        var svgPreviewCanvas = root.querySelector('#oli-lc-svg-preview-canvas');
+                        var svgPreviewMeta = root.querySelector('#oli-lc-svg-preview-meta');
+                        var svgAnalysis = root.querySelector('#oli-lc-svg-analysis');
+                        var svgAnalysisGrid = root.querySelector('#oli-lc-svg-analysis-grid');
+                        var svgAnalysisWarnings = root.querySelector('#oli-lc-svg-analysis-warnings');
+                        if (!materialSelect || !methodSelect || !colorSelect || !thicknessSelect || !textInput || !widthInput || !heightInput) {
+                            return;
+                        }
+
+
+                        function resetSvgPreview() {
+                            if (svgField) {
+                                svgField.classList.remove('is-invalid');
+                            }
+                            if (svgPreview) {
+                                svgPreview.classList.remove('is-visible');
+                            }
+                            if (svgPreviewCanvas) {
+                                svgPreviewCanvas.innerHTML = '';
+                            }
+                            if (svgPreviewMeta) {
+                                svgPreviewMeta.textContent = '';
+                            }
+                            if (svgAnalysis) {
+                                svgAnalysis.classList.remove('is-visible');
+                            }
+                            if (svgAnalysisGrid) {
+                                svgAnalysisGrid.innerHTML = '';
+                            }
+                            if (svgAnalysisWarnings) {
+                                svgAnalysisWarnings.textContent = '';
+                            }
+                        }
+
+                        function parseSvgLength(value) {
+                            var match = String(value || '').trim().match(/^([+-]?(?:\d+\.?\d*|\.\d+))(px|mm|cm|in|pt|pc)?$/i);
+                            if (!match) { return null; }
+                            return {value: parseFloat(match[1]), unit: (match[2] || '').toLowerCase()};
+                        }
+
+                        function lengthToMm(length) {
+                            if (!length || !isFinite(length.value)) { return null; }
+                            var factors = {mm:1, cm:10, in:25.4, pt:25.4/72, pc:25.4/6, px:25.4/96, '':25.4/96};
+                            return Object.prototype.hasOwnProperty.call(factors, length.unit) ? length.value * factors[length.unit] : null;
+                        }
+
+                        function formatNumber(value, decimals) {
+                            if (!isFinite(value)) { return '–'; }
+                            return value.toLocaleString('de-DE', {minimumFractionDigits: decimals, maximumFractionDigits: decimals});
+                        }
+
+                        function isClosedGeometry(element) {
+                            var name = element.nodeName.toLowerCase();
+                            if (name === 'rect' || name === 'circle' || name === 'ellipse' || name === 'polygon') { return true; }
+                            if (name === 'path') { return /[zZ]\s*$/.test(element.getAttribute('d') || ''); }
+                            return false;
+                        }
+
+                        function transformedPoint(element, point) {
+                            var matrix = element.getCTM ? element.getCTM() : null;
+                            if (!matrix) { return {x:point.x, y:point.y}; }
+                            return {x:matrix.a * point.x + matrix.c * point.y + matrix.e, y:matrix.b * point.x + matrix.d * point.y + matrix.f};
+                        }
+
+                        function sampleGeometry(element, closed) {
+                            if (typeof element.getTotalLength !== 'function' || typeof element.getPointAtLength !== 'function') {
+                                return null;
+                            }
+                            var length = element.getTotalLength();
+                            if (!isFinite(length) || length <= 0) { return null; }
+                            var steps = Math.max(12, Math.min(3000, Math.ceil(length / 1.5)));
+                            var points = [];
+                            var total = 0;
+                            var previous = null;
+                            for (var i = 0; i <= steps; i += 1) {
+                                var local = element.getPointAtLength(length * i / steps);
+                                var point = transformedPoint(element, local);
+                                points.push(point);
+                                if (previous) {
+                                    total += Math.hypot(point.x - previous.x, point.y - previous.y);
+                                }
+                                previous = point;
+                            }
+                            var area = 0;
+                            if (closed && points.length > 2) {
+                                for (var j = 0; j < points.length - 1; j += 1) {
+                                    area += points[j].x * points[j + 1].y - points[j + 1].x * points[j].y;
+                                }
+                                area = Math.abs(area / 2);
+                            }
+                            return {length:total, area:area, points:points};
+                        }
+
+                        function addAnalysisRow(label, value, section) {
+                            if (!svgAnalysisGrid) { return; }
+                            if (section) {
+                                var heading = document.createElement('dt');
+                                heading.className = 'oli-lc-svg-analysis__section';
+                                heading.textContent = section;
+                                svgAnalysisGrid.appendChild(heading);
+                                var blank = document.createElement('dd');
+                                blank.hidden = true;
+                                svgAnalysisGrid.appendChild(blank);
+                            }
+                            var dt = document.createElement('dt');
+                            var dd = document.createElement('dd');
+                            dt.textContent = label;
+                            dd.textContent = value;
+                            svgAnalysisGrid.appendChild(dt);
+                            svgAnalysisGrid.appendChild(dd);
+                        }
+
+                        function analyseSvg(svg, file) {
+                            if (!svgAnalysis || !svgAnalysisGrid) { return; }
+                            svgAnalysisGrid.innerHTML = '';
+                            var warnings = [];
+                            var viewBoxValues = String(svg.getAttribute('viewBox') || '').trim().split(/[ ,]+/).map(Number);
+                            var hasViewBox = viewBoxValues.length === 4 && viewBoxValues.every(isFinite) && viewBoxValues[2] > 0 && viewBoxValues[3] > 0;
+                            var widthLength = parseSvgLength(svg.getAttribute('data-oli-original-width') || svg.getAttribute('width'));
+                            var heightLength = parseSvgLength(svg.getAttribute('data-oli-original-height') || svg.getAttribute('height'));
+                            var widthMm = lengthToMm(widthLength);
+                            var heightMm = lengthToMm(heightLength);
+                            var scaleX = hasViewBox && widthMm ? widthMm / viewBoxValues[2] : null;
+                            var scaleY = hasViewBox && heightMm ? heightMm / viewBoxValues[3] : null;
+                            if (!hasViewBox) { warnings.push('Keine gültige ViewBox vorhanden. Physische Geometriedaten können dadurch ungenau sein.'); }
+                            if (!widthMm || !heightMm) { warnings.push('Breite oder Höhe fehlen bzw. haben keine unterstützte Einheit; Längen werden in SVG-Einheiten angezeigt.'); }
+                            if (scaleX && scaleY && Math.abs(scaleX - scaleY) > Math.max(scaleX, scaleY) * 0.01) { warnings.push('Unterschiedliche X-/Y-Skalierung erkannt. Konturlänge und Fläche werden entsprechend skaliert angenähert.'); }
+
+                            var selector = 'path,rect,circle,ellipse,line,polyline,polygon';
+                            var geometries = Array.prototype.slice.call(svg.querySelectorAll(selector)).filter(function (element) {
+                                var style = window.getComputedStyle ? window.getComputedStyle(element) : null;
+                                return !style || (style.display !== 'none' && style.visibility !== 'hidden');
+                            });
+                            var counts = {path:0,rect:0,circle:0,ellipse:0,line:0,polyline:0,polygon:0};
+                            var openCount = 0, closedCount = 0, totalLengthUnits = 0, totalAreaUnits = 0;
+                            var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                            geometries.forEach(function (element) {
+                                var name = element.nodeName.toLowerCase();
+                                counts[name] += 1;
+                                var closed = isClosedGeometry(element);
+                                if (closed) { closedCount += 1; } else { openCount += 1; }
+                                var sampled = sampleGeometry(element, closed);
+                                if (sampled) {
+                                    totalLengthUnits += sampled.length;
+                                    totalAreaUnits += sampled.area;
+                                    sampled.points.forEach(function (point) {
+                                        minX = Math.min(minX, point.x); minY = Math.min(minY, point.y);
+                                        maxX = Math.max(maxX, point.x); maxY = Math.max(maxY, point.y);
+                                    });
+                                }
+                            });
+                            var unsupported = svg.querySelectorAll('text,image,use,symbol,marker,pattern,mask,clipPath').length;
+                            if (unsupported) { warnings.push(unsupported + ' nicht direkt auswertbare Elemente erkannt (z. B. Text, Bild, Use oder Masken). Vor der Fertigung sollten diese in Pfade umgewandelt werden.'); }
+                            if (!geometries.length) { warnings.push('Keine auswertbaren Konturelemente gefunden.'); }
+                            if (isFinite(minX) && (minX < 0 || minY < 0)) { warnings.push('Negative Koordinaten erkannt.'); }
+                            if (openCount) { warnings.push(openCount + ' offene Kontur(en) erkannt.'); }
+
+                            var avgScale = scaleX && scaleY ? (scaleX + scaleY) / 2 : null;
+                            var lengthText = avgScale ? formatNumber(totalLengthUnits * avgScale, 2) + ' mm' : formatNumber(totalLengthUnits, 2) + ' SVG-Einheiten';
+                            var areaText = scaleX && scaleY ? formatNumber(totalAreaUnits * scaleX * scaleY, 2) + ' mm²' : formatNumber(totalAreaUnits, 2) + ' SVG-Einheiten²';
+                            var bboxText = isFinite(minX) ? formatNumber(maxX - minX, 2) + ' × ' + formatNumber(maxY - minY, 2) + (avgScale ? ' SVG-Einheiten' : ' SVG-Einheiten') : '–';
+                            if (scaleX && scaleY && isFinite(minX)) { bboxText = formatNumber((maxX-minX)*scaleX, 2) + ' × ' + formatNumber((maxY-minY)*scaleY, 2) + ' mm'; }
+
+                            addAnalysisRow('Datei', file.name, 'Datei');
+                            addAnalysisRow('Dateigröße', Math.max(1, Math.round(file.size / 1024)) + ' KB');
+                            addAnalysisRow('Breite', widthLength ? formatNumber(widthLength.value, 2) + (widthLength.unit || ' px') : '–');
+                            addAnalysisRow('Höhe', heightLength ? formatNumber(heightLength.value, 2) + (heightLength.unit || ' px') : '–');
+                            addAnalysisRow('ViewBox', hasViewBox ? viewBoxValues.join(' ') : 'nicht vorhanden');
+                            addAnalysisRow('Pfade', String(counts.path), 'Geometrie');
+                            addAnalysisRow('Rechtecke / Kreise / Ellipsen', counts.rect + ' / ' + counts.circle + ' / ' + counts.ellipse);
+                            addAnalysisRow('Linien / Polylinien / Polygone', counts.line + ' / ' + counts.polyline + ' / ' + counts.polygon);
+                            addAnalysisRow('Gruppen', String(svg.querySelectorAll('g').length));
+                            addAnalysisRow('Transformationen', String(svg.querySelectorAll('[transform]').length));
+                            addAnalysisRow('Geschlossene Konturen', String(closedCount), 'Kontur und Fläche');
+                            addAnalysisRow('Offene Konturen', String(openCount));
+                            addAnalysisRow('Gesamte Konturlänge', lengthText);
+                            addAnalysisRow('Näherungsfläche', areaText);
+                            addAnalysisRow('Bounding Box', bboxText);
+                            if (svgAnalysisWarnings) { svgAnalysisWarnings.textContent = warnings.join(' '); }
+                            svgAnalysis.classList.add('is-visible');
+                        }
+
+                        function sanitizeSvgDocument(documentNode) {
+                            var forbidden = documentNode.querySelectorAll('script, foreignObject, iframe, object, embed, audio, video');
+                            Array.prototype.forEach.call(forbidden, function (node) { node.remove(); });
+                            var all = documentNode.querySelectorAll('*');
+                            Array.prototype.forEach.call(all, function (node) {
+                                Array.prototype.slice.call(node.attributes || []).forEach(function (attribute) {
+                                    var name = attribute.name.toLowerCase();
+                                    var value = String(attribute.value || '').trim().toLowerCase();
+                                    if (name.indexOf('on') === 0 || ((name === 'href' || name === 'xlink:href') && value && value.charAt(0) !== '#') || value.indexOf('javascript:') === 0) {
+                                        node.removeAttribute(attribute.name);
+                                    }
+                                });
+                            });
+                            return documentNode.documentElement;
+                        }
+
+                        function handleSvgSelection() {
+                            resetSvgPreview();
+                            if (!svgInput || !svgInput.files || !svgInput.files.length) {
+                                return;
+                            }
+                            var file = svgInput.files[0];
+                            var validName = /\.svg$/i.test(file.name || '');
+                            var validType = !file.type || file.type === 'image/svg+xml';
+                            if (!validName || !validType || file.size <= 0 || file.size > 2 * 1024 * 1024) {
+                                if (svgField) { svgField.classList.add('is-invalid'); }
+                                svgInput.value = '';
+                                return;
+                            }
+                            var reader = new FileReader();
+                            reader.onload = function () {
+                                try {
+                                    var parser = new DOMParser();
+                                    var documentNode = parser.parseFromString(String(reader.result || ''), 'image/svg+xml');
+                                    if (documentNode.querySelector('parsererror') || !documentNode.documentElement || documentNode.documentElement.nodeName.toLowerCase() !== 'svg') {
+                                        throw new Error('Invalid SVG');
+                                    }
+                                    var safeSvg = sanitizeSvgDocument(documentNode);
+                                    var previewSvg = document.importNode(safeSvg, true);
+                                    if (previewSvg.hasAttribute('width')) { previewSvg.setAttribute('data-oli-original-width', previewSvg.getAttribute('width')); }
+                                    if (previewSvg.hasAttribute('height')) { previewSvg.setAttribute('data-oli-original-height', previewSvg.getAttribute('height')); }
+                                    previewSvg.removeAttribute('width');
+                                    previewSvg.removeAttribute('height');
+                                    previewSvg.setAttribute('role', 'img');
+                                    previewSvg.setAttribute('aria-label', 'SVG-Vorschau');
+                                    if (svgPreviewCanvas) {
+                                        svgPreviewCanvas.appendChild(previewSvg);
+                                    }
+                                    if (svgPreviewMeta) {
+                                        svgPreviewMeta.textContent = file.name + ' · ' + Math.max(1, Math.round(file.size / 1024)) + ' KB';
+                                    }
+                                    if (svgPreview) {
+                                        svgPreview.classList.add('is-visible');
+                                    }
+                                    window.requestAnimationFrame(function () {
+                                        var renderedSvg = svgPreviewCanvas ? svgPreviewCanvas.querySelector('svg') : null;
+                                        if (renderedSvg) { analyseSvg(renderedSvg, file); }
+                                    });
+                                } catch (error) {
+                                    if (svgField) { svgField.classList.add('is-invalid'); }
+                                    svgInput.value = '';
+                                }
+                            };
+                            reader.onerror = function () {
+                                if (svgField) { svgField.classList.add('is-invalid'); }
+                                svgInput.value = '';
+                            };
+                            reader.readAsText(file);
+                        }
+
+                        function captureOptions(select) {
+                            return Array.prototype.slice.call(select.options, 1).map(function (option) {
+                                return {
+                                    value: option.value,
+                                    text: option.text,
+                                    materialId: option.getAttribute('data-material-id') || '',
+                                    methodId: option.getAttribute('data-method-id') || ''
+                                };
+                            });
+                        }
+
+                        var materialOptions = captureOptions(materialSelect);
+                        var methodOptions = captureOptions(methodSelect);
+                        var colorOptions = captureOptions(colorSelect);
+                        var thicknessOptions = captureOptions(thicknessSelect);
+
+                        function hasCombination(materialId, methodId) {
+                            return thicknessOptions.some(function (option) {
+                                return (!materialId || option.materialId === materialId)
+                                    && (!methodId || option.methodId === methodId);
+                            });
+                        }
+
+                        function rebuild(select, options, predicate, placeholder) {
+                            var previousValue = select.value;
+                            select.innerHTML = '';
+
+                            var emptyOption = document.createElement('option');
+                            emptyOption.value = '';
+                            emptyOption.textContent = placeholder;
+                            select.appendChild(emptyOption);
+
+                            options.filter(predicate).forEach(function (item) {
+                                var option = document.createElement('option');
+                                option.value = item.value;
+                                option.textContent = item.text;
+                                if (item.materialId) {
+                                    option.setAttribute('data-material-id', item.materialId);
+                                }
+                                if (item.methodId) {
+                                    option.setAttribute('data-method-id', item.methodId);
+                                }
+                                select.appendChild(option);
+                            });
+
+                            if (previousValue && Array.prototype.some.call(select.options, function (option) { return option.value === previousValue; })) {
+                                select.value = previousValue;
+                            } else if (select.options.length === 2) {
+                                // A single valid option is unambiguous and can be selected automatically.
+                                select.selectedIndex = 1;
+                            } else {
+                                select.value = '';
+                            }
+                        }
+
+                        function updateSelections() {
+                            var selectedMaterial = materialSelect.value;
+                            var selectedMethod = methodSelect.value;
+
+                            rebuild(materialSelect, materialOptions, function (option) {
+                                return !selectedMethod || hasCombination(option.value, selectedMethod);
+                            }, 'Bitte auswählen');
+
+                            selectedMaterial = materialSelect.value;
+                            rebuild(methodSelect, methodOptions, function (option) {
+                                return !selectedMaterial || hasCombination(selectedMaterial, option.value);
+                            }, 'Bitte auswählen');
+
+                            selectedMethod = methodSelect.value;
+                            rebuild(colorSelect, colorOptions, function (option) {
+                                return !!selectedMaterial && option.materialId === selectedMaterial;
+                            }, selectedMaterial ? 'Bitte auswählen' : 'Zuerst Material auswählen');
+                            colorSelect.disabled = !selectedMaterial;
+
+                            rebuild(thicknessSelect, thicknessOptions, function (option) {
+                                return !!selectedMaterial && !!selectedMethod
+                                    && option.materialId === selectedMaterial
+                                    && option.methodId === selectedMethod;
+                            }, selectedMaterial && selectedMethod ? 'Bitte auswählen' : 'Zuerst Material und Fertigungsart auswählen');
+                            thicknessSelect.disabled = !(selectedMaterial && selectedMethod);
+                        }
+
+                        function numberValue(name) {
+                            var value = parseFloat(root.getAttribute(name) || '0');
+                            return isFinite(value) && value > 0 ? value : 0;
+                        }
+
+                        function money(value) {
+                            return (Math.round(value * 100) / 100).toLocaleString('de-DE', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }) + ' €';
+                        }
+
+                        function setPrice(id, value) {
+                            var element = root.querySelector(id);
+                            if (element) {
+                                element.textContent = money(value);
+                            }
+                        }
+
+                        function resetMainPrice() {
+                            if (mainGrossPrice) {
+                                mainGrossPrice.textContent = 'Preis nach Konfiguration';
+                            }
+                        }
+
+                        var form = root.closest('form');
+                        var submitButtons = form ? Array.prototype.slice.call(form.querySelectorAll('button[type="submit"], input[type="submit"]')) : [];
+                        var minDimension = parseFloat(root.getAttribute('data-dimension-min') || '1');
+                        var maxDimension = parseFloat(root.getAttribute('data-dimension-max') || '100000');
+                        var maxTextLength = parseInt(root.getAttribute('data-text-max-length') || '255', 10);
+
+                        function markField(control, valid, showErrors) {
+                            var field = control.closest('.oli-lc-configurator__field');
+                            if (field) {
+                                field.classList.toggle('is-invalid', !!showErrors && !valid);
+                            }
+                            control.setAttribute('aria-invalid', valid ? 'false' : 'true');
+                        }
+
+                        function validationState(showErrors) {
+                            var text = textInput.value.trim();
+                            var width = parseFloat(String(widthInput.value).replace(',', '.'));
+                            var height = parseFloat(String(heightInput.value).replace(',', '.'));
+                            var states = [
+                                [textInput, text.length > 0 && text.length <= maxTextLength],
+                                [widthInput, isFinite(width) && width >= minDimension && width <= maxDimension],
+                                [heightInput, isFinite(height) && height >= minDimension && height <= maxDimension],
+                                [materialSelect, !!materialSelect.value],
+                                [methodSelect, !!methodSelect.value],
+                                [colorSelect, !!colorSelect.value],
+                                [thicknessSelect, !!thicknessSelect.value]
+                            ];
+                            states.forEach(function (state) { markField(state[0], state[1], showErrors); });
+                            var valid = states.every(function (state) { return state[1]; });
+                            submitButtons.forEach(function (button) {
+                                button.disabled = !valid;
+                                button.setAttribute('aria-disabled', valid ? 'false' : 'true');
+                            });
+                            return valid;
+                        }
+
+                        function calculatePrice(showErrors) {
+                            if (!priceBox || !priceMessage || !priceDetails) {
+                                return;
+                            }
+                            priceBox.classList.add('is-visible');
+
+                            var profileMaterialId = root.getAttribute('data-price-material-id') || '';
+                            var profileMethodId = root.getAttribute('data-price-method-id') || '';
+                            if (!profileMaterialId || !profileMethodId) {
+                                priceMessage.textContent = 'Für diese Produktvorlage ist kein aktives Preisprofil hinterlegt.';
+                                priceMessage.hidden = false;
+                                priceDetails.hidden = true;
+                                resetMainPrice();
+                                return;
+                            }
+
+                            var width = parseFloat(String(widthInput.value).replace(',', '.')) || 0;
+                            var height = parseFloat(String(heightInput.value).replace(',', '.')) || 0;
+                            var text = textInput.value.trim();
+                            var complete = validationState(!!showErrors);
+                            if (!complete) {
+                                priceMessage.textContent = 'Bitte Text, Maße und alle Ausführungsmerkmale auswählen.';
+                                priceMessage.hidden = false;
+                                priceDetails.hidden = true;
+                                resetMainPrice();
+                                return;
+                            }
+
+                            if (materialSelect.value !== profileMaterialId || methodSelect.value !== profileMethodId) {
+                                priceMessage.textContent = 'Das hinterlegte Preisprofil gilt nicht für diese Material-/Fertigungsart-Kombination.';
+                                priceMessage.hidden = false;
+                                priceDetails.hidden = true;
+                                resetMainPrice();
+                                return;
+                            }
+
+                            var areaM2 = (width * height) / 1000000;
+                            var perimeterMm = 2 * (width + height);
+                            var wasteFactor = 1 + (numberValue('data-waste-percent') / 100);
+                            var characterCount = text.replace(/\s/g, '').length;
+
+                            var materialPrice = areaM2 * numberValue('data-area-price') * wasteFactor;
+                            var contourPrice = perimeterMm * numberValue('data-contour-price');
+                            var characterPrice = characterCount * numberValue('data-character-price');
+                            var fixedPrice = numberValue('data-fixed-price');
+                            var setupFee = numberValue('data-setup-fee');
+                            var minimumPrice = numberValue('data-minimum-price');
+                            var netPrice = materialPrice + contourPrice + characterPrice + fixedPrice + setupFee;
+                            netPrice = Math.max(netPrice, minimumPrice);
+                            var grossPrice = netPrice * (1 + numberValue('data-tax-rate') / 100);
+
+                            setPrice('#oli-lc-price-material', materialPrice);
+                            setPrice('#oli-lc-price-contour', contourPrice);
+                            setPrice('#oli-lc-price-characters', characterPrice);
+                            setPrice('#oli-lc-price-fixed', fixedPrice);
+                            setPrice('#oli-lc-price-setup', setupFee);
+                            setPrice('#oli-lc-price-net', netPrice);
+                            var gross = root.querySelector('#oli-lc-price-gross');
+                            if (gross) {
+                                gross.textContent = money(grossPrice);
+                            }
+                            if (mainGrossPrice) {
+                                mainGrossPrice.textContent = money(grossPrice);
+                            }
+                            priceMessage.hidden = true;
+                            priceDetails.hidden = false;
+                        }
+
+                        function updateAll() {
+                            updateSelections();
+                            calculatePrice();
+                        }
+
+                        materialSelect.addEventListener('change', updateAll);
+                        methodSelect.addEventListener('change', updateAll);
+                        colorSelect.addEventListener('change', function () { calculatePrice(false); });
+                        thicknessSelect.addEventListener('change', function () { calculatePrice(false); });
+                        textInput.addEventListener('input', function () { calculatePrice(false); });
+                        widthInput.addEventListener('input', function () { calculatePrice(false); });
+                        heightInput.addEventListener('input', function () { calculatePrice(false); });
+                        if (svgInput) {
+                            svgInput.addEventListener('change', handleSvgSelection);
+                        }
+
+                        if (form) {
+                            form.addEventListener('submit', function (event) {
+                                calculatePrice(true);
+                                if (!validationState(true) || priceDetails.hidden) {
+                                    event.preventDefault();
+                                    priceMessage.textContent = 'Bitte die Konfiguration vollständig und gültig ausfüllen.';
+                                    priceMessage.hidden = false;
+                                    root.scrollIntoView({behavior: 'smooth', block: 'center'});
+                                }
+                            });
+                        }
+                        updateAll();
+                        validationState(false);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initLetterConfigurator);
+                    } else {
+                        initLetterConfigurator();
+                    }
+                }());
+            </script>
+            {/literal}
+        </div>
+    {/if}
+{/block}

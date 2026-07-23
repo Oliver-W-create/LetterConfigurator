@@ -1,0 +1,22 @@
+.lc-admin { width:100% !important; max-width:none !important; min-width:0; margin:0; padding:0; color:var(--lc-text); }
+.lc-admin * { box-sizing:border-box; }
+.lc-page-header { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; width:100%; margin:0 0 18px; }
+.lc-page-title { margin:0; font-size:24px; line-height:1.25; font-weight:600; }
+.lc-page-subtitle { margin:5px 0 0; color:var(--lc-muted); }
+.lc-grid { display:grid; grid-template-columns:minmax(0, 1fr); gap:18px; width:100%; max-width:none; min-width:0; }
+.lc-grid--stack { grid-template-columns:minmax(0, 1fr); }
+/* Rückwärtskompatibilität: Auch alte Split-Klassen werden ab M3.4 vollbreit gestapelt. */
+.lc-grid--split { grid-template-columns:minmax(0, 1fr); }
+.lc-card { width:100%; max-width:none; min-width:0; background:var(--lc-card-bg); border:1px solid var(--lc-border); border-radius:var(--lc-radius); box-shadow:var(--lc-shadow); overflow:hidden; }
+.lc-card__header { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; padding:15px 18px; border-bottom:1px solid var(--lc-border); }
+.lc-card__title { margin:0; font-size:16px; font-weight:600; }
+.lc-card__body { width:100%; max-width:none; min-width:0; padding:18px; }
+.lc-card__body--flush { padding:0; }
+.lc-note { width:100%; margin-top:18px; }
+@media (max-width:767px) { .lc-page-header { flex-direction:column; } .lc-card__header { align-items:flex-start; flex-direction:column; } }
+
+/* M3.5.1: Gambio's .breakpoint-small limits pages to 675px. The module deliberately uses the full content area. */
+.lc-admin--full-width {
+    width:100% !important;
+    max-width:none !important;
+}

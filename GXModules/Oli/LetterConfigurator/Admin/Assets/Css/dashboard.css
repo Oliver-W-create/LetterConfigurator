@@ -1,0 +1,50 @@
+.lc-stat-grid {
+    display:grid;
+    grid-template-columns:repeat(6, minmax(150px, 1fr));
+    gap:14px;
+    width:100%;
+    margin-bottom:18px;
+}
+.lc-stat-card {
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-width:0;
+    min-height:112px;
+    padding:18px;
+    color:var(--lc-text);
+    background:var(--lc-card-bg);
+    border:1px solid var(--lc-border);
+    border-radius:var(--lc-radius);
+    box-shadow:var(--lc-shadow);
+    text-decoration:none;
+}
+.lc-stat-card--linked:hover,
+.lc-stat-card--linked:focus { color:var(--lc-text); border-color:#b9c8d3; text-decoration:none; }
+.lc-stat-card__icon { flex:0 0 auto; width:38px; color:var(--lc-primary); font-size:30px; text-align:center; }
+.lc-stat-card__content { display:flex; flex-direction:column; min-width:0; }
+.lc-stat-card__value { font-size:28px; line-height:1; font-weight:600; }
+.lc-stat-card__label { margin-top:6px; font-size:14px; font-weight:600; }
+.lc-stat-card small { margin-top:3px; overflow:hidden; color:var(--lc-muted); text-overflow:ellipsis; white-space:nowrap; }
+.lc-dashboard-grid { display:grid; grid-template-columns:minmax(0, 2fr) minmax(280px, 1fr); gap:18px; width:100%; margin-bottom:18px; }
+.lc-action-list { display:grid; gap:10px; }
+.lc-action-button { display:flex; align-items:center; justify-content:flex-start; gap:9px; width:100%; text-align:left; }
+.lc-card-hint { margin:14px 0 0; color:var(--lc-muted); font-size:12px; }
+.lc-system-card { margin-top:0; }
+@media (max-width:1400px) { .lc-stat-grid { grid-template-columns:repeat(3, minmax(180px, 1fr)); } }
+@media (max-width:991px) { .lc-dashboard-grid { grid-template-columns:minmax(0, 1fr); } }
+@media (max-width:767px) { .lc-stat-grid { grid-template-columns:minmax(0, 1fr); } }
+
+/* M3.5.1: distribute dashboard content across the available admin width. */
+.lc-stat-grid {
+    grid-template-columns:repeat(6, minmax(0, 1fr));
+}
+.lc-dashboard-grid {
+    grid-template-columns:minmax(0, 3fr) minmax(300px, 1fr);
+}
+@media (max-width:1550px) {
+    .lc-stat-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width:900px) {
+    .lc-dashboard-grid { grid-template-columns:minmax(0, 1fr); }
+}

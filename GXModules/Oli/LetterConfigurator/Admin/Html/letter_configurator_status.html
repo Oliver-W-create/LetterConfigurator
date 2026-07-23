@@ -1,0 +1,106 @@
+{extends file="get_usermod:layouts/main/layout.html"}
+
+{block name="content"}
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/admin.css?v=3.8.0">
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/admin.js?v=3.8.0" defer></script>
+<div class="lc-admin lc-admin--full-width">
+    <header class="lc-page-header">
+        <div>
+            <h1 class="lc-page-title">Buchstaben-Konfigurator</h1>
+            <p class="lc-page-subtitle">Zentrale Übersicht über Stammdaten und Entwicklungsstatus.</p>
+        </div>
+        <span class="label label-info">M3.8</span>
+    </header>
+
+    <section class="lc-stat-grid" aria-label="Datenübersicht">
+        <a class="lc-stat-card lc-stat-card--linked" href="{$content.materialsUrl|escape}">
+            <span class="lc-stat-card__icon fa fa-cubes" aria-hidden="true"></span>
+            <span class="lc-stat-card__content">
+                <strong class="lc-stat-card__value">{$content.counts.materials|escape}</strong>
+                <span class="lc-stat-card__label">Materialien</span>
+                <small>{$content.activeMaterials|escape} aktiv</small>
+            </span>
+        </a>
+        <a class="lc-stat-card lc-stat-card--linked" href="{$content.colorsUrl|escape}">
+            <span class="lc-stat-card__icon fa fa-paint-brush" aria-hidden="true"></span>
+            <span class="lc-stat-card__content"><strong class="lc-stat-card__value">{$content.counts.colors|escape}</strong><span class="lc-stat-card__label">Farben</span><small>Jetzt verwalten</small></span>
+        </a>
+        <a class="lc-stat-card lc-stat-card--linked" href="{$content.thicknessesUrl|escape}">
+            <span class="lc-stat-card__icon fa fa-arrows-v" aria-hidden="true"></span>
+            <span class="lc-stat-card__content"><strong class="lc-stat-card__value">{$content.counts.thicknesses|escape}</strong><span class="lc-stat-card__label">Materialstärken</span><small>Jetzt verwalten</small></span>
+        </a>
+        <a class="lc-stat-card lc-stat-card--linked" href="{$content.priceProfilesUrl|escape}">
+            <span class="lc-stat-card__icon fa fa-eur" aria-hidden="true"></span>
+            <span class="lc-stat-card__content"><strong class="lc-stat-card__value">{$content.counts.priceProfiles|escape}</strong><span class="lc-stat-card__label">Preisprofile</span><small>Jetzt verwalten</small></span>
+        </a>
+        <article class="lc-stat-card">
+            <span class="lc-stat-card__icon fa fa-shopping-cart" aria-hidden="true"></span>
+            <span class="lc-stat-card__content"><strong class="lc-stat-card__value">{$content.counts.productProfiles|escape}</strong><span class="lc-stat-card__label">Produktprofile</span><small>Verwaltung folgt</small></span>
+        </article>
+        <article class="lc-stat-card">
+            <span class="lc-stat-card__icon fa fa-font" aria-hidden="true"></span>
+            <span class="lc-stat-card__content"><strong class="lc-stat-card__value">{$content.counts.fonts|escape}</strong><span class="lc-stat-card__label">Schriften</span><small>Verwaltung folgt</small></span>
+        </article>
+    </section>
+
+    <div class="lc-dashboard-grid">
+        <section class="lc-card">
+            <div class="lc-card__header">
+                <h2 class="lc-card__title">Zuletzt bearbeitete Materialien</h2>
+                <a class="btn btn-default btn-sm" href="{$content.materialsUrl|escape}">Alle Materialien</a>
+            </div>
+            <div class="lc-card__body lc-card__body--flush">
+                <div class="lc-table-wrap">
+                    <table class="table lc-table">
+                        <thead><tr><th>Name</th><th>Status</th><th>Geändert</th><th class="lc-table__actions">Aktion</th></tr></thead>
+                        <tbody>
+                        {foreach $content.latestMaterials as $material}
+                            <tr>
+                                <td>{$material.name|escape}</td>
+                                
+                                <td>{if $material.is_active}<span class="lc-status lc-status--active">Aktiv</span>{else}<span class="lc-status lc-status--inactive">Inaktiv</span>{/if}</td>
+                                <td>{$material.updated_at|escape}</td>
+                                <td class="lc-table__actions"><a class="btn btn-default btn-xs" href="{$material.edit_url|escape}">Bearbeiten</a></td>
+                            </tr>
+                        {foreachelse}
+                            <tr><td colspan="4" class="lc-empty">Noch keine Materialien vorhanden.</td></tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="lc-card">
+            <div class="lc-card__header"><h2 class="lc-card__title">Schnellzugriff</h2></div>
+            <div class="lc-card__body">
+                <div class="lc-action-list">
+                    <a class="btn btn-primary lc-action-button" href="{$content.newMaterialUrl|escape}"><span class="fa fa-plus" aria-hidden="true"></span> Material anlegen</a>
+                    <a class="btn btn-default lc-action-button" href="{$content.colorsUrl|escape}"><span class="fa fa-paint-brush" aria-hidden="true"></span> Farbe anlegen</a>
+                    <a class="btn btn-default lc-action-button" href="{$content.newThicknessUrl|escape}"><span class="fa fa-arrows-v" aria-hidden="true"></span> Stärke anlegen</a>
+                    <a class="btn btn-default lc-action-button" href="{$content.newPriceProfileUrl|escape}"><span class="fa fa-eur" aria-hidden="true"></span> Preisprofil anlegen</a>
+                    <button class="btn btn-default lc-action-button" type="button" disabled><span class="fa fa-font" aria-hidden="true"></span> Schrift hochladen</button>
+                </div>
+                <p class="lc-card-hint">Deaktivierte Aktionen werden in den nächsten Meilensteinen freigeschaltet.</p>
+            </div>
+        </section>
+    </div>
+
+    <section class="lc-card lc-system-card">
+        <div class="lc-card__header"><h2 class="lc-card__title">Systemstatus</h2></div>
+        <div class="lc-card__body lc-card__body--flush">
+            <div class="lc-table-wrap">
+                <table class="table lc-table">
+                    <tbody>
+                    <tr><th>Entwicklungsstand</th><td>{$content.milestone|escape}</td><td><span class="lc-status lc-status--active">Aktiv</span></td></tr>
+                    <tr><th>Datenbankschema</th><td>{$content.schemaVersion|escape}</td><td><span class="lc-status lc-status--active">Erreichbar</span></td></tr>
+                    <tr><th>PHP-Version</th><td>{$content.phpVersion|escape}</td><td><span class="lc-status lc-status--active">Erkannt</span></td></tr>
+                    <tr><th>Admin-Framework</th><td>Vollbreiten-Layout und Dashboard</td><td><span class="lc-status lc-status--active">Aktiv</span></td></tr>
+                    <tr><th>Frontend-Konfigurator</th><td>Noch nicht Bestandteil dieses Meilensteins</td><td><span class="lc-status lc-status--inactive">Ausstehend</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+{/block}

@@ -1,0 +1,51 @@
+{extends file="get_usermod:layouts/main/layout.html"}
+
+{block name="content"}
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/admin.css?v=3.14.5.1">
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/admin.js?v=3.14.5.1" defer></script>
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/table.js?v=3.14.5.1" defer></script>
+
+<div class="lc-admin lc-admin--full-width" data-lc-table>
+  <header class="lc-page-header"><div><h1 class="lc-page-title">Konfigurationen</h1><p class="lc-page-subtitle">Verknüpfen Sie Gambio-Artikel mit einer Produktvorlage.</p></div><div><span class="label label-info">M3.14.5.1</span></div></header>
+  <div class="lc-grid lc-grid--2">
+    <section class="lc-card">
+      <div class="lc-card__header"><h2 class="lc-card__title">{if $content.editAssignment.assignment_id}Zuordnung bearbeiten{else}Neue Zuordnung{/if}</h2></div>
+      <div class="lc-card__body">
+        <form method="post" action="{$content.action_save}">
+          <input type="hidden" name="pageToken" value="{$content.pageToken}">
+          <input type="hidden" name="assignment[assignment_id]" value="{$content.editAssignment.assignment_id|escape}">
+          <div class="form-group"><label class="control-label">Gambio-Artikel</label>
+            <select class="form-control" name="assignment[products_id]" required><option value="0">Bitte Artikel auswählen</option>{foreach $content.shopProducts as $product}<option value="{$product.products_id|escape}" {if $product.is_selected}selected{/if}>{$product.products_name|escape}{if $product.products_model} · {$product.products_model|escape}{/if}</option>{/foreach}</select>
+            <span class="lc-field-help">Ein Gambio-Artikel kann nur einer Produktvorlage zugeordnet werden.</span>
+          </div>
+          <div class="form-group"><label class="control-label">Produktvorlage</label>
+            <select class="form-control" name="assignment[product_template_id]" required><option value="0">Bitte Produktvorlage auswählen</option>{foreach $content.templates as $template}<option value="{$template.product_template_id|escape}" {if $template.is_selected}selected{/if}>{$template.name|escape}{if $template.is_active != 1} · inaktiv{/if}</option>{/foreach}</select>
+          </div>
+          <div class="form-group"><label><input type="checkbox" name="assignment[is_active]" value="1" {if $content.editAssignment.is_active == 1}checked{/if}> Zuordnung aktiv</label></div>
+          <div class="lc-form__footer">{if $content.editAssignment.assignment_id}<a class="btn btn-default" href="{$content.action_cancel}">Abbrechen</a>{/if}<button class="btn btn-primary" type="submit">Speichern</button></div>
+        </form>
+      </div>
+    </section>
+    <section class="lc-card">
+      <div class="lc-card__header"><h2 class="lc-card__title">Hinweis</h2></div>
+      <div class="lc-card__body"><p>Eine Produktvorlage kann mehreren Shopartikeln zugewiesen werden. Die eigentliche Konfiguration wird erst im nächsten Frontend-Meilenstein auf der Artikelseite angezeigt.</p></div>
+    </section>
+  </div>
+
+  <section class="lc-card">
+    <div class="lc-card__header"><h2 class="lc-card__title">Artikelzuordnungen</h2></div>
+    <div class="lc-card__body lc-card__body--flush">
+      <div class="table-responsive"><table class="table table-striped lc-table"><thead><tr><th>Artikelnummer</th><th>Artikel</th><th>Produktvorlage</th><th>Status</th><th>Aktionen</th></tr></thead><tbody>
+      {if empty($content.assignments)}<tr><td colspan="5" class="text-center lc-muted">Noch keine Artikelzuordnungen vorhanden.</td></tr>{else}{foreach $content.assignments as $row}<tr>
+        <td>{$row.products_model|default:'–'|escape}</td><td>{$row.products_name|escape}</td><td>{$row.template_name|escape}</td><td>{if $row.is_active == 1}<span class="label label-success">Aktiv</span>{else}<span class="label label-default">Inaktiv</span>{/if}</td>
+        <td class="lc-actions"><a class="btn btn-xs btn-default" href="{$row.edit_url}">Bearbeiten</a>
+          <form method="post" action="{$content.action_toggle}" class="lc-inline-form"><input type="hidden" name="pageToken" value="{$content.pageToken}"><input type="hidden" name="assignment_id" value="{$row.assignment_id|escape}"><button class="btn btn-xs btn-default" type="submit">{if $row.is_active == 1}Deaktivieren{else}Aktivieren{/if}</button></form>
+          <form method="post" action="{$content.action_delete}" class="lc-inline-form" onsubmit="return confirm('Artikelzuordnung wirklich löschen?');"><input type="hidden" name="pageToken" value="{$content.pageToken}"><input type="hidden" name="assignment_id" value="{$row.assignment_id|escape}"><button class="btn btn-xs btn-danger" type="submit">Löschen</button></form>
+        </td></tr>{/foreach}{/if}
+      </tbody></table></div>
+    </div>
+  </section>
+  <div class="alert alert-info lc-note"><strong>M3.14.5:</strong> Shopartikel und Produktvorlagen sind über eine eigene Modultabelle verknüpft. Gambio-Coretabellen bleiben unverändert.</div>
+</div>
+
+{/block}

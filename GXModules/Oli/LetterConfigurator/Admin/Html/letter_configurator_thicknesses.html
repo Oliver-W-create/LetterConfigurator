@@ -1,0 +1,161 @@
+{extends file="get_usermod:layouts/main/layout.html"}
+{block name="content"}
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/variables.css">
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/admin.css">
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/layout.css">
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/table.css">
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/form.css">
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/toolbar.css">
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/admin.js"></script>
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/table.js"></script>
+
+<div class="lc-admin lc-admin--full-width" data-lc-table>
+    <header class="lc-page-header">
+        <div>
+            <h1 class="lc-page-title">Materialstärken</h1>
+            <p class="lc-page-subtitle">Preisgruppen einer oder mehreren Farben desselben Materials zuordnen.</p>
+        </div>
+        <span class="label label-info">M3.12</span>
+    </header>
+
+    <div class="lc-grid lc-grid--stack">
+        <section class="lc-card">
+            <div class="lc-card__header">
+                <h2 class="lc-card__title">Vorhandene Materialstärken</h2>
+                <div class="lc-toolbar"><div class="lc-toolbar__group"></div><div class="lc-toolbar__group">
+                    <div class="lc-search"><input class="form-control" type="search" data-lc-table-search placeholder="Materialstärken durchsuchen …" aria-label="Materialstärken durchsuchen"><span class="lc-search__icon">⌕</span></div>
+                </div></div>
+            </div>
+            <div class="lc-card__body lc-card__body--flush"><div class="lc-table-wrap">
+                <table class="table lc-table">
+                    <thead><tr>
+                        <th class="lc-table__sort lc-table__sort-order" data-lc-sort>Sortierung</th>
+                        <th class="lc-table__sort" data-lc-sort>Material</th>
+                        <th class="lc-table__sort" data-lc-sort>Stärke</th>
+                        <th>Farben</th>
+                        <th class="lc-table__sort" data-lc-sort>Fertigungsart</th>
+                        <th>Status</th>
+                        <th class="lc-table__actions">Aktionen</th>
+                    </tr></thead>
+                    <tbody>
+                    {if empty($content.thicknesses)}
+                        <tr><td colspan="7" class="lc-empty">Noch keine Materialstärken vorhanden.</td></tr>
+                    {else}
+                        {foreach $content.thicknesses as $thickness}
+                            <tr>
+                                <td class="lc-table__sort-order" data-sort-value="{$thickness.sort_order|escape}">{$thickness.sort_order|escape}</td>
+                                <td>{$thickness.material_name|default:'–'|escape}</td>
+                                <td><strong>{if $thickness.thickness_min_mm == $thickness.thickness_max_mm}{$thickness.thickness_min_display|escape} mm{else}{$thickness.thickness_min_display|escape}–{$thickness.thickness_max_display|escape} mm{/if}</strong></td>
+                                <td>{if $thickness.color_count > 0}<span class="lc-color-tags">{$thickness.color_names|escape}</span>{else}<span class="lc-status lc-status--info">Alle Farben</span>{/if}</td>
+                                <td>{$thickness.production_method_label|escape}</td>
+                                <td>{if $thickness.is_active == 1}<span class="lc-status lc-status--active">Aktiv</span>{else}<span class="lc-status lc-status--inactive">Inaktiv</span>{/if}</td>
+                                <td class="lc-table__actions">
+                                    <a class="btn btn-default btn-sm" href="{$thickness.edit_url}">Bearbeiten</a>
+                                    <form action="{$content.action_toggle}" method="post" style="display:inline;">
+                                        <input type="hidden" name="pageToken" value="{$content.pageToken}">
+                                        <input type="hidden" name="thickness_id" value="{$thickness.thickness_id|escape}">
+                                        <button type="submit" class="btn btn-default btn-sm">{if $thickness.is_active == 1}Deaktivieren{else}Aktivieren{/if}</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {/foreach}
+                    {/if}
+                    </tbody>
+                </table>
+            </div></div>
+        </section>
+
+        <section class="lc-card" id="lc-thickness-form">
+            <div class="lc-card__header"><h2 class="lc-card__title">{if $content.editThickness.thickness_id}Materialstärke bearbeiten{else}Materialstärke anlegen{/if}</h2></div>
+            <div class="lc-card__body">
+                {if empty($content.materials)}<div class="alert alert-warning">Bitte zuerst mindestens ein Material anlegen.</div>{/if}
+                <div class="alert alert-info"><strong>3D-Druck:</strong> Hier kann ein zulässiger Stärkenbereich von 0,1 bis 200 mm hinterlegt werden. Die spätere 3D-Druck-Kalkulation wird getrennt von der Konturschnitt-Kalkulation aufgebaut.</div><form action="{$content.action_save}" method="post" class="form-horizontal lc-form">
+                    <input type="hidden" name="pageToken" value="{$content.pageToken}">
+                    <input type="hidden" name="thickness[thickness_id]" value="{$content.editThickness.thickness_id|escape}">
+                    <div class="lc-form-grid">
+                        <div class="form-group">
+                            <label class="control-label" for="lc-thickness-material">Material *</label>
+                            <select class="form-control" id="lc-thickness-material" name="thickness[material_id]" required>
+                                <option value="">Bitte auswählen</option>
+                                {foreach $content.materials as $material}<option value="{$material.material_id|escape}" {if $content.editThickness.material_id == $material.material_id}selected{/if}>{$material.name|escape}{if $material.is_active != 1} (inaktiv){/if}</option>{/foreach}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="lc-production-method">Fertigungsart *</label>
+                            <select class="form-control" id="lc-production-method" name="thickness[production_method]" required>{foreach $content.productionMethods as $method}<option value="{$method.method_key|escape}" data-range-mode="{$method.range_mode|escape}" {if $content.editThickness.production_method == $method.method_key}selected{/if}>{$method.name|escape}{if $method.is_active != 1} (inaktiv){/if}</option>{/foreach}</select>
+                        </div>
+                        <div class="form-group" id="lc-thickness-min-group">
+                            <label class="control-label" for="lc-thickness-min"><span id="lc-thickness-single-label">Materialstärke (mm) *</span><span id="lc-thickness-range-label">Stärke von (mm) *</span></label>
+                            <input type="number" min="0.1" max="200" step="0.1" class="form-control" id="lc-thickness-min" name="thickness[thickness_min_mm]" required value="{$content.editThickness.thickness_min_mm|default:$content.editThickness.thickness_mm|escape}" placeholder="0.1">
+                        </div>
+                        <div class="form-group" id="lc-thickness-max-group">
+                            <label class="control-label" for="lc-thickness-max">Stärke bis (mm) *</label>
+                            <input type="number" min="0.1" max="200" step="0.1" class="form-control" id="lc-thickness-max" name="thickness[thickness_max_mm]" required value="{$content.editThickness.thickness_max_mm|default:$content.editThickness.thickness_mm|escape}" placeholder="200.0">
+                            <span class="lc-field-help">Für eine feste Stärke in beide Felder denselben Wert eintragen.</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="lc-thickness-sort">Sortierung</label>
+                            <input type="number" class="form-control" id="lc-thickness-sort" name="thickness[sort_order]" value="{$content.editThickness.sort_order|escape}">
+                        </div>
+                    </div>
+
+                    <div class="form-group lc-color-assignment">
+                        <label class="control-label">Farben *</label>
+                        <label class="lc-check-card lc-check-card--all">
+                            <input type="checkbox" id="lc-thickness-all-colors" name="thickness[all_colors]" value="1" {if $content.editThickness.all_colors == 1}checked{/if}>
+                            <span><strong>Für alle Farben</strong><small>Diese Preisgruppe gilt für sämtliche Farben des Materials.</small></span>
+                        </label>
+                        <div class="lc-checkbox-grid" id="lc-thickness-colors">
+                            {foreach $content.colors as $color}
+                                <label class="lc-check-card" data-material-id="{$color.material_id|escape}">
+                                    <input type="checkbox" name="thickness[color_ids][]" value="{$color.color_id|escape}" {if $color.is_selected == 1}checked{/if}>
+                                    <span class="lc-color-option"><span class="lc-color-swatch lc-color-swatch--small" style="background-color: {$color.hex_value|default:'#FFFFFF'|escape};"></span><span class="lc-color-option__text"><strong class="lc-color-option__name">{$color.name|escape}</strong><small class="lc-color-option__code">{if $color.is_active != 1}Inaktiv{/if}</small></span></span>
+                                </label>
+                            {/foreach}
+                        </div>
+                        <span class="lc-field-help">Mehrere Farben mit identischem Preis können gemeinsam ausgewählt werden.</span>
+                    </div>
+
+                    <div class="form-group"><input type="hidden" name="thickness[is_active]" value="0"><label><input type="checkbox" name="thickness[is_active]" value="1" {if $content.editThickness.is_active == 1}checked{/if}> Materialstärke ist aktiv</label></div>
+                    <div class="lc-form__footer">{if $content.editThickness.thickness_id}<a href="{$content.action_cancel}" class="btn btn-default">Abbrechen</a>{/if}<button type="submit" class="btn btn-primary" {if empty($content.materials)}disabled{/if}>Speichern</button></div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{literal}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var material = document.getElementById('lc-thickness-material');
+    var allColors = document.getElementById('lc-thickness-all-colors');
+    var colorWrap = document.getElementById('lc-thickness-colors');
+    if (!material || !allColors || !colorWrap) { return; }
+    var cards = Array.prototype.slice.call(colorWrap.querySelectorAll('[data-material-id]'));
+    function update() {
+        var materialId = material.value;
+        cards.forEach(function (card) {
+            var visible = materialId !== '' && card.getAttribute('data-material-id') === materialId;
+            card.hidden = !visible;
+            var input = card.querySelector('input');
+            input.disabled = !visible || allColors.checked;
+            if (!visible) { input.checked = false; }
+        });
+        colorWrap.classList.toggle('is-disabled', allColors.checked);
+    }
+    material.addEventListener('change', update);
+    allColors.addEventListener('change', update);
+    update();
+});
+</script>
+{/literal}
+{literal}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var method=document.getElementById('lc-production-method'), maxGroup=document.getElementById('lc-thickness-max-group'), maxInput=document.getElementById('lc-thickness-max'), singleLabel=document.getElementById('lc-thickness-single-label'), rangeLabel=document.getElementById('lc-thickness-range-label'), minInput=document.getElementById('lc-thickness-min');
+  if(!method||!maxGroup){return;}
+  function updateThicknessFields(){var single=method.options[method.selectedIndex].getAttribute('data-range-mode')==='single'; maxGroup.style.display=single?'none':''; maxInput.disabled=single; if(single){maxInput.value=minInput.value;} singleLabel.style.display=single?'':'none'; rangeLabel.style.display=single?'none':'';}
+  method.addEventListener('change',updateThicknessFields); minInput.addEventListener('input',function(){if(method.options[method.selectedIndex].getAttribute('data-range-mode')==='single'){maxInput.value=minInput.value;}}); updateThicknessFields();
+});
+</script>
+{/literal}
+{/block}

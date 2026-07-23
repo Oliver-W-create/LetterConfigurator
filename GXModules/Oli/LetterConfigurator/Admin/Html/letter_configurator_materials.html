@@ -1,0 +1,113 @@
+{extends file="get_usermod:layouts/main/layout.html"}
+
+{block name="content"}
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/admin.css?v=3.4.0">
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/admin.js?v=3.4.0" defer></script>
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/table.js?v=3.4.0" defer></script>
+
+<div class="lc-admin lc-admin--full-width" data-lc-table>
+    <header class="lc-page-header">
+        <div>
+            <h1 class="lc-page-title">Materialien</h1>
+            <p class="lc-page-subtitle">Grundmaterialien für spätere Farben, Stärken, Preisprofile und Produktzuordnungen.</p>
+        </div>
+        <div><span class="label label-info">M3.9</span></div>
+    </header>
+
+    <div class="lc-grid lc-grid--stack">
+        <section class="lc-card">
+            <div class="lc-card__header">
+                <h2 class="lc-card__title">Vorhandene Materialien</h2>
+                <div class="lc-toolbar">
+                    <div class="lc-toolbar__group"></div>
+                    <div class="lc-toolbar__group">
+                        <div class="lc-search">
+                            <input class="form-control" type="search" data-lc-table-search placeholder="Materialien durchsuchen …" aria-label="Materialien durchsuchen">
+                            <span class="lc-search__icon">⌕</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lc-card__body lc-card__body--flush">
+                <div class="lc-table-wrap">
+                    <table class="table lc-table">
+                        <thead>
+                        <tr>
+                            <th class="lc-table__sort" data-lc-sort>Sortierung</th>
+                            <th class="lc-table__sort" data-lc-sort>Name</th>
+                                                        <th class="lc-table__sort" data-lc-sort>Status</th>
+                            <th class="lc-table__actions">Aktionen</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {if empty($content.materials)}
+                            <tr><td colspan="4" class="lc-empty">Noch keine Materialien vorhanden.</td></tr>
+                        {else}
+                            {foreach $content.materials as $material}
+                                <tr data-lc-row>
+                                    <td data-sort-value="{$material.sort_order|escape}">{$material.sort_order|escape}</td>
+                                    <td>
+                                        <strong>{$material.name|escape}</strong>
+                                        {if $material.description}<br><small class="text-muted">{$material.description|escape}</small>{/if}
+                                    </td>
+                                    <td data-sort-value="{$material.is_active|escape}">
+                                        {if $material.is_active == 1}
+                                            <span class="lc-status lc-status--active">Aktiv</span>
+                                        {else}
+                                            <span class="lc-status lc-status--inactive">Inaktiv</span>
+                                        {/if}
+                                    </td>
+                                    <td class="lc-table__actions">
+                                        <a class="btn btn-default btn-sm" href="{$material.edit_url}">Bearbeiten</a>
+                                        <form action="{$content.action_toggle}" method="post" style="display:inline;">
+                                            <input type="hidden" name="pageToken" value="{$content.pageToken}">
+                                            <input type="hidden" name="material_id" value="{$material.material_id|escape}">
+                                            <button type="submit" class="btn btn-default btn-sm">{if $material.is_active == 1}Deaktivieren{else}Aktivieren{/if}</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {/foreach}
+                        {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="lc-card">
+            <div class="lc-card__header">
+                <h2 class="lc-card__title">{if $content.editMaterial.material_id}Material bearbeiten{else}Material anlegen{/if}</h2>
+            </div>
+            <div class="lc-card__body">
+                <form action="{$content.action_save}" method="post" class="form-horizontal lc-form">
+                    <input type="hidden" name="pageToken" value="{$content.pageToken}">
+                    <input type="hidden" name="material[material_id]" value="{$content.editMaterial.material_id|escape}">
+
+                    <div class="form-group">
+                        <label class="control-label" for="lc-material-name">Name *</label>
+                        <input class="form-control" id="lc-material-name" name="material[name]" maxlength="150" required value="{$content.editMaterial.name|escape}">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="lc-material-description">Beschreibung</label>
+                        <textarea class="form-control" id="lc-material-description" name="material[description]" rows="4">{$content.editMaterial.description|escape}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="lc-material-sort">Sortierung</label>
+                        <input type="number" class="form-control" id="lc-material-sort" name="material[sort_order]" value="{$content.editMaterial.sort_order|escape}">
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="material[is_active]" value="0">
+                        <label><input type="checkbox" name="material[is_active]" value="1" {if $content.editMaterial.is_active == 1}checked{/if}> Material ist aktiv</label>
+                    </div>
+                    <div class="lc-form__footer">
+                        {if $content.editMaterial.material_id}<a href="{$content.action_cancel}" class="btn btn-default">Abbrechen</a>{/if}
+                        <button type="submit" class="btn btn-primary">Speichern</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <div class="alert alert-info lc-note"><strong>M3.9:</strong> Technische Codes werden intern automatisch verwaltet und müssen nicht mehr eingegeben werden.</div>
+</div>
+{/block}
