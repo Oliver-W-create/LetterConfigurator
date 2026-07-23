@@ -1,0 +1,631 @@
+warning: in the working copy of 'GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryException.inc.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryResult.inc.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryService.inc.php', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryException.inc.php b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryException.inc.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..6a3ca46[m
+[1m--- /dev/null[m
+[1m+++ b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryException.inc.php[m
+[36m@@ -0,0 +1,8 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Domain exception for invalid or unsupported SVG geometry input.[m
+[32m+[m[32m */[m
+[32m+[m[32mclass OliLetterConfiguratorGeometryException extends RuntimeException[m
+[32m+[m[32m{[m
+[32m+[m[32m}[m
+[1mdiff --git a/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryResult.inc.php b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryResult.inc.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d8f6659[m
+[1m--- /dev/null[m
+[1m+++ b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryResult.inc.php[m
+[36m@@ -0,0 +1,35 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Immutable value object returned by the server-side geometry service.[m
+[32m+[m[32m */[m
+[32m+[m[32mclass OliLetterConfiguratorGeometryResult implements JsonSerializable[m
+[32m+[m[32m{[m
+[32m+[m[32m    /** @var array<string, mixed> */[m
+[32m+[m[32m    private $data;[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @param array<string, mixed> $data[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function __construct(array $data)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $this->data = $data;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @return array<string, mixed>[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function toArray()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        return $this->data;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @return array<string, mixed>[m
+[32m+[m[32m     */[m
+[32m+[m[32m    #[\ReturnTypeWillChange][m
+[32m+[m[32m    public function jsonSerialize()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        return $this->toArray();[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryService.inc.php b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryService.inc.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ec112b4[m
+[1m--- /dev/null[m
+[1m+++ b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorGeometryService.inc.php[m
+[36m@@ -0,0 +1,35 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Public facade for server-side SVG geometry analysis.[m
+[32m+[m[32m *[m
+[32m+[m[32m * The service has no knowledge of uploads, carts, prices or persistence.[m
+[32m+[m[32m */[m
+[32m+[m[32mclass OliLetterConfiguratorGeometryService[m
+[32m+[m[32m{[m
+[32m+[m[32m    /** @var OliLetterConfiguratorSvgDocumentParser */[m
+[32m+[m[32m    private $parser;[m
+[32m+[m
+[32m+[m[32m    /** @var OliLetterConfiguratorSvgGeometryAnalyzer */[m
+[32m+[m[32m    private $analyzer;[m
+[32m+[m
+[32m+[m[32m    public function __construct([m
+[32m+[m[32m        ?OliLetterConfiguratorSvgDocumentParser $parser = null,[m
+[32m+[m[32m        ?OliLetterConfiguratorSvgGeometryAnalyzer $analyzer = null[m
+[32m+[m[32m    ) {[m
+[32m+[m[32m        $this->parser = $parser ?: new OliLetterConfiguratorSvgDocumentParser();[m
+[32m+[m[32m        $this->analyzer = $analyzer ?: new OliLetterConfiguratorSvgGeometryAnalyzer();[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @throws OliLetterConfiguratorGeometryException[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function analyzeSvg($svgSource, $filename = null)[m
+[32m+[m[32m    {[m
+[32warning: in the working copy of 'GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorSvgDocumentParser.inc.php', LF will be replaced by CRLF the next time Git touches it
+m+[m[32m        $svgSource = (string)$svgSource;[m
+[32m+[m[32m        $root = $this->parser->parse($svgSource);[m
+[32m+[m[32m        $data = $this->analyzer->analyze($root, strlen($svgSource), $filename);[m
+[32m+[m
+[32m+[m[32m        return new OliLetterConfiguratorGeometryResult($data);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorSvgDocumentParser.inc.php b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorSvgDocumentParser.inc.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..619da45[m
+[1m--- /dev/null[m
+[1m+++ b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorSvgDocumentParser.inc.php[m
+[36m@@ -0,0 +1,135 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Parses untrusted SVG input without network or external-entity access.[m
+[32m+[m[32m *[m
+[32m+[m[32m * This parser deliberately validates rather than mutates the source. A future[m
+[32m+[m[32m * upload workflow can therefore reject unsafe production files instead of[m
+[32m+[m[32m * silently producing geometry from a different document.[m
+[32m+[m[32m */[m
+[32m+[m[32mclass OliLetterConfiguratorSvgDocumentParser[m
+[32m+[m[32m{[m
+[32m+[m[32m    const DEFAULT_MAX_BYTES = 2097152;[m
+[32m+[m
+[32m+[m[32m    /** @var int */[m
+[32m+[m[32m    private $maxBytes;[m
+[32m+[m
+[32m+[m[32m    public function __construct($maxBytes = self::DEFAULT_MAX_BYTES)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $this->maxBytes = max(1, (int)$maxBytes);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @return DOMElement[m
+[32m+[m[32m     *[m
+[32m+[m[32m     * @throws OliLetterConfiguratorGeometryException[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function parse($svgSource)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        if (!class_exists('DOMDocument')) {[m
+[32m+[m[32m            throw new OliLetterConfiguratorGeometryException('The PHP DOM extension is required for SVG analysis.');[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $svgSource = (string)$svgSource;[m
+[32m+[m[32m        $size = strlen($svgSource);[m
+[32m+[m[32m        if ($size === 0) {[m
+[32m+[m[32m            throw new OliLetterConfiguratorGeometryException('The SVG document is empty.');[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if ($size > $this->maxBytes) {[m
+[32m+[m[32m            throw new OliLetterConfiguratorGeometryException('The SVG document exceeds the configured size limit.');[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if (preg_match('/<!DOCTYPE|<!ENTITY/i', $svgSource)) {[m
+[32m+[m[32m            throw new OliLetterConfiguratorGeometryException('DOCTYPE and ENTITY declarations are not allowed in SVG documents.');[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $previous = libxml_use_internal_errors(true);[m
+[32m+[m[32m        libxml_clear_errors();[m
+[32m+[m
+[32m+[m[32m        $document = new DOMDocument();[m
+[32m+[m[32m        $flags = defined('LIBXML_NONET') ? LIBXML_NONET : 0;[m
+[32m+[m[32m        $loaded = $document->loadXML($svgSource, $flags);[m
+[32m+[m[32m        $errors = libxml_get_errors();[m
+[32m+[m[32m        libxml_clear_errors();[m
+[32m+[m[32m        libxml_use_internal_errors($previous);[m
+[32m+[m
+[32m+[m[32m        if (!$loaded || !$document->documentElement instanceof DOMElement) {[m
+[32m+[m[32m            $message = 'The SVG document is not valid XML.';[m
+[32m+[m[32m            if ($errors) {[m
+[32m+[m[32m                $message .= ' ' . trim((string)$errors[0]->message);[m
+[32m+[m[32m            }[m
+[32m+[m[32m            throw new OliLetterConfiguratorGeometryException($message);[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if ($document->doctype !== null) {[m
+[32m+[m[32m            throw new OliLetterConfiguratorGeometryException([m
+[32m+[m[32m                'DOCwarning: in the working copy of 'GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorSvgGeometryAnalyzer.inc.php', LF will be replaced by CRLF the next time Git touches it
+TYPE declarations are not allowed in SVG documents.'[m
+[32m+[m[32m            );[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $root = $document->documentElement;[m
+[32m+[m[32m        if (strtolower($root->localName) !== 'svg') {[m
+[32m+[m[32m            throw new OliLetterConfiguratorGeometryException('The XML root element must be svg.');[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        foreach ($document->childNodes as $documentChild) {[m
+[32m+[m[32m            if ($documentChild->nodeType === XML_PI_NODE) {[m
+[32m+[m[32m                throw new OliLetterConfiguratorGeometryException([m
+[32m+[m[32m                    'XML processing instructions are not allowed in SVG documents.'[m
+[32m+[m[32m                );[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $this->assertSafeDocument($root);[m
+[32m+[m
+[32m+[m[32m        return $root;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @throws OliLetterConfiguratorGeometryException[m
+[32m+[m[32m     */[m
+[32m+[m[32m    private function assertSafeDocument(DOMElement $root)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $forbiddenElements = [[m
+[32m+[m[32m            'script', 'style', 'foreignobject', 'iframe', 'object', 'embed', 'audio', 'video'[m
+[32m+[m[32m        ];[m
+[32m+[m
+[32m+[m[32m        $nodes = [$root];[m
+[32m+[m[32m        foreach ($root->getElementsByTagName('*') as $descendant) {[m
+[32m+[m[32m            $nodes[] = $descendant;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        foreach ($nodes as $node) {[m
+[32m+[m[32m            if (!$node instanceof DOMElement) {[m
+[32m+[m[32m                continue;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            if (in_array(strtolower($node->localName), $forbiddenElements, true)) {[m
+[32m+[m[32m                throw new OliLetterConfiguratorGeometryException([m
+[32m+[m[32m                    'The SVG document contains the forbidden element ' . $node->localName . '.'[m
+[32m+[m[32m                );[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            foreach ($node->attributes as $attribute) {[m
+[32m+[m[32m                $name = strtolower($attribute->nodeName);[m
+[32m+[m[32m                $value = trim((string)$attribute->nodeValue);[m
+[32m+[m[32m                if (strpos($name, 'on') === 0) {[m
+[32m+[m[32m                    throw new OliLetterConfiguratorGeometryException('Event handler attributes are not allowed in SVG documents.');[m
+[32m+[m[32m                }[m
+[32m+[m[32m                if (($name === 'href' || $name === 'xlink:href') && $value !== '' && strpos($value, '#') !== 0) {[m
+[32m+[m[32m                    throw new OliLetterConfiguratorGeometryException('External SVG references are not allowed.');[m
+[32m+[m[32m                }[m
+[32m+[m[32m                if (preg_match('/javascript\s*:/i', $value)) {[m
+[32m+[m[32m                    throw new OliLetterConfiguratorGeometryException('Active or external SVG attribute content is not allowed.');[m
+[32m+[m[32m                }[m
+[32m+[m[32m                if (preg_match_all('/url\s*\(\s*([\'"]?)(.*?)\1\s*\)/i', $value, $urlMatches)) {[m
+[32m+[m[32m                    foreach ($urlMatches[2] as $urlReference) {[m
+[32m+[m[32m                        if (strpos(trim((string)$urlReference), '#') !== 0) {[m
+[32m+[m[32m                            throw new OliLetterConfiguratorGeometryException([m
+[32m+[m[32m                                'External URL references are not allowed in SVG attributes.'[m
+[32m+[m[32m                            );[m
+[32m+[m[32m                        }[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorSvgGeometryAnalyzer.inc.php b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorSvgGeometryAnalyzer.inc.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..fd7485a[m
+[1m--- /dev/null[m
+[1m+++ b/GXModules/Oli/LetterConfigurator/Shop/Classes/Geometry/OliLetterConfiguratorSvgGeometryAnalyzer.inc.php[m
+[36m@@ -0,0 +1,383 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Extracts deterministic, server-side SVG metadata and basic geometry.[m
+[32m+[m[32m *[m
+[32m+[m[32m * Basic SVG primitives are measured exactly. Path contour length and area are[m
+[32m+[m[32m * intentionally reported as unavailable until a production-grade path engine[m
+[32m+[m[32m * is introduced; the service never substitutes the bounding-box perimeter.[m
+[32m+[m[32m */[m
+[32m+[m[32mclass OliLetterConfiguratorSvgGeometryAnalyzer[m
+[32m+[m[32m{[m
+[32m+[m[32m    /** @var array<string, int> */[m
+[32m+[m[32m    private $counts = [];[m
+[32m+[m
+[32m+[m[32m    /** @var array<int, string> */[m
+[32m+[m[32m    private $warnings = [];[m
+[32m+[m
+[32m+[m[32m    /** @var float */[m
+[32m+[m[32m    private $contourLength = 0.0;[m
+[32m+[m
+[32m+[m[32m    /** @var float */[m
+[32m+[m[32m    private $closedArea = 0.0;[m
+[32m+[m
+[32m+[m[32m    /** @var int */[m
+[32m+[m[32m    private $measuredElements = 0;[m
+[32m+[m
+[32m+[m[32m    /** @var int */[m
+[32m+[m[32m    private $unmeasuredElements = 0;[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @return array<string, mixed>[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function analyze(DOMElement $root, $sourceBytes = null, $filename = null)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $this->reset();[m
+[32m+[m
+[32m+[m[32m        $viewBox = $this->parseViewBox($root->getAttribute('viewBox'));[m
+[32m+[m[32m        $width = $this->parseLength($root->getAttribute('width'));[m
+[32m+[m[32m        $height = $this->parseLength($root->getAttribute('height'));[m
+[32m+[m[32m        $widthMm = $this->lengthToMillimetres($width);[m
+[32m+[m[32m        $heightMm = $this->lengthToMillimetres($height);[m
+[32m+[m
+[32m+[m[32m        $scaleX = null;[m
+[32m+[m[32m        $scaleY = null;[m
+[32m+[m[32m        if ($viewBox !== null && $widthMm !== null && $heightMm !== null) {[m
+[32m+[m[32m            $scaleX = $widthMm / $viewBox[2];[m
+[32m+[m[32m            $scaleY = $heightMm / $viewBox[3];[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        if ($viewBox === null) {[m
+[32m+[m[32m            $this->warnings[] = 'missing_or_invalid_viewbox';[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if ($widthMm === null || $heightMm === null) {[m
+[32m+[m[32m            $this->warnings[] = 'physical_dimensions_unavailable';[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if ($scaleX !== null && $scaleY !== null[m
+[32m+[m[32m            && abs($scaleX - $scaleY) > max($scaleX, $scaleY) * 0.01) {[m
+[32m+[m[32m            $this->warnings[] = 'non_uniform_physical_scale';[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $bounds = [[m
+[32m+[m[32m            'min_x' => INF,[m
+[32m+[m[32m            'min_y' => INF,[m
+[32m+[m[32m            'max_x' => -INF,[m
+[32m+[m[32m            'max_y' => -INF,[m
+[32m+[m[32m        ];[m
+[32m+[m
+[32m+[m[32m        $rootHasTransform = $root->hasAttribute('transform');[m
+[32m+[m[32m        if ($rootHasTransform) {[m
+[32m+[m[32m            $this->counts['transformed']++;[m
+[32m+[m[32m        }[m
+[32m+[m[32m        $this->walk($root, $bounds, $rootHasTransform);[m
+[32m+[m
+[32m+[m[32m        if ($this->unmeasuredElements > 0) {[m
+[32m+[m[32m            $this->warnings[] = 'geometry_contains_unmeasured_elements';[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if (($this->counts['text'] + $this->counts['image'] + $this->counts['use'][m
+[32m+[m[32m            + $this->counts['symbol'] + $this->counts['mask'] + $this->counts['clippath']) > 0) {[m
+[32m+[m[32m            $this->warnings[] = 'unsupported_production_elements_present';[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if (is_finite($bounds['min_x']) && ($bounds['min_x'] < 0 || $bounds['min_y'] < 0)) {[m
+[32m+[m[32m            $this->warnings[] = 'negative_coordinates';[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $unitLength = $this->contourLength;[m
+[32m+[m[32m        $unitArea = $this->closedArea;[m
+[32m+[m[32m        $lengthMm = null;[m
+[32m+[m[32m        $areaMm2 = null;[m
+[32m+[m[32m        if ($scaleX !== null && $scaleY !== null) {[m
+[32m+[m[32m            $lengthMm = $unitLength * (($scaleX + $scaleY) / 2);[m
+[32m+[m[32m            $areaMm2 = $unitArea * $scaleX * $scaleY;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        return [[m
+[32m+[m[32m            'source' => [[m
+[32m+[m[32m                'filename' => $filename === null ? null : (string)$filename,[m
+[32m+[m[32m                'bytes' => $sourceBytes === null ? null : (int)$sourceBytes,[m
+[32m+[m[32m            ],[m
+[32m+[m[32m            'document' => [[m
+[32m+[m[32m                'width' => $width,[m
+[32m+[m[32m                'height' => $height,[m
+[32m+[m[32m                'width_mm' => $widthMm,[m
+[32m+[m[32m                'height_mm' => $heightMm,[m
+[32m+[m[32m                'view_box' => $viewBox,[m
+[32m+[m[32m            ],[m
+[32m+[m[32m            'elements' => $this->counts,[m
+[32m+[m[32m            'geometry' => [[m
+[32m+[m[32m                'measured_elements' => $this->measuredElements,[m
+[32m+[m[32m                'unmeasured_elements' => $this->unmeasuredElements,[m
+[32m+[m[32m                'contour_length_svg_units' => $unitLength,[m
+[32m+[m[32m                'contour_length_mm' => $lengthMm,[m
+[32m+[m[32m                'closed_area_svg_units2' => $unitArea,[m
+[32m+[m[32m                'closed_area_mm2' => $areaMm2,[m
+[32m+[m[32m                'bounding_box_svg_units' => $this->normaliseBounds($bounds),[m
+[32m+[m[32m                'is_complete' => $this->unmeasuredElements === 0,[m
+[32m+[m[32m            ],[m
+[32m+[m[32m            'warnings' => array_values(array_unique($this->warnings)),[m
+[32m+[m[32m        ];[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    private function reset()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $this->counts = [[m
+[32m+[m[32m            'path' => 0, 'rect' => 0, 'circle' => 0, 'ellipse' => 0,[m
+[32m+[m[32m            'line' => 0, 'polyline' => 0, 'polygon' => 0, 'group' => 0,[m
+[32m+[m[32m            'text' => 0, 'image' => 0, 'use' => 0, 'symbol' => 0,[m
+[32m+[m[32m            'marker' => 0, 'pattern' => 0, 'mask' => 0, 'clippath' => 0,[m
+[32m+[m[32m            'transformed' => 0,[m
+[32m+[m[32m        ];[m
+[32m+[m[32m        $this->warnings = [];[m
+[32m+[m[32m        $this->contourLength = 0.0;[m
+[32m+[m[32m        $this->closedArea = 0.0;[m
+[32m+[m[32m        $this->measuredElements = 0;[m
+[32m+[m[32m        $this->unmeasuredElements = 0;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @param array<string, float> $bounds[m
+[32m+[m[32m     */[m
+[32m+[m[32m    private function walk(DOMElement $element, array &$bounds, $hasInheritedTransform)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        foreach ($element->childNodes as $child) {[m
+[32m+[m[32m            if (!$child instanceof DOMElement) {[m
+[32m+[m[32m                continue;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            $name = strtolower($child->localName);[m
+[32m+[m[32m            if ($name === 'g') {[m
+[32m+[m[32m                $this->counts['group']++;[m
+[32m+[m[32m            } elseif (array_key_exists($name, $this->counts)) {[m
+[32m+[m[32m                $this->counts[$name]++;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            $hasTransform = $hasInheritedTransform || $child->hasAttribute('transform');[m
+[32m+[m[32m            if ($child->hasAttribute('transform')) {[m
+[32m+[m[32m                $this->counts['transformed']++;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            if (in_array($name, ['path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon'], true)) {[m
+[32m+[m[32m                $this->measureElement($child, $name, $bounds, $hasTransform);[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            $this->walk($child, $bounds, $hasTransform);[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @param array<string, float> $bounds[m
+[32m+[m[32m     */[m
+[32m+[m[32m    private function measureElement(DOMElement $element, $name, array &$bounds, $hasTransform)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        if ($hasTransform) {[m
+[32m+[m[32m            $this->unmeasuredElements++;[m
+[32m+[m[32m            $this->warnings[] = 'transformed_geometry_requires_path_engine';[m
+[32m+[m[32m            return;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        if ($name === 'path') {[m
+[32m+[m[32m            $this->unmeasuredElements++;[m
+[32m+[m[32m            $this->warnings[] = 'path_geometry_requires_path_engine';[m
+[32m+[m[32m            return;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        if ($name === 'rect') {[m
+[32m+[m[32m            $x = $this->number($element, 'x', 0);[m
+[32m+[m[32m            $y = $this->number($element, 'y', 0);[m
+[32m+[m[32m            $width = $this->number($element, 'width');[m
+[32m+[m[32m            $height = $this->number($element, 'height');[m
+[32m+[m[32m            if ($width === null || $height === null || $width < 0 || $height < 0) {[m
+[32m+[m[32m                $this->unmeasuredElements++;[m
+[32m+[m[32m                return;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            if ($width == 0.0 || $height == 0.0) {[m
+[32m+[m[32m                $this->measuredElements++;[m
+[32m+[m[32m                return;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            $this->contourLength += 2 * ($width + $height);[m
+[32m+[m[32m            $this->closedArea += $width * $height;[m
+[32m+[m[32m            $this->includePoint($bounds, $x, $y);[m
+[32m+[m[32m            $this->includePoint($bounds, $x + $width, $y + $height);[m
+[32m+[m[32m            $this->measuredElements++;[m
+[32m+[m[32m            return;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        if ($name === 'circle') {[m
+[32m+[m[32m            $cx = $this->number($element, 'cx', 0);[m
+[32m+[m[32m            $cy = $this->number($element, 'cy', 0);[m
+[32m+[m[32m            $radius = $this->number($element, 'r');[m
+[32m+[m[32m            if ($radius === null || $radius < 0) {[m
+[32m+[m[32m                $this->unmeasuredElements++;[m
+[32m+[m[32m                return;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            if ($radius == 0.0) {[m
+[32m+[m[32m                $this->measuredElements++;[m
+[32m+[m[32m                return;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            $this->contourLength += 2 * M_PI * $radius;[m
+[32m+[m[32m            $this->closedArea += M_PI * $radius * $radius;[m
+[32m+[m[32m            $this->includePoint($bounds, $cx - $radius, $cy - $radius);[m
+[32m+[m[32m            $this->includePoint($bounds, $cx + $radius, $cy + $radius);[m
+[32m+[m[32m            $this->measuredElements++;[m
+[32m+[m[32m            return;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        if ($name === 'ellipse') {[m
+[32m+[m[32m            $cx = $this->number($element, 'cx', 0);[m
+[32m+[m[32m            $cy = $this->number($element, 'cy', 0);[m
+[32m+[m[32m            $rx = $this->number($element, 'rx');[m
+[32m+[m[32m            $ry = $this->number($element, 'ry');[m
+[32m+[m[32m            if ($rx === null || $ry === null || $rx < 0 || $ry < 0) {[m
+[32m+[m[32m                $this->unmeasuredElements++;[m
+[32m+[m[32m                return;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            if ($rx == 0.0 || $ry == 0.0) {[m
+[32m+[m[32m                $this->measuredElements++;[m
+[32m+[m[32m                return;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            // Ramanujan's second approximation.[m
+[32m+[m[32m            $h = (($rx - $ry) * ($rx - $ry)) / (($rx + $ry) * ($rx + $ry));[m
+[32m+[m[32m            $this->contourLength += M_PI * ($rx + $ry) * (1 + (3 * $h) / (10 + sqrt(4 - 3 * $h)));[m
+[32m+[m[32m            $this->closedArea += M_PI * $rx * $ry;[m
+[32m+[m[32m            $this->includePoint($bounds, $cx - $rx, $cy - $ry);[m
+[32m+[m[32m            $this->includePoint($bounds, $cx + $rx, $cy + $ry);[m
+[32m+[m[32m            $this->measuredElements++;[m
+[32m+[m[32m            return;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        if ($name === 'line') {[m
+[32m+[m[32m            $x1 = $this->number($element, 'x1', 0);[m
+[32m+[m[32m            $y1 = $this->number($element, 'y1', 0);[m
+[32m+[m[32m            $x2 = $this->number($element, 'x2', 0);[m
+[32m+[m[32m            $y2 = $this->number($element, 'y2', 0);[m
+[32m+[m[32m            $this->contourLength += hypot($x2 - $x1, $y2 - $y1);[m
+[32m+[m[32m            $this->includePoint($bounds, $x1, $y1);[m
+[32m+[m[32m            $this->includePoint($bounds, $x2, $y2);[m
+[32m+[m[32m            $this->warnings[] = 'open_contours_present';[m
+[32m+[m[32m            $this->measuredElements++;[m
+[32m+[m[32m            return;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $points = $this->parsePoints($element->getAttribute('points'));[m
+[32m+[m[32m        if (count($points) < 2) {[m
+[32m+[m[32m            $this->unmeasuredElements++;[m
+[32m+[m[32m            return;[m
+[32m+[m[32m        }[m
+[32m+[m[32m        $closed = $name === 'polygon';[m
+[32m+[m[32m        $length = 0.0;[m
+[32m+[m[32m        $area = 0.0;[m
+[32m+[m[32m        for ($index = 0; $index < count($points); $index++) {[m
+[32m+[m[32m            $this->includePoint($bounds, $points[$index][0], $points[$index][1]);[m
+[32m+[m[32m            if ($index > 0) {[m
+[32m+[m[32m                $length += hypot([m
+[32m+[m[32m                    $points[$index][0] - $points[$index - 1][0],[m
+[32m+[m[32m                    $points[$index][1] - $points[$index - 1][1][m
+[32m+[m[32m                );[m
+[32m+[m[32m            }[m
+[32m+[m[32m            if ($closed) {[m
+[32m+[m[32m                $next = $points[($index + 1) % count($points)];[m
+[32m+[m[32m                $area += $points[$index][0] * $next[1] - $next[0] * $points[$index][1];[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if ($closed) {[m
+[32m+[m[32m            $last = $points[count($points) - 1];[m
+[32m+[m[32m            $length += hypot($points[0][0] - $last[0], $points[0][1] - $last[1]);[m
+[32m+[m[32m            $this->closedArea += abs($area / 2);[m
+[32m+[m[32m        } else {[m
+[32m+[m[32m            $this->warnings[] = 'open_contours_present';[m
+[32m+[m[32m        }[m
+[32m+[m[32m        $this->contourLength += $length;[m
+[32m+[m[32m        $this->measuredElements++;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @return array<int, array{0: float, 1: float}>[m
+[32m+[m[32m     */[m
+[32m+[m[32m    private function parsePoints($value)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        preg_match_all('/[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/', (string)$value, $matches);[m
+[32m+[m[32m        $numbers = array_map('floatval', $matches[0]);[m
+[32m+[m[32m        $points = [];[m
+[32m+[m[32m        for ($index = 0; $index + 1 < count($numbers); $index += 2) {[m
+[32m+[m[32m            $points[] = [$numbers[$index], $numbers[$index + 1]];[m
+[32m+[m[32m        }[m
+[32m+[m[32m        return $points;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    private function number(DOMElement $element, $attribute, $default = null)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        if (!$element->hasAttribute($attribute)) {[m
+[32m+[m[32m            return $default;[m
+[32m+[m[32m        }[m
+[32m+[m[32m        $value = trim($element->getAttribute($attribute));[m
+[32m+[m[32m        return preg_match('/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/', $value)[m
+[32m+[m[32m            ? (float)$value[m
+[32m+[m[32m            : null;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @return array{value: float, unit: string}|null[m
+[32m+[m[32m     */[m
+[32m+[m[32m    private function parseLength($value)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        if (!preg_match('/^([+-]?(?:\d+\.?\d*|\.\d+))(px|mm|cm|in|pt|pc)?$/i', trim((string)$value), $match)) {[m
+[32m+[m[32m            return null;[m
+[32m+[m[32m        }[m
+[32m+[m[32m        return ['value' => (float)$match[1], 'unit' => strtolower(isset($match[2]) ? $match[2] : '')];[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    private function lengthToMillimetres($length)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        if ($length === null) {[m
+[32m+[m[32m            return null;[m
+[32m+[m[32m        }[m
+[32m+[m[32m        $factors = [[m
+[32m+[m[32m            'mm' => 1.0, 'cm' => 10.0, 'in' => 25.4, 'pt' => 25.4 / 72,[m
+[32m+[m[32m            'pc' => 25.4 / 6, 'px' => 25.4 / 96, '' => 25.4 / 96,[m
+[32m+[m[32m        ];[m
+[32m+[m[32m        return array_key_exists($length['unit'], $factors)[m
+[32m+[m[32m            ? $length['value'] * $factors[$length['unit']][m
+[32m+[m[32m            : null;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @return array{0: float, 1: float, 2: float, 3: float}|null[m
+[32m+[m[32m     */[m
+[32m+[m[32m    private function parseViewBox($value)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        preg_match_all('/[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/', trim((string)$value), $matches);[m
+[32m+[m[32m        if (count($matches[0]) !== 4) {[m
+[32m+[m[32m            return null;[m
+[32m+[m[32m        }[m
+[32m+[m[32m        $values = array_map('floatval', $matches[0]);[m
+[32m+[m[32m        return $values[2] > 0 && $values[3] > 0 ? $values : null;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @param array<string, float> $bounds[m
+[32m+[m[32m     */[m
+[32m+[m[32m    private function includePoint(array &$bounds, $x, $y)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $bounds['min_x'] = min($bounds['min_x'], $x);[m
+[32m+[m[32m        $bounds['min_y'] = min($bounds['min_y'], $y);[m
+[32m+[m[32m        $bounds['max_x'] = max($bounds['max_x'], $x);[m
+[32m+[m[32m        $bounds['max_y'] = max($bounds['max_y'], $y);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * @param array<string, float> $bounds[m
+[32m+[m[32m     *[m
+[32m+[m[32m     * @return array<string, float>|null[m
+[32m+[m[32m     */[m
+[32m+[m[32m    private function normaliseBounds(array $bounds)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        if (!is_finite($bounds['min_x'])) {[m
+[32m+[m[32m            return null;[m
+[32m+[m[32m        }[m
+[32m+[m[32m        return [[m
+[32m+[m[32m            'x' => $bounds['min_x'],[m
+[32m+[m[32m            'y' => $bounds['min_y'],[m
+[32m+[m[32m            'width' => $bounds['max_x'] - $bounds['min_x'],[m
+[32m+[m[32m            'height' => $bounds['max_y'] - $bounds['min_y'],[m
+[32m+[m[32m        ];[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
