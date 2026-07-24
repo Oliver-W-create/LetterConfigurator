@@ -20,6 +20,7 @@ class OliLetterConfiguratorGeometryAnalyzer
         $minY = null;
         $maxX = null;
         $maxY = null;
+        $totalLength = 0.0;
 
         foreach ($geometry->getSegments() as $segment) {
             foreach ([$segment->getFrom(), $segment->getTo()] as $point) {
@@ -39,6 +40,10 @@ class OliLetterConfiguratorGeometryAnalyzer
                 $maxX = max($maxX, $x);
                 $maxY = max($maxY, $y);
             }
+
+            $dx = $segment->getTo()->getX() - $segment->getFrom()->getX();
+            $dy = $segment->getTo()->getY() - $segment->getFrom()->getY();
+            $totalLength += sqrt(($dx * $dx) + ($dy * $dy));
         }
 
         $width = $maxX - $minX;
@@ -55,6 +60,7 @@ class OliLetterConfiguratorGeometryAnalyzer
             'height' => $height,
             'centerX' => $centerX,
             'centerY' => $centerY,
+            'totalLength' => $totalLength,
         ];
     }
 }
