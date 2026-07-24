@@ -19,17 +19,23 @@ class OliLetterConfiguratorGeometryService
     /** @var OliLetterConfiguratorPathAggregationService */
     private $pathAggregationService;
 
+    /** @var OliLetterConfiguratorPathGeometryAdapter */
+    private $pathGeometryAdapter;
+
     public function __construct(
         ?OliLetterConfiguratorSvgDocumentParser $parser = null,
         ?OliLetterConfiguratorSvgGeometryAnalyzer $analyzer = null,
         ?OliLetterConfiguratorPathProcessingService $pathProcessingService = null,
-        ?OliLetterConfiguratorPathAggregationService $pathAggregationService = null
+        ?OliLetterConfiguratorPathAggregationService $pathAggregationService = null,
+        ?OliLetterConfiguratorPathGeometryAdapter $pathGeometryAdapter = null
     ) {
         $this->parser = $parser ?: new OliLetterConfiguratorSvgDocumentParser();
         $this->analyzer = $analyzer ?: new OliLetterConfiguratorSvgGeometryAnalyzer();
         $this->pathProcessingService = $pathProcessingService;
         $this->pathAggregationService = $pathAggregationService
             ?: new OliLetterConfiguratorPathAggregationService();
+        $this->pathGeometryAdapter = $pathGeometryAdapter
+            ?: new OliLetterConfiguratorPathGeometryAdapter();
 
         if ($this->pathProcessingService === null) {
             $pointTranslator = new OliLetterConfiguratorPointTranslator();
@@ -88,6 +94,9 @@ class OliLetterConfiguratorGeometryService
 
         $aggregatedPathAnalysisResult = count($pathAnalysisResults) > 0
             ? $this->pathAggregationService->aggregate($pathAnalysisResults)
+            : null;
+        $pathBoundingBox = $aggregatedPathAnalysisResult !== null
+            ? $this->pathGeometryAdapter->toBoundingBox($aggregatedPathAnalysisResult)
             : null;
 
         $data = $this->analyzer->analyze($root, strlen($svgSource), $filename);
