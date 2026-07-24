@@ -104,6 +104,16 @@ class OliLetterConfiguratorGeometryService
                 (float)$domBoundingBox['y']
                 + (float)$domBoundingBox['height']
                 - $pathAnalysisResult->getMaxY()
+            ) <= 0.001
+            && abs(
+                (float)$domBoundingBox['x']
+                + ((float)$domBoundingBox['width'] / 2)
+                - $pathAnalysisResult->getCenterX()
+            ) <= 0.001
+            && abs(
+                (float)$domBoundingBox['y']
+                + ((float)$domBoundingBox['height'] / 2)
+                - $pathAnalysisResult->getCenterY()
             ) <= 0.001;
 
         return new OliLetterConfiguratorGeometryResult($data);
