@@ -1,24 +1,25 @@
 <?php
 
 /**
- * Resolves normalized SVG path commands to their resulting points.
+ * Resolves normalized SVG path commands to path geometry.
  */
 class OliLetterConfiguratorSvgPathInterpreter
 {
     /**
      * @param OliLetterConfiguratorSvgPathCommand[] $commands
      *
-     * @return array
+     * @return OliLetterConfiguratorPathGeometry
      *
      * @throws OliLetterConfiguratorGeometryException
      */
     public function interpret(array $commands)
     {
+        $geometry = new OliLetterConfiguratorPathGeometry();
+
         if (count($commands) === 0) {
-            return [];
+            return $geometry;
         }
 
-        $points = [];
         $currentPoint = null;
         $subPathStart = null;
 
@@ -26,15 +27,14 @@ class OliLetterConfiguratorSvgPathInterpreter
             $command = $pathCommand->getCommand();
             $parameters = $pathCommand->getParameters();
             $relative = $pathCommand->isRelative();
-            $fromPoint = $currentPoint;
 
             if ($command === 'M') {
-                $baseX = $relative && $currentPoint !== null ? $currentPoint['x'] : 0.0;
-                $baseY = $relative && $currentPoint !== null ? $currentPoint['y'] : 0.0;
-                $currentPoint = [
-                    'x' => $relative ? $baseX + $parameters[0] : $parameters[0],
-                    'y' => $relative ? $baseY + $parameters[1] : $parameters[1],
-                ];
+                $baseX = $relative && $currentPoint !== null ? $currentPoint->getX() : 0.0;
+                $baseY = $relative && $currentPoint !== null ? $currentPoint->getY() : 0.0;
+                $currentPoint = new OliLetterConfiguratorPoint(
+                    $relative ? $baseX + $parameters[0] : $parameters[0],
+                    $relative ? $baseY + $parameters[1] : $parameters[1]
+                );
                 $subPathStart = $currentPoint;
             } else {
                 if ($currentPoint === null || $subPathStart === null) {
@@ -43,26 +43,28 @@ class OliLetterConfiguratorSvgPathInterpreter
                     );
                 }
 
+                $fromPoint = $currentPoint;
+
                 switch ($command) {
                     case 'L':
-                        $currentPoint = [
-                            'x' => $relative ? $currentPoint['x'] + $parameters[0] : $parameters[0],
-                            'y' => $relative ? $currentPoint['y'] + $parameters[1] : $parameters[1],
-                        ];
+                        $currentPoint = new OliLetterConfiguratorPoint(
+                            $relative ? $currentPoint->getX() + $parameters[0] : $parameters[0],
+                            $relative ? $currentPoint->getY() + $parameters[1] : $parameters[1]
+                        );
                         break;
 
                     case 'H':
-                        $currentPoint = [
-                            'x' => $relative ? $currentPoint['x'] + $parameters[0] : $parameters[0],
-                            'y' => $currentPoint['y'],
-                        ];
+                        $currentPoint = new OliLetterConfiguratorPoint(
+                            $relative ? $currentPoint->getX() + $parameters[0] : $parameters[0],
+                            $currentPoint->getY()
+                        );
                         break;
 
                     case 'V':
-                        $currentPoint = [
-                            'x' => $currentPoint['x'],
-                            'y' => $relative ? $currentPoint['y'] + $parameters[0] : $parameters[0],
-                        ];
+                        $currentPoint = new OliLetterConfiguratorPoint(
+                            $currentPoint->getX(),
+                            $relative ? $currentPoint->getY() + $parameters[0] : $parameters[0]
+                        );
                         break;
 
                     case 'Z':
@@ -74,18 +76,13 @@ class OliLetterConfiguratorSvgPathInterpreter
                             'SVG path command ' . $command . ' is not implemented yet.'
                         );
                 }
-            }
 
-            $points[] = [
-                'command' => $command,
-                'from' => $command === 'M' ? null : $fromPoint,
-                'to' => [
-                    'x' => $currentPoint['x'],
-                    'y' => $currentPoint['y'],
-                ],
-            ];
+                $geometry->addSegment(
+                    new OliLetterConfiguratorLineSegment($fromPoint, $currentPoint)
+                );
+            }
         }
 
-        return $points;
+        return $geometry;
     }
 }
