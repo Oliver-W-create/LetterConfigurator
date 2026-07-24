@@ -13,12 +13,45 @@ class OliLetterConfiguratorGeometryService
     /** @var OliLetterConfiguratorSvgGeometryAnalyzer */
     private $analyzer;
 
+    /** @var OliLetterConfiguratorPathProcessingService */
+    private $pathProcessingService;
+
     public function __construct(
         ?OliLetterConfiguratorSvgDocumentParser $parser = null,
-        ?OliLetterConfiguratorSvgGeometryAnalyzer $analyzer = null
+        ?OliLetterConfiguratorSvgGeometryAnalyzer $analyzer = null,
+        ?OliLetterConfiguratorPathProcessingService $pathProcessingService = null
     ) {
         $this->parser = $parser ?: new OliLetterConfiguratorSvgDocumentParser();
         $this->analyzer = $analyzer ?: new OliLetterConfiguratorSvgGeometryAnalyzer();
+        $this->pathProcessingService = $pathProcessingService;
+
+        if ($this->pathProcessingService === null) {
+            $pointTranslator = new OliLetterConfiguratorPointTranslator();
+            $lineSegmentTranslator = new OliLetterConfiguratorLineSegmentTranslator($pointTranslator);
+            $pathGeometryTranslator = new OliLetterConfiguratorPathGeometryTranslator($lineSegmentTranslator);
+
+            $pointScaler = new OliLetterConfiguratorPointScaler();
+            $lineSegmentScaler = new OliLetterConfiguratorLineSegmentScaler($pointScaler);
+            $pathGeometryScaler = new OliLetterConfiguratorPathGeometryScaler($lineSegmentScaler);
+
+            $pointRotator = new OliLetterConfiguratorPointRotator();
+            $lineSegmentRotator = new OliLetterConfiguratorLineSegmentRotator($pointRotator);
+            $pathGeometryRotator = new OliLetterConfiguratorPathGeometryRotator($lineSegmentRotator);
+
+            $transformationService = new OliLetterConfiguratorGeometryTransformationService(
+                $pathGeometryScaler,
+                $pathGeometryRotator,
+                $pathGeometryTranslator
+            );
+
+            $this->pathProcessingService = new OliLetterConfiguratorPathProcessingService(
+                new OliLetterConfiguratorSvgPathTokenizer(),
+                new OliLetterConfiguratorSvgPathParser(),
+                new OliLetterConfiguratorSvgPathInterpreter(),
+                $transformationService,
+                new OliLetterConfiguratorGeometryAnalyzer()
+            );
+        }
     }
 
     /**
