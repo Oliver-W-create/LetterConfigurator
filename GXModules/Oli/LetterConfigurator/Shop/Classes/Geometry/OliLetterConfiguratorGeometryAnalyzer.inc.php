@@ -8,7 +8,7 @@ class OliLetterConfiguratorGeometryAnalyzer
     /**
      * @param OliLetterConfiguratorPathGeometry $geometry
      *
-     * @return array
+     * @return OliLetterConfiguratorGeometryAnalysisResult|array
      */
     public function analyze(OliLetterConfiguratorPathGeometry $geometry)
     {
@@ -54,17 +54,17 @@ class OliLetterConfiguratorGeometryAnalyzer
         $centerX = $minX + ($width / 2);
         $centerY = $minY + ($height / 2);
 
-        return [
-            'minX' => $minX,
-            'minY' => $minY,
-            'maxX' => $maxX,
-            'maxY' => $maxY,
-            'width' => $width,
-            'height' => $height,
-            'centerX' => $centerX,
-            'centerY' => $centerY,
-            'totalLength' => $totalLength,
-            'segmentCount' => $segmentCount,
-        ];
+        return new OliLetterConfiguratorGeometryAnalysisResult(
+            $minX,
+            $minY,
+            $maxX,
+            $maxY,
+            $width,
+            $height,
+            $centerX,
+            $centerY,
+            $totalLength,
+            $segmentCount
+        );
     }
 }
