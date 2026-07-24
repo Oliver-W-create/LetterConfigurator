@@ -41,11 +41,20 @@ class OliLetterConfiguratorGeometryAnalyzer
             }
         }
 
+        $width = $maxX - $minX;
+        $height = $maxY - $minY;
+        $centerX = $minX + ($width / 2);
+        $centerY = $minY + ($height / 2);
+
         return [
             'minX' => $minX,
             'minY' => $minY,
             'maxX' => $maxX,
             'maxY' => $maxY,
+            'width' => $width,
+            'height' => $height,
+            'centerX' => $centerX,
+            'centerY' => $centerY,
         ];
     }
 }
