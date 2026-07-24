@@ -8,12 +8,23 @@ class OliLetterConfiguratorGeometryAnalyzer
     /**
      * @param OliLetterConfiguratorPathGeometry $geometry
      *
-     * @return OliLetterConfiguratorGeometryAnalysisResult|array
+     * @return OliLetterConfiguratorGeometryAnalysisResult
      */
     public function analyze(OliLetterConfiguratorPathGeometry $geometry)
     {
         if ($geometry->isEmpty()) {
-            return [];
+            return new OliLetterConfiguratorGeometryAnalysisResult(
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0
+            );
         }
 
         $minX = null;
