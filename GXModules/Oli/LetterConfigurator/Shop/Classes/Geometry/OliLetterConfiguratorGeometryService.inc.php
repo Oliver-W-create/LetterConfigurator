@@ -22,12 +22,16 @@ class OliLetterConfiguratorGeometryService
     /** @var OliLetterConfiguratorPathGeometryAdapter */
     private $pathGeometryAdapter;
 
+    /** @var OliLetterConfiguratorBoundingBoxMergeService */
+    private $boundingBoxMergeService;
+
     public function __construct(
         ?OliLetterConfiguratorSvgDocumentParser $parser = null,
         ?OliLetterConfiguratorSvgGeometryAnalyzer $analyzer = null,
         ?OliLetterConfiguratorPathProcessingService $pathProcessingService = null,
         ?OliLetterConfiguratorPathAggregationService $pathAggregationService = null,
-        ?OliLetterConfiguratorPathGeometryAdapter $pathGeometryAdapter = null
+        ?OliLetterConfiguratorPathGeometryAdapter $pathGeometryAdapter = null,
+        ?OliLetterConfiguratorBoundingBoxMergeService $boundingBoxMergeService = null
     ) {
         $this->parser = $parser ?: new OliLetterConfiguratorSvgDocumentParser();
         $this->analyzer = $analyzer ?: new OliLetterConfiguratorSvgGeometryAnalyzer();
@@ -36,6 +40,8 @@ class OliLetterConfiguratorGeometryService
             ?: new OliLetterConfiguratorPathAggregationService();
         $this->pathGeometryAdapter = $pathGeometryAdapter
             ?: new OliLetterConfiguratorPathGeometryAdapter();
+        $this->boundingBoxMergeService = $boundingBoxMergeService
+            ?: new OliLetterConfiguratorBoundingBoxMergeService();
 
         if ($this->pathProcessingService === null) {
             $pointTranslator = new OliLetterConfiguratorPointTranslator();
@@ -110,6 +116,10 @@ class OliLetterConfiguratorGeometryService
             )
                 ? $data['geometry']['bounding_box_svg_units']
                 : null;
+        $mergedBoundingBox = $this->boundingBoxMergeService->merge(
+            $domBoundingBox,
+            $pathBoundingBox
+        );
         $geometryMatches = $aggregatedPathAnalysisResult !== null
             && is_array($domBoundingBox)
             && abs((float)$domBoundingBox['width'] - $aggregatedPathAnalysisResult->getWidth()) <= 0.001
