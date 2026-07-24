@@ -82,6 +82,8 @@ class OliLetterConfiguratorGeometryService
         $domBoundingBox = isset($data['geometry']['bounding_box_svg_units'])
             && is_array($data['geometry']['bounding_box_svg_units'])
             && isset(
+                $data['geometry']['bounding_box_svg_units']['x'],
+                $data['geometry']['bounding_box_svg_units']['y'],
                 $data['geometry']['bounding_box_svg_units']['width'],
                 $data['geometry']['bounding_box_svg_units']['height']
             )
@@ -90,7 +92,19 @@ class OliLetterConfiguratorGeometryService
         $geometryMatches = $pathAnalysisResult !== null
             && is_array($domBoundingBox)
             && abs((float)$domBoundingBox['width'] - $pathAnalysisResult->getWidth()) <= 0.001
-            && abs((float)$domBoundingBox['height'] - $pathAnalysisResult->getHeight()) <= 0.001;
+            && abs((float)$domBoundingBox['height'] - $pathAnalysisResult->getHeight()) <= 0.001
+            && abs((float)$domBoundingBox['x'] - $pathAnalysisResult->getMinX()) <= 0.001
+            && abs((float)$domBoundingBox['y'] - $pathAnalysisResult->getMinY()) <= 0.001
+            && abs(
+                (float)$domBoundingBox['x']
+                + (float)$domBoundingBox['width']
+                - $pathAnalysisResult->getMaxX()
+            ) <= 0.001
+            && abs(
+                (float)$domBoundingBox['y']
+                + (float)$domBoundingBox['height']
+                - $pathAnalysisResult->getMaxY()
+            ) <= 0.001;
 
         return new OliLetterConfiguratorGeometryResult($data);
     }
