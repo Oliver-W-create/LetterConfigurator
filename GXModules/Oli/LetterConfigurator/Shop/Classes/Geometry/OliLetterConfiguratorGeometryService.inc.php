@@ -16,14 +16,20 @@ class OliLetterConfiguratorGeometryService
     /** @var OliLetterConfiguratorPathProcessingService */
     private $pathProcessingService;
 
+    /** @var OliLetterConfiguratorPathAggregationService */
+    private $pathAggregationService;
+
     public function __construct(
         ?OliLetterConfiguratorSvgDocumentParser $parser = null,
         ?OliLetterConfiguratorSvgGeometryAnalyzer $analyzer = null,
-        ?OliLetterConfiguratorPathProcessingService $pathProcessingService = null
+        ?OliLetterConfiguratorPathProcessingService $pathProcessingService = null,
+        ?OliLetterConfiguratorPathAggregationService $pathAggregationService = null
     ) {
         $this->parser = $parser ?: new OliLetterConfiguratorSvgDocumentParser();
         $this->analyzer = $analyzer ?: new OliLetterConfiguratorSvgGeometryAnalyzer();
         $this->pathProcessingService = $pathProcessingService;
+        $this->pathAggregationService = $pathAggregationService
+            ?: new OliLetterConfiguratorPathAggregationService();
 
         if ($this->pathProcessingService === null) {
             $pointTranslator = new OliLetterConfiguratorPointTranslator();
@@ -80,6 +86,10 @@ class OliLetterConfiguratorGeometryService
             );
         }
 
+        $aggregatedPathAnalysisResult = count($pathAnalysisResults) > 0
+            ? $this->pathAggregationService->aggregate($pathAnalysisResults)
+            : null;
+
         $data = $this->analyzer->analyze($root, strlen($svgSource), $filename);
         $domBoundingBox = isset($data['geometry']['bounding_box_svg_units'])
             && is_array($data['geometry']['bounding_box_svg_units'])
@@ -91,34 +101,31 @@ class OliLetterConfiguratorGeometryService
             )
                 ? $data['geometry']['bounding_box_svg_units']
                 : null;
-        $pathAnalysisResult = count($pathAnalysisResults) === 1
-            ? $pathAnalysisResults[0]
-            : null;
-        $geometryMatches = $pathAnalysisResult !== null
+        $geometryMatches = $aggregatedPathAnalysisResult !== null
             && is_array($domBoundingBox)
-            && abs((float)$domBoundingBox['width'] - $pathAnalysisResult->getWidth()) <= 0.001
-            && abs((float)$domBoundingBox['height'] - $pathAnalysisResult->getHeight()) <= 0.001
-            && abs((float)$domBoundingBox['x'] - $pathAnalysisResult->getMinX()) <= 0.001
-            && abs((float)$domBoundingBox['y'] - $pathAnalysisResult->getMinY()) <= 0.001
+            && abs((float)$domBoundingBox['width'] - $aggregatedPathAnalysisResult->getWidth()) <= 0.001
+            && abs((float)$domBoundingBox['height'] - $aggregatedPathAnalysisResult->getHeight()) <= 0.001
+            && abs((float)$domBoundingBox['x'] - $aggregatedPathAnalysisResult->getMinX()) <= 0.001
+            && abs((float)$domBoundingBox['y'] - $aggregatedPathAnalysisResult->getMinY()) <= 0.001
             && abs(
                 (float)$domBoundingBox['x']
                 + (float)$domBoundingBox['width']
-                - $pathAnalysisResult->getMaxX()
+                - $aggregatedPathAnalysisResult->getMaxX()
             ) <= 0.001
             && abs(
                 (float)$domBoundingBox['y']
                 + (float)$domBoundingBox['height']
-                - $pathAnalysisResult->getMaxY()
+                - $aggregatedPathAnalysisResult->getMaxY()
             ) <= 0.001
             && abs(
                 (float)$domBoundingBox['x']
                 + ((float)$domBoundingBox['width'] / 2)
-                - $pathAnalysisResult->getCenterX()
+                - $aggregatedPathAnalysisResult->getCenterX()
             ) <= 0.001
             && abs(
                 (float)$domBoundingBox['y']
                 + ((float)$domBoundingBox['height'] / 2)
-                - $pathAnalysisResult->getCenterY()
+                - $aggregatedPathAnalysisResult->getCenterY()
             ) <= 0.001;
 
         return new OliLetterConfiguratorGeometryResult($data);
