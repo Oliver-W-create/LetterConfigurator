@@ -66,7 +66,7 @@ class OliLetterConfiguratorGeometryService
         if ($pathElements->length > 0) {
             $pathData = trim((string)$pathElements->item(0)->getAttribute('d'));
             if ($pathData !== '') {
-                $this->pathProcessingService->processPath(
+                $pathAnalysisResult = $this->pathProcessingService->processPath(
                     $pathData,
                     1.0,
                     1.0,
