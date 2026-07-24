@@ -61,6 +61,22 @@ class OliLetterConfiguratorGeometryService
     {
         $svgSource = (string)$svgSource;
         $root = $this->parser->parse($svgSource);
+
+        $pathElements = $root->getElementsByTagName('path');
+        if ($pathElements->length > 0) {
+            $pathData = trim((string)$pathElements->item(0)->getAttribute('d'));
+            if ($pathData !== '') {
+                $this->pathProcessingService->processPath(
+                    $pathData,
+                    1.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                );
+            }
+        }
+
         $data = $this->analyzer->analyze($root, strlen($svgSource), $filename);
 
         return new OliLetterConfiguratorGeometryResult($data);
