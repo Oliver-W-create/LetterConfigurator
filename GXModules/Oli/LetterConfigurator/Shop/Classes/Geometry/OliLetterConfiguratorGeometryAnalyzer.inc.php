@@ -9,8 +9,6 @@ class OliLetterConfiguratorGeometryAnalyzer
      * @param OliLetterConfiguratorPathGeometry $geometry
      *
      * @return array
-     *
-     * @throws OliLetterConfiguratorGeometryException
      */
     public function analyze(OliLetterConfiguratorPathGeometry $geometry)
     {
@@ -18,12 +16,36 @@ class OliLetterConfiguratorGeometryAnalyzer
             return [];
         }
 
+        $minX = null;
+        $minY = null;
+        $maxX = null;
+        $maxY = null;
+
         foreach ($geometry->getSegments() as $segment) {
-            throw new OliLetterConfiguratorGeometryException(
-                'Geometry analysis not implemented yet.'
-            );
+            foreach ([$segment->getFrom(), $segment->getTo()] as $point) {
+                $x = $point->getX();
+                $y = $point->getY();
+
+                if ($minX === null) {
+                    $minX = $x;
+                    $minY = $y;
+                    $maxX = $x;
+                    $maxY = $y;
+                    continue;
+                }
+
+                $minX = min($minX, $x);
+                $minY = min($minY, $y);
+                $maxX = max($maxX, $x);
+                $maxY = max($maxY, $y);
+            }
         }
 
-        return [];
+        return [
+            'minX' => $minX,
+            'minY' => $minY,
+            'maxX' => $maxX,
+            'maxY' => $maxY,
+        ];
     }
 }
