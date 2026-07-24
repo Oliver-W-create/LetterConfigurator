@@ -21,8 +21,11 @@ class OliLetterConfiguratorGeometryAnalyzer
         $maxX = null;
         $maxY = null;
         $totalLength = 0.0;
+        $segmentCount = 0;
 
         foreach ($geometry->getSegments() as $segment) {
+            $segmentCount++;
+
             foreach ([$segment->getFrom(), $segment->getTo()] as $point) {
                 $x = $point->getX();
                 $y = $point->getY();
@@ -61,6 +64,7 @@ class OliLetterConfiguratorGeometryAnalyzer
             'centerX' => $centerX,
             'centerY' => $centerY,
             'totalLength' => $totalLength,
+            'segmentCount' => $segmentCount,
         ];
     }
 }
