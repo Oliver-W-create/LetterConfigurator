@@ -62,6 +62,7 @@ class OliLetterConfiguratorGeometryService
         $svgSource = (string)$svgSource;
         $root = $this->parser->parse($svgSource);
 
+        $pathAnalysisResult = null;
         $pathElements = $root->getElementsByTagName('path');
         if ($pathElements->length > 0) {
             $pathData = trim((string)$pathElements->item(0)->getAttribute('d'));
@@ -78,6 +79,18 @@ class OliLetterConfiguratorGeometryService
         }
 
         $data = $this->analyzer->analyze($root, strlen($svgSource), $filename);
+        $domBoundingBox = isset($data['geometry']['bounding_box_svg_units'])
+            && is_array($data['geometry']['bounding_box_svg_units'])
+            && isset(
+                $data['geometry']['bounding_box_svg_units']['width'],
+                $data['geometry']['bounding_box_svg_units']['height']
+            )
+                ? $data['geometry']['bounding_box_svg_units']
+                : null;
+        $geometryMatches = $pathAnalysisResult !== null
+            && is_array($domBoundingBox)
+            && abs((float)$domBoundingBox['width'] - $pathAnalysisResult->getWidth()) <= 0.001
+            && abs((float)$domBoundingBox['height'] - $pathAnalysisResult->getHeight()) <= 0.001;
 
         return new OliLetterConfiguratorGeometryResult($data);
     }
