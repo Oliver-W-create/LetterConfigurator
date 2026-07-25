@@ -177,11 +177,21 @@ class OliLetterConfiguratorSvgPathInterpreter
                         continue 2;
 
                     case 'A':
-                        $this->arcInterpreter->interpret(
+                        $arcSegments = $this->arcInterpreter->interpret(
                             $currentPoint,
                             $pathCommand
                         );
-                        break;
+                        foreach ($arcSegments as $arcSegment) {
+                            $geometry->addSegment($arcSegment);
+                        }
+                        $currentPoint = $this->arcInterpreter->resolveEndPoint(
+                            $commandStartPoint,
+                            $pathCommand
+                        );
+                        $previousPathCommand = $pathCommand;
+                        $previousCommandStartPoint = $commandStartPoint;
+                        $previousQuadraticControlPoint = null;
+                        continue 2;
 
                     case 'Z':
                         $currentPoint = $subPathStart;

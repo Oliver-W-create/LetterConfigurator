@@ -5,21 +5,29 @@
  */
 class OliLetterConfiguratorArcInterpreter
 {
+    private const APPROXIMATION_SEGMENTS = 20;
+
     /** @var OliLetterConfiguratorPointTranslator */
     private $pointTranslator;
 
+    /** @var OliLetterConfiguratorCubicBezierApproximator */
+    private $cubicBezierApproximator;
+
     public function __construct(
-        ?OliLetterConfiguratorPointTranslator $pointTranslator = null
+        ?OliLetterConfiguratorPointTranslator $pointTranslator = null,
+        ?OliLetterConfiguratorCubicBezierApproximator $cubicBezierApproximator = null
     ) {
         $this->pointTranslator = $pointTranslator
             ?: new OliLetterConfiguratorPointTranslator();
+        $this->cubicBezierApproximator = $cubicBezierApproximator
+            ?: new OliLetterConfiguratorCubicBezierApproximator();
     }
 
     /**
      * @param OliLetterConfiguratorPoint          $startPoint
      * @param OliLetterConfiguratorSvgPathCommand $pathCommand
      *
-     * @return void
+     * @return OliLetterConfiguratorLineSegment[]
      *
      * @throws OliLetterConfiguratorGeometryException
      */
@@ -47,6 +55,17 @@ class OliLetterConfiguratorArcInterpreter
             );
         }
         $endPoint = $this->resolveEndPoint($startPoint, $pathCommand);
+        if ($startPoint->getX() == $endPoint->getX()
+            && $startPoint->getY() == $endPoint->getY()
+        ) {
+            return [];
+        }
+        if ($rx == 0.0 || $ry == 0.0) {
+            return [
+                new OliLetterConfiguratorLineSegment($startPoint, $endPoint),
+            ];
+        }
+
         $ellipseCoordinates = $this->rotateToEllipseSpace(
             $startPoint,
             $endPoint,
@@ -95,10 +114,21 @@ class OliLetterConfiguratorArcInterpreter
             $startAngle,
             $deltaAngle
         );
+        $lineSegments = [];
+        foreach ($cubicBezierSegments as $cubicBezierSegment) {
+            $approximatedSegments = $this->cubicBezierApproximator->approximate(
+                $cubicBezierSegment['startPoint'],
+                $cubicBezierSegment['controlPoint1'],
+                $cubicBezierSegment['controlPoint2'],
+                $cubicBezierSegment['endPoint'],
+                self::APPROXIMATION_SEGMENTS
+            );
+            foreach ($approximatedSegments as $approximatedSegment) {
+                $lineSegments[] = $approximatedSegment;
+            }
+        }
 
-        throw new OliLetterConfiguratorGeometryException(
-            'SVG path command A is not implemented yet.'
-        );
+        return $lineSegments;
     }
 
     /**
