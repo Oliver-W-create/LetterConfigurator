@@ -5,6 +5,16 @@
  */
 class OliLetterConfiguratorSvgPathInterpreter
 {
+    /** @var OliLetterConfiguratorCubicBezierInterpreter */
+    private $cubicBezierInterpreter;
+
+    public function __construct(
+        ?OliLetterConfiguratorCubicBezierInterpreter $cubicBezierInterpreter = null
+    ) {
+        $this->cubicBezierInterpreter = $cubicBezierInterpreter
+            ?: new OliLetterConfiguratorCubicBezierInterpreter();
+    }
+
     /**
      * @param OliLetterConfiguratorSvgPathCommand[] $commands
      *
@@ -64,6 +74,13 @@ class OliLetterConfiguratorSvgPathInterpreter
                         $currentPoint = new OliLetterConfiguratorPoint(
                             $currentPoint->getX(),
                             $relative ? $currentPoint->getY() + $parameters[0] : $parameters[0]
+                        );
+                        break;
+
+                    case 'C':
+                        $this->cubicBezierInterpreter->interpret(
+                            $currentPoint,
+                            $pathCommand
                         );
                         break;
 
