@@ -58,13 +58,16 @@
 							}
 						{/block}
 
-						{block name="product_info_template_standard_product_images_if"}
-							{$IMAGE_GALLERY}
-						{/block}
+						<div class="product-info-letter-configurator__hero col-xs-12">
+							<div class="row product-info-letter-configurator__hero-row">
+						<div class="product-info-letter-configurator__preview">
+							{block name="product_info_template_standard_product_images_if"}
+								{$IMAGE_GALLERY}
+							{/block}
+						</div>
 						
 						{block name="product_info_template_standard_sticky_box"}
-							{assign var="stickybox" value={template_setting name="gx-product-info-details-sticky"}}
-							<div class="product-info-details col-xs-12 col-md-4" data-gambio-widget="{if $stickybox}stickybox {/if}product_min_height_fix">
+							<div class="product-info-details product-info-letter-configurator__details">
 				
 								{block name="product_info_template_standard_sticky_box_overlays"}
 									<div class="loading-overlay"></div>
@@ -152,10 +155,6 @@
 										{/block}
 					
 					
-								{/block}
-							</div>
-						{/block}
-			
 						<div class="product-info-letter-configurator__configurator col-xs-12 clearfix">
 																	{block name="product_info_template_letter_configurator_configurator"}
 																		{if $OLI_LC_CONFIGURATOR}
@@ -250,6 +249,11 @@
 																			{/block}
 																		</div>
 																	{/block}
+						</div>
+								{/block}
+							</div>
+						{/block}
+							</div>
 						</div>
 					</form>
 

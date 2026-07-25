@@ -39,15 +39,14 @@
                 .product-info-letter-configurator .oli-lc-main-price .tax-shipping-text{margin:4px 0 0;font-size:12px;color:#777;text-align:right}
                 @media (max-width:480px){.product-info-letter-configurator .oli-lc-configurator__field-row{display:block}.product-info-letter-configurator .oli-lc-configurator__field-row>.oli-lc-configurator__field{width:100%}}
 
-/* M4.0.4 – Full-width configurator layout */
+/* M4.0.5 – Kennmal-inspired two-column product layout */
 .product-info-letter-configurator {
     .product-info-letter-configurator__form {
-        display: contents;
+        display: block;
+        width: 100%;
     }
 
-    .product-info-letter-configurator__top,
-    .product-info-letter-configurator__configurator,
-    .product-info-letter-configurator__purchase,
+    .product-info-letter-configurator__hero,
     .product-info-description,
     .products_info_available,
     .product-info-share,
@@ -57,10 +56,52 @@
         clear: both;
     }
 
-    .product-info-letter-configurator__configurator {
+    .product-info-letter-configurator__hero {
         width: 100%;
-        margin-top: 32px;
-        padding-top: 0;
+    }
+
+    .product-info-letter-configurator__hero-row {
+        display: flex;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+    }
+
+    .product-info-letter-configurator__hero-row > [class*="col-"]:not(.product-info-details) {
+        float: none;
+        flex: 0 0 58.333333%;
+        width: 58.333333%;
+        max-width: 58.333333%;
+    }
+
+    .product-info-letter-configurator__hero-row > .product-info-details {
+        float: none;
+        flex: 0 0 41.666667%;
+        width: 41.666667%;
+        max-width: 41.666667%;
+        min-width: 0;
+        padding-left: 30px;
+    }
+
+    .product-info-details .product-info-title-desktop {
+        margin-top: 0;
+        margin-bottom: 14px;
+    }
+
+    .product-info-details .dl-horizontal {
+        margin-bottom: 18px;
+    }
+
+    .product-info-letter-configurator__configurator,
+    .product-info-letter-configurator__purchase {
+        float: none;
+        clear: both;
+        width: 100%;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .product-info-letter-configurator__configurator {
+        margin-top: 20px;
     }
 
     .letter-configurator {
@@ -72,48 +113,213 @@
         width: 100%;
         max-width: none;
         margin: 0;
-        padding: 28px;
-        border: 1px solid #dedede;
-        background: #f7f7f7;
+        padding: 22px 0 4px;
+        border: 0;
+        border-top: 1px solid #dedede;
+        background: transparent;
+    }
+
+    .oli-lc-configurator__title {
+        font-size: 20px;
     }
 
     .product-info-letter-configurator__purchase {
-        width: 100%;
-        margin: 20px 0 36px;
-        padding: 22px 28px;
-        border: 1px solid #dedede;
-        background: #fff;
+        margin: 12px 0 0;
+        padding: 20px 0 0;
+        border: 0;
+        border-top: 1px solid #dedede;
+        background: transparent;
     }
 
     .product-info-letter-configurator__purchase .price-container {
         width: 100%;
-        max-width: 520px;
-        margin-left: auto;
+        max-width: none;
+        margin: 0;
+    }
+
+    .product-info-letter-configurator__purchase .price-calc-container {
+        width: 100%;
+    }
+
+    .oli-lc-main-price,
+    .oli-lc-main-price__gross-container,
+    .oli-lc-main-price__gross,
+    .oli-lc-main-price .tax-shipping-text {
+        text-align: left;
+    }
+
+    .oli-lc-main-price__gross {
+        font-size: 30px;
     }
 
     .product-info-description {
-        margin-top: 0;
+        width: 100%;
+        margin-top: 48px;
     }
 }
 
-@media (min-width: 768px) {
+@media (max-width: 991px) {
     .product-info-letter-configurator {
-        .oli-lc-configurator__field-row {
-            display: flex;
+        .product-info-letter-configurator__hero-row {
+            display: block;
         }
 
-        .oli-lc-svg-preview,
-        .oli-lc-svg-analysis {
+        .product-info-letter-configurator__hero-row > [class*="col-"]:not(.product-info-details),
+        .product-info-letter-configurator__hero-row > .product-info-details {
+            float: none;
             width: 100%;
+            max-width: 100%;
+        }
+
+        .product-info-letter-configurator__hero-row > .product-info-details {
+            padding-left: 15px;
+            margin-top: 28px;
         }
     }
 }
 
 @media (max-width: 767px) {
     .product-info-letter-configurator {
-        .oli-lc-configurator,
-        .product-info-letter-configurator__purchase {
-            padding: 18px 15px;
+        .product-info-letter-configurator__hero-row > .product-info-details {
+            margin-top: 18px;
+        }
+
+        .oli-lc-configurator {
+            padding-top: 18px;
+        }
+
+        .product-info-description {
+            margin-top: 32px;
+        }
+    }
+}
+
+/* M4.0.6 – robust hero grid and disabled Gambio sticky behaviour */
+.product-info-letter-configurator {
+    .product-info-letter-configurator__hero {
+        display: block;
+        float: none;
+        width: 100%;
+        clear: both;
+    }
+
+    .product-info-letter-configurator__hero-row {
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(380px, 5fr);
+        column-gap: 30px;
+        align-items: start;
+        width: 100%;
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    .product-info-letter-configurator__preview,
+    .product-info-letter-configurator__details {
+        float: none !important;
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0;
+        margin: 0;
+    }
+
+    .product-info-letter-configurator__preview {
+        grid-column: 1;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .product-info-letter-configurator__preview > [class*="col-"],
+    .product-info-letter-configurator__preview .product-info-image,
+    .product-info-letter-configurator__preview .product-info-gallery {
+        float: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    .product-info-letter-configurator__details {
+        grid-column: 2;
+        position: static !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        z-index: auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        transform: none !important;
+        padding-right: 15px;
+        padding-left: 15px;
+        overflow: visible !important;
+    }
+
+    .product-info-letter-configurator__details.affix,
+    .product-info-letter-configurator__details.affix-top,
+    .product-info-letter-configurator__details.affix-bottom,
+    .product-info-letter-configurator__details.sticky,
+    .product-info-letter-configurator__details.is-sticky {
+        position: static !important;
+        top: auto !important;
+        width: 100% !important;
+        transform: none !important;
+    }
+
+    .product-info-letter-configurator__configurator,
+    .product-info-letter-configurator__purchase {
+        position: static;
+        float: none;
+        clear: both;
+        width: 100%;
+    }
+
+    .product-info-description {
+        display: block;
+        float: none !important;
+        clear: both !important;
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .product-info-letter-configurator {
+        .product-info-letter-configurator__hero-row {
+            display: block;
+        }
+
+        .product-info-letter-configurator__preview,
+        .product-info-letter-configurator__details {
+            width: 100% !important;
+        }
+
+        .product-info-letter-configurator__details {
+            margin-top: 28px;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+    }
+}
+
+/* M4.0.7 – sticky product preview within the configurator hero */
+@media (min-width: 992px) {
+    .product-info-letter-configurator {
+        .product-info-letter-configurator__preview {
+            position: sticky !important;
+            top: 145px;
+            align-self: start;
+            z-index: 1;
+            height: fit-content;
+        }
+    }
+}
+
+@media (max-width: 991px) {
+    .product-info-letter-configurator {
+        .product-info-letter-configurator__preview {
+            position: static !important;
+            top: auto;
+            height: auto;
         }
     }
 }
