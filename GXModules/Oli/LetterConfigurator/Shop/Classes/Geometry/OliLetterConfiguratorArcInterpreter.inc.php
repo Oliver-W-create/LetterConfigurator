@@ -47,6 +47,21 @@ class OliLetterConfiguratorArcInterpreter
             );
         }
         $endPoint = $this->resolveEndPoint($startPoint, $pathCommand);
+        $ellipseCoordinates = $this->rotateToEllipseSpace(
+            $startPoint,
+            $endPoint,
+            $rotation
+        );
+        $x1Prime = $ellipseCoordinates['x1Prime'];
+        $y1Prime = $ellipseCoordinates['y1Prime'];
+        $normalizedRadii = $this->normalizeRadii(
+            $rx,
+            $ry,
+            $x1Prime,
+            $y1Prime
+        );
+        $rx = $normalizedRadii['rx'];
+        $ry = $normalizedRadii['ry'];
 
         throw new OliLetterConfiguratorGeometryException(
             'SVG path command A is not implemented yet.'
@@ -76,5 +91,71 @@ class OliLetterConfiguratorArcInterpreter
             $parameters[5],
             $parameters[6]
         );
+    }
+
+    /**
+     * @param float $degrees
+     *
+     * @return float
+     */
+    private function degreesToRadians(float $degrees)
+    {
+        return deg2rad($degrees);
+    }
+
+    /**
+     * @param OliLetterConfiguratorPoint $startPoint
+     * @param OliLetterConfiguratorPoint $endPoint
+     * @param float                      $rotation
+     *
+     * @return array<string, float>
+     */
+    private function rotateToEllipseSpace(
+        OliLetterConfiguratorPoint $startPoint,
+        OliLetterConfiguratorPoint $endPoint,
+        float $rotation
+    ) {
+        $rotationInRadians = $this->degreesToRadians($rotation);
+        $cosRotation = cos($rotationInRadians);
+        $sinRotation = sin($rotationInRadians);
+        $dx = ($startPoint->getX() - $endPoint->getX()) / 2;
+        $dy = ($startPoint->getY() - $endPoint->getY()) / 2;
+
+        return [
+            'x1Prime' => ($cosRotation * $dx) + ($sinRotation * $dy),
+            'y1Prime' => (-$sinRotation * $dx) + ($cosRotation * $dy),
+        ];
+    }
+
+    /**
+     * @param float $rx
+     * @param float $ry
+     * @param float $x1Prime
+     * @param float $y1Prime
+     *
+     * @return array<string, float>
+     */
+    private function normalizeRadii(
+        float $rx,
+        float $ry,
+        float $x1Prime,
+        float $y1Prime
+    ) {
+        if ($rx == 0.0 || $ry == 0.0) {
+            return ['rx' => $rx, 'ry' => $ry];
+        }
+
+        $lambda = (($x1Prime * $x1Prime) / ($rx * $rx))
+            + (($y1Prime * $y1Prime) / ($ry * $ry));
+        if ($lambda <= 1.0) {
+            return ['rx' => $rx, 'ry' => $ry];
+        }
+
+        $scale = sqrt($lambda);
+
+        return [
+            'rx' => $rx * $scale,
+            'ry' => $ry * $scale,
+        ];
     }
 }
