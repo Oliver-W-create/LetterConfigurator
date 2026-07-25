@@ -121,11 +121,17 @@ class OliLetterConfiguratorSvgPathInterpreter
                         continue 2;
 
                     case 'Q':
-                        $this->quadraticBezierInterpreter->interpret(
+                        $quadraticBezierSegments = $this->quadraticBezierInterpreter->interpret(
                             $currentPoint,
                             $pathCommand
                         );
-                        break;
+                        foreach ($quadraticBezierSegments as $quadraticBezierSegment) {
+                            $geometry->addSegment($quadraticBezierSegment);
+                        }
+                        $currentPoint = $quadraticBezierSegments[count($quadraticBezierSegments) - 1]->getTo();
+                        $previousPathCommand = $pathCommand;
+                        $previousCommandStartPoint = $commandStartPoint;
+                        continue 2;
 
                     case 'Z':
                         $currentPoint = $subPathStart;
