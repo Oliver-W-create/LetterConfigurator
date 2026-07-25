@@ -5,14 +5,22 @@
  */
 class OliLetterConfiguratorSmoothCubicBezierInterpreter
 {
+    private const APPROXIMATION_SEGMENTS = 20;
+
     /** @var OliLetterConfiguratorPointTranslator */
     private $pointTranslator;
 
+    /** @var OliLetterConfiguratorCubicBezierApproximator */
+    private $cubicBezierApproximator;
+
     public function __construct(
-        ?OliLetterConfiguratorPointTranslator $pointTranslator = null
+        ?OliLetterConfiguratorPointTranslator $pointTranslator = null,
+        ?OliLetterConfiguratorCubicBezierApproximator $cubicBezierApproximator = null
     ) {
         $this->pointTranslator = $pointTranslator
             ?: new OliLetterConfiguratorPointTranslator();
+        $this->cubicBezierApproximator = $cubicBezierApproximator
+            ?: new OliLetterConfiguratorCubicBezierApproximator();
     }
 
     /**
@@ -21,9 +29,7 @@ class OliLetterConfiguratorSmoothCubicBezierInterpreter
      * @param OliLetterConfiguratorSvgPathCommand|null $previousPathCommand
      * @param OliLetterConfiguratorPoint|null          $previousCommandStartPoint
      *
-     * @return void
-     *
-     * @throws OliLetterConfiguratorGeometryException
+     * @return OliLetterConfiguratorLineSegment[]
      */
     public function interpret(
         OliLetterConfiguratorPoint $startPoint,
@@ -84,8 +90,12 @@ class OliLetterConfiguratorSmoothCubicBezierInterpreter
             }
         }
 
-        throw new OliLetterConfiguratorGeometryException(
-            'SVG path command S is not implemented yet.'
+        return $this->cubicBezierApproximator->approximate(
+            $startPoint,
+            $controlPoint1,
+            $controlPoint2,
+            $endPoint,
+            self::APPROXIMATION_SEGMENTS
         );
     }
 }

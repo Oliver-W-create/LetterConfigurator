@@ -100,13 +100,19 @@ class OliLetterConfiguratorSvgPathInterpreter
                         continue 2;
 
                     case 'S':
-                        $this->smoothCubicBezierInterpreter->interpret(
+                        $smoothCubicBezierSegments = $this->smoothCubicBezierInterpreter->interpret(
                             $currentPoint,
                             $pathCommand,
                             $previousPathCommand,
                             $previousCommandStartPoint
                         );
-                        break;
+                        foreach ($smoothCubicBezierSegments as $smoothCubicBezierSegment) {
+                            $geometry->addSegment($smoothCubicBezierSegment);
+                        }
+                        $currentPoint = $smoothCubicBezierSegments[count($smoothCubicBezierSegments) - 1]->getTo();
+                        $previousPathCommand = $pathCommand;
+                        $previousCommandStartPoint = $commandStartPoint;
+                        continue 2;
 
                     case 'Z':
                         $currentPoint = $subPathStart;
