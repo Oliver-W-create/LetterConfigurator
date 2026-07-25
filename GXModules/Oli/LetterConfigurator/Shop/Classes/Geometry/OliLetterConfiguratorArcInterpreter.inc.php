@@ -87,6 +87,14 @@ class OliLetterConfiguratorArcInterpreter
         );
         $startAngle = $angleData['startAngle'];
         $deltaAngle = $angleData['deltaAngle'];
+        $cubicBezierSegments = $this->createCubicBezierSegments(
+            $center,
+            $rx,
+            $ry,
+            $rotation,
+            $startAngle,
+            $deltaAngle
+        );
 
         throw new OliLetterConfiguratorGeometryException(
             'SVG path command A is not implemented yet.'
@@ -300,6 +308,88 @@ class OliLetterConfiguratorArcInterpreter
         return atan2(
             ($ux * $vy) - ($uy * $vx),
             ($ux * $vx) + ($uy * $vy)
+        );
+    }
+
+    /**
+     * @return array<int, array<string, OliLetterConfiguratorPoint>>
+     */
+    private function createCubicBezierSegments(
+        OliLetterConfiguratorPoint $center,
+        float $rx,
+        float $ry,
+        float $rotation,
+        float $startAngle,
+        float $deltaAngle
+    ) {
+        if ($deltaAngle == 0.0 || $rx == 0.0 || $ry == 0.0) {
+            return [];
+        }
+
+        $segmentCount = (int)ceil(abs($deltaAngle) / (M_PI / 2));
+        $segmentDelta = $deltaAngle / $segmentCount;
+        $segments = [];
+
+        for ($index = 0; $index < $segmentCount; $index++) {
+            $theta1 = $startAngle + ($index * $segmentDelta);
+            $theta2 = $theta1 + $segmentDelta;
+            $alpha = (4.0 / 3.0) * tan(($theta2 - $theta1) / 4.0);
+            $x1 = $rx * cos($theta1);
+            $y1 = $ry * sin($theta1);
+            $x2 = $rx * cos($theta2);
+            $y2 = $ry * sin($theta2);
+            $controlPoint1X = $x1 - ($alpha * $rx * sin($theta1));
+            $controlPoint1Y = $y1 + ($alpha * $ry * cos($theta1));
+            $controlPoint2X = $x2 + ($alpha * $rx * sin($theta2));
+            $controlPoint2Y = $y2 - ($alpha * $ry * cos($theta2));
+
+            $segments[] = [
+                'startPoint' => $this->transformEllipsePoint(
+                    $x1,
+                    $y1,
+                    $center,
+                    $rotation
+                ),
+                'controlPoint1' => $this->transformEllipsePoint(
+                    $controlPoint1X,
+                    $controlPoint1Y,
+                    $center,
+                    $rotation
+                ),
+                'controlPoint2' => $this->transformEllipsePoint(
+                    $controlPoint2X,
+                    $controlPoint2Y,
+                    $center,
+                    $rotation
+                ),
+                'endPoint' => $this->transformEllipsePoint(
+                    $x2,
+                    $y2,
+                    $center,
+                    $rotation
+                ),
+            ];
+        }
+
+        return $segments;
+    }
+
+    /**
+     * @return OliLetterConfiguratorPoint
+     */
+    private function transformEllipsePoint(
+        float $x,
+        float $y,
+        OliLetterConfiguratorPoint $center,
+        float $rotation
+    ) {
+        $rotationInRadians = $this->degreesToRadians($rotation);
+        $cosRotation = cos($rotationInRadians);
+        $sinRotation = sin($rotationInRadians);
+
+        return new OliLetterConfiguratorPoint(
+            $center->getX() + ($cosRotation * $x) - ($sinRotation * $y),
+            $center->getY() + ($sinRotation * $x) + ($cosRotation * $y)
         );
     }
 }
