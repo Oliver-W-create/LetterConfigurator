@@ -1,0 +1,120 @@
+{* M4.0.3 – Letter Configurator HTML/Smarty partial *}
+
+<div class="oli-lc-configurator" aria-labelledby="oli-lc-configurator-title"
+    {if $OLI_LC_CONFIGURATOR.pricing}
+        data-price-material-id="{$OLI_LC_CONFIGURATOR.pricing.material_id|intval}"
+        data-price-method-id="{$OLI_LC_CONFIGURATOR.pricing.production_method_id|intval}"
+        data-area-price="{$OLI_LC_CONFIGURATOR.pricing.area_price_per_m2|escape}"
+        data-contour-price="{$OLI_LC_CONFIGURATOR.pricing.contour_price_per_mm|escape}"
+        data-character-price="{$OLI_LC_CONFIGURATOR.pricing.price_per_character|escape}"
+        data-fixed-price="{$OLI_LC_CONFIGURATOR.pricing.fixed_price|escape}"
+        data-minimum-price="{$OLI_LC_CONFIGURATOR.pricing.minimum_price|escape}"
+        data-setup-fee="{$OLI_LC_CONFIGURATOR.pricing.setup_fee|escape}"
+        data-waste-percent="{$OLI_LC_CONFIGURATOR.pricing.waste_percent|escape}"
+        data-tax-rate="{$OLI_LC_CONFIGURATOR.pricing.tax_rate|escape}"
+    {/if}
+    data-text-max-length="{$OLI_LC_CONFIGURATOR.limits.text_max_length|intval}"
+    data-dimension-min="{$OLI_LC_CONFIGURATOR.limits.dimension_min_mm|escape}"
+    data-dimension-max="{$OLI_LC_CONFIGURATOR.limits.dimension_max_mm|escape}">
+{if $OLI_LC_CONFIGURATOR.cart_error}
+        <div class="oli-lc-configurator__alert" role="alert">{$OLI_LC_CONFIGURATOR.cart_error|escape}</div>
+    {/if}
+
+    <input type="hidden" name="oli_lc_product_template_id" value="{$OLI_LC_CONFIGURATOR.product_template_id|intval}">
+    <h2 class="oli-lc-configurator__title" id="oli-lc-configurator-title">Produkt konfigurieren</h2>
+    {if $OLI_LC_CONFIGURATOR.description}
+        <p class="oli-lc-configurator__description">{$OLI_LC_CONFIGURATOR.description|escape}</p>
+    {/if}
+
+    <div class="oli-lc-configurator__field">
+        <label for="oli-lc-text">Text</label>
+        <input class="form-control" type="text" id="oli-lc-text" name="oli_lc_text" required maxlength="255" autocomplete="off" aria-describedby="oli-lc-text-error">
+        <p class="oli-lc-configurator__error" id="oli-lc-text-error">Bitte einen Text mit maximal 255 Zeichen eingeben.</p>
+    </div>
+
+    <div class="oli-lc-configurator__field-row">
+        <div class="oli-lc-configurator__field">
+            <label for="oli-lc-width">Breite (mm)</label>
+            <input class="form-control" type="number" id="oli-lc-width" name="oli_lc_width" required min="1" max="100000" step="1" inputmode="decimal" aria-describedby="oli-lc-width-error">
+            <p class="oli-lc-configurator__error" id="oli-lc-width-error">Bitte eine Breite zwischen 1 und 100.000 mm eingeben.</p>
+        </div>
+        <div class="oli-lc-configurator__field">
+            <label for="oli-lc-height">Höhe (mm)</label>
+            <input class="form-control" type="number" id="oli-lc-height" name="oli_lc_height" required min="1" max="100000" step="1" inputmode="decimal" aria-describedby="oli-lc-height-error">
+            <p class="oli-lc-configurator__error" id="oli-lc-height-error">Bitte eine Höhe zwischen 1 und 100.000 mm eingeben.</p>
+        </div>
+    </div>
+
+    <div class="oli-lc-configurator__field">
+        <label for="oli-lc-material">Material</label>
+        <select class="form-control" id="oli-lc-material" name="oli_lc_material" required>
+            <option value="">Bitte auswählen</option>
+            {foreach $OLI_LC_CONFIGURATOR.materials as $material}
+                <option value="{$material.material_id|intval}" data-material-id="{$material.material_id|intval}">{$material.name|escape}</option>
+            {/foreach}
+        </select>
+        <p class="oli-lc-configurator__error">Bitte ein Material auswählen.</p>
+    </div>
+
+    <div class="oli-lc-configurator__field">
+        <label for="oli-lc-method">Fertigungsart</label>
+        <select class="form-control" id="oli-lc-method" name="oli_lc_method" required>
+            <option value="">Bitte auswählen</option>
+            {foreach $OLI_LC_CONFIGURATOR.production_methods as $method}
+                <option value="{$method.production_method_id|intval}" data-method-id="{$method.production_method_id|intval}">{$method.name|escape}</option>
+            {/foreach}
+        </select>
+        <p class="oli-lc-configurator__error">Bitte eine Fertigungsart auswählen.</p>
+    </div>
+
+    <div class="oli-lc-configurator__field">
+        <label for="oli-lc-color">Farbe</label>
+        <select class="form-control" id="oli-lc-color" name="oli_lc_color" required>
+            <option value="">Bitte auswählen</option>
+            {foreach $OLI_LC_CONFIGURATOR.colors as $color}
+                <option value="{$color.color_id|intval}" data-material-id="{$color.material_id|intval}">{$color.name|escape}</option>
+            {/foreach}
+        </select>
+        <p class="oli-lc-configurator__error">Bitte eine Farbe auswählen.</p>
+    </div>
+
+    <div class="oli-lc-configurator__field">
+        <label for="oli-lc-thickness">Materialstärke</label>
+        <select class="form-control" id="oli-lc-thickness" name="oli_lc_thickness" required>
+            <option value="">Bitte auswählen</option>
+            {foreach $OLI_LC_CONFIGURATOR.thicknesses as $thickness}
+                <option value="{$thickness.thickness_id|intval}" data-material-id="{$thickness.material_id|intval}" data-method-id="{$thickness.production_method_id|intval}">{$thickness.display_name|escape}</option>
+            {/foreach}
+        </select>
+        <p class="oli-lc-configurator__error">Bitte eine Materialstärke auswählen.</p>
+    </div>
+
+    <div class="oli-lc-configurator__field" id="oli-lc-svg-field">
+        <label for="oli-lc-svg">SVG-Datei (optional)</label>
+        <input class="form-control" type="file" id="oli-lc-svg" name="oli_lc_svg" accept=".svg,image/svg+xml" aria-describedby="oli-lc-svg-note oli-lc-svg-error">
+        <p class="oli-lc-configurator__note" id="oli-lc-svg-note">Maximal 2 MB. Die Datei wird lokal analysiert und noch nicht in den Warenkorb übernommen.</p>
+        <p class="oli-lc-configurator__error" id="oli-lc-svg-error">Bitte eine gültige, sichere SVG-Datei mit maximal 2 MB auswählen.</p>
+    </div>
+    <div class="oli-lc-svg-preview" id="oli-lc-svg-preview" aria-live="polite">
+        <div id="oli-lc-svg-preview-canvas"></div>
+        <p class="oli-lc-svg-preview__meta" id="oli-lc-svg-preview-meta"></p>
+    </div>
+    <section class="oli-lc-svg-analysis" id="oli-lc-svg-analysis" aria-live="polite">
+        <h3 class="oli-lc-svg-analysis__title">SVG-Analyse</h3>
+        <dl class="oli-lc-svg-analysis__grid" id="oli-lc-svg-analysis-grid"></dl>
+        <div class="oli-lc-svg-analysis__warnings" id="oli-lc-svg-analysis-warnings"></div>
+    </section>
+
+    <div class="oli-lc-price" id="oli-lc-price" aria-live="polite">
+        <p class="oli-lc-price__message" id="oli-lc-price-message">Bitte Text, Maße und die passende Ausführung auswählen.</p>
+        <div id="oli-lc-price-details" hidden>
+            <div class="oli-lc-price__row"><span>Material</span><strong id="oli-lc-price-material">0,00 €</strong></div>
+            <div class="oli-lc-price__row"><span>Kontur</span><strong id="oli-lc-price-contour">0,00 €</strong></div>
+            <div class="oli-lc-price__row"><span>Zeichen</span><strong id="oli-lc-price-characters">0,00 €</strong></div>
+            <div class="oli-lc-price__row"><span>Grundpreis</span><strong id="oli-lc-price-fixed">0,00 €</strong></div>
+            <div class="oli-lc-price__row"><span>Rüstkosten</span><strong id="oli-lc-price-setup">0,00 €</strong></div>
+            <div class="oli-lc-price__row oli-lc-price__row--total"><span>Gesamt inkl. USt.</span><strong id="oli-lc-price-gross">0,00 €</strong></div>
+            <div class="oli-lc-price__gross"><span id="oli-lc-price-net">0,00 €</span> netto</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+/* M4.0.3 – Letter Configurator product styles */
+
+.product-info-letter-configurator .oli-lc-configurator{width:100%;max-width:100%;margin:20px 0;padding:18px 0 4px;border-top:1px solid #e5e5e5;box-sizing:border-box;clear:both}
+                .product-info-letter-configurator .oli-lc-configurator,.product-info-letter-configurator .oli-lc-configurator *{box-sizing:border-box}
+                .product-info-letter-configurator .oli-lc-configurator__title{margin:0 0 6px;font-size:18px;line-height:1.35;font-weight:600}
+                .product-info-letter-configurator .oli-lc-configurator__description{margin:0 0 15px;color:#777;font-size:13px;line-height:1.45}
+                .product-info-letter-configurator .oli-lc-configurator__field{width:100%;max-width:100%;margin-bottom:13px}
+                .product-info-letter-configurator .oli-lc-configurator__field-row{display:flex;gap:12px;width:100%}
+                .product-info-letter-configurator .oli-lc-configurator__field-row>.oli-lc-configurator__field{flex:1 1 0;min-width:0}
+                .product-info-letter-configurator .oli-lc-configurator label{display:block;margin:0 0 5px;font-size:13px;font-weight:600;line-height:1.35}
+                .product-info-letter-configurator .oli-lc-configurator .form-control{display:block;width:100%;max-width:100%;height:40px;margin:0}
+                .product-info-letter-configurator .oli-lc-configurator__note{margin:3px 0 12px;color:#888;font-size:12px;line-height:1.4}
+                .product-info-letter-configurator .oli-lc-configurator__error{display:none;margin:5px 0 0;color:#b42318;font-size:12px;line-height:1.35}
+                .product-info-letter-configurator .oli-lc-configurator__field.is-invalid .oli-lc-configurator__error{display:block}
+                .product-info-letter-configurator .oli-lc-configurator__field.is-invalid .form-control{border-color:#b42318;box-shadow:0 0 0 1px rgba(180,35,24,.12)}
+                .product-info-letter-configurator .oli-lc-configurator__alert{margin:0 0 14px;padding:10px 12px;border:1px solid #e7a9a3;background:#fff4f2;color:#8a1c13;font-size:13px;line-height:1.4}
+                .product-info-letter-configurator .oli-lc-svg-preview{display:none;margin:8px 0 13px;padding:12px;border:1px solid #d8d8d8;background:#fafafa;text-align:center;overflow:hidden}
+                .product-info-letter-configurator .oli-lc-svg-preview.is-visible{display:block}
+                .product-info-letter-configurator .oli-lc-svg-preview svg{display:block;width:100%;max-width:100%;height:auto;max-height:260px;margin:auto}
+                .product-info-letter-configurator .oli-lc-svg-preview__meta{margin:8px 0 0;color:#777;font-size:12px;line-height:1.4;text-align:left}
+                .product-info-letter-configurator .oli-lc-svg-analysis{display:none;margin:0 0 15px;padding:13px;border:1px solid #d8d8d8;background:#fff}
+                .product-info-letter-configurator .oli-lc-svg-analysis.is-visible{display:block}
+                .product-info-letter-configurator .oli-lc-svg-analysis__title{margin:0 0 10px;font-size:15px;font-weight:600}
+                .product-info-letter-configurator .oli-lc-svg-analysis__grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 14px;margin:0}
+                .product-info-letter-configurator .oli-lc-svg-analysis__grid dt,.product-info-letter-configurator .oli-lc-svg-analysis__grid dd{margin:0;font-size:12px;line-height:1.45}
+                .product-info-letter-configurator .oli-lc-svg-analysis__grid dd{text-align:right;font-weight:600}
+                .product-info-letter-configurator .oli-lc-svg-analysis__section{grid-column:1/-1;margin-top:7px;padding-top:7px;border-top:1px solid #ececec;font-weight:600}
+                .product-info-letter-configurator .oli-lc-svg-analysis__warnings{margin:10px 0 0;padding:8px 10px;background:#fff8e6;border:1px solid #edd79c;color:#6b5200;font-size:12px;line-height:1.45}
+                .product-info-letter-configurator .oli-lc-svg-analysis__warnings:empty{display:none}
+                .product-info-letter-configurator .oli-lc-price{display:none!important}
+                .product-info-letter-configurator .oli-lc-price.is-visible{display:none!important}
+                .product-info-letter-configurator .oli-lc-price__row{display:flex;justify-content:space-between;gap:12px;padding:3px 0;font-size:13px}
+                .product-info-letter-configurator .oli-lc-price__row--total{margin-top:8px;padding-top:10px;border-top:1px solid #d8d8d8;font-size:17px;font-weight:700}
+                .product-info-letter-configurator .oli-lc-price__gross{margin-top:3px;text-align:right;color:#777;font-size:12px}
+                .product-info-letter-configurator .oli-lc-price__message{margin:0;color:#777;font-size:12px;line-height:1.4}
+                .product-info-letter-configurator .oli-lc-main-price{text-align:right}
+                .product-info-letter-configurator .oli-lc-main-price__gross-container{text-align:right}
+                .product-info-letter-configurator .oli-lc-main-price__gross{display:block;width:100%;font-size:28px;font-weight:700;line-height:1.2;text-align:right}
+                .product-info-letter-configurator .oli-lc-main-price .tax-shipping-text{margin:4px 0 0;font-size:12px;color:#777;text-align:right}
+                @media (max-width:480px){.product-info-letter-configurator .oli-lc-configurator__field-row{display:block}.product-info-letter-configurator .oli-lc-configurator__field-row>.oli-lc-configurator__field{width:100%}}

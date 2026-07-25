@@ -1,0 +1,297 @@
+{load_language_text section="product_info"}
+{load_language_text section="buttons" name="button"}
+{load_language_text section="customers_status" name="customer"}
+
+{block name="product_info_template_letter_configurator"}
+	{block name="product_info_template_standard_navigator"}
+		{$PRODUCT_NAVIGATOR}
+	{/block}
+
+	{if $JSONLD}
+		<script type="application/ld+json">
+			{$JSONLD}
+		</script>
+	{/if}
+	<div class="product-info product-info-default product-info-letter-configurator row">
+		
+		{block name="product_info_template_standard_modal"}
+			<div id="product_image_layer">
+			{$IMAGE_GALLERY_MODAL}
+			</div>
+			{*{include file="get_usermod:{$tpl_path}product_info_gallery_modal.html"}*}
+		{/block}
+
+		{block name="product_info_template_standard_content"}
+			<div class="product-info-content col-xs-12" data-gambio-widget="cart_handler" data-cart_handler-page="product-info">
+
+				{block name="product_info_template_standard_content_row"}
+					<div class="row">
+						
+						{block name="product_info_template_standard_product_name"}
+							<div class="product-info-title-mobile {if 'ENABLE_JS_HYPHENATION'|gm_get_conf == 'true'}hyphenate{/if} col-xs-12 visible-xs-block visible-sm-block">
+								{block name="product_info_template_standard_product_name_span"}
+									<span{if 'ENABLE_JS_HYPHENATION'|gm_get_conf == 'true'} class="hyphenate"{/if}>{$PRODUCTS_NAME}</span>
+								{/block}
+
+								{block name="product_info_template_standard_product_review_data_if"}
+									<div>
+										{if $showRating && $AGGREGATE_REVIEW_DATA.averageRating && $AGGREGATE_REVIEW_DATA.averageRating != 0}
+											{block name="product_info_template_standard_product_review_data"}
+                                                <a href="#product-ratings"{if 'SHOW_RATING_AS_TAB'|gm_get_conf === 'true'} onclick="document.getElementById('reviews-tab').click()"{/if} aria-label="{$txt.reviews_stars_label}">
+												    {include file="get_usermod:{$tpl_path}rating_stars.html" rating_rounded=$AGGREGATE_REVIEW_DATA.averageRating rating_count=$AGGREGATE_REVIEW_DATA.count }
+                                                </a>
+											{/block}
+										{/if}
+									</div>
+								{/block}
+							</div>
+						{/block}
+
+						{block name="product_info_template_standard_product_ribbons"}
+							{product_ribbons
+							showManufacturerImages=$showManufacturerImages
+							showProductRibbons=$showProductRibbons
+							product_id=$PRODUCTS_ID
+							out=arr_ribbons
+							}
+						{/block}
+
+						{block name="product_info_template_standard_product_images_if"}
+							{$IMAGE_GALLERY}
+						{/block}
+						
+						{block name="product_info_template_standard_sticky_box"}
+							{assign var="stickybox" value={template_setting name="gx-product-info-details-sticky"}}
+							<div class="product-info-details col-xs-12 col-md-4" data-gambio-widget="{if $stickybox}stickybox {/if}product_min_height_fix">
+				
+								{block name="product_info_template_standard_sticky_box_overlays"}
+									<div class="loading-overlay"></div>
+									<div class="magnifier-overlay"></div>
+									<div class="magnifier-target">
+										<div class="preloader"></div>
+									</div>
+								{/block}
+
+								{block name="product_info_template_standard_sticky_box_ribbon_if"}
+									{if $arr_ribbons.ribbons}
+										{block name="product_info_template_standard_sticky_box_ribbon_include"}
+											{include file="get_usermod:{$tpl_path}product_listing_ribbon.html" ribbons=$arr_ribbons}
+										{/block}
+									{/if}
+								{/block}
+				
+								{block name="product_info_template_standard_sticky_box_ts_rating"}
+									{$TS_PRODUCT_RATING}
+								{/block}
+								
+								{block name="product_info_template_standard_sticky_box_form"}
+									<form action="{$FORM_ACTION_URL}" class="form-horizontal js-product-form{if $GM_GPRINT} customizer{/if} product-info">
+										<input type="hidden" id="update-gallery-hash" name="galleryHash" value="">
+										{block name="product_info_template_standard_sticky_box_rating"}
+											<div class="hidden-xs hidden-sm ribbon-spacing">
+												{block name="product_info_template_standard_sticky_box_rating_if"}
+													{if $showRating && $AGGREGATE_REVIEW_DATA.averageRating && $AGGREGATE_REVIEW_DATA.averageRating != 0}
+														{block name="product_info_template_standard_sticky_box_rating2"}
+															<span>
+																<span style="display: none">{$AGGREGATE_REVIEW_DATA.averageRating}</span>
+																<span style="display: none">{$AGGREGATE_REVIEW_DATA.count}</span>
+															</span>
+															<a href="#product-ratings"{if 'SHOW_RATING_AS_TAB'|gm_get_conf === 'true'} onclick="document.getElementById('reviews-tab').click()"{/if} aria-label="{$txt.reviews_stars_label}">
+																{include file="get_usermod:{$tpl_path}rating_stars.html" rating_rounded=$AGGREGATE_REVIEW_DATA.averageRating rating_count=$AGGREGATE_REVIEW_DATA.count }
+															</a>
+														{/block}
+													{/if}
+												{/block}
+											</div>
+										{/block}
+										
+										{block name="product_info_template_standard_sticky_box_product_title"}
+											<h1 class="product-info-title-desktop {if 'ENABLE_JS_HYPHENATION'|gm_get_conf == 'true'}hyphenate{/if} hidden-xs hidden-sm">{$RICH_SNIPPET_ARRAY.product_itemprop_name_start}{$PRODUCTS_NAME}{$RICH_SNIPPET_ARRAY.product_itemprop_name_end}</h1>
+										{/block}
+					
+										{block name="product_info_template_standard_sticky_box_product_options_if"}
+											{if ($SHOW_PRODUCTS_MODEL && trim($PRODUCTS_MODEL) != '') || $SHIPPING_NAME || $SHOW_SHIPPING_TIME || $PRODUCTS_QUANTITY || $SHOW_PRODUCTS_QUANTITY || $additional_fields}
+												{block name="product_info_template_standard_sticky_box_product_options"}
+													<dl class="dl-horizontal">
+														{block name="product_info_template_standard_sticky_box_model_include"}
+															{include file="get_usermod:{$tpl_path}product_info_model.html"}
+														{/block}
+
+														{block name="product_info_template_standard_sticky_box_shipping_time_include"}
+															{include file="get_usermod:{$tpl_path}product_info_shipping_time.html"}
+														{/block}
+
+														{block name="product_info_template_standard_sticky_box_stock_include"}
+															{include file="get_usermod:{$tpl_path}product_info_stock.html"}
+														{/block}
+	
+														{block name="product_info_template_standard_sticky_box_additional_fields"}
+															{$additional_fields}
+														{/block}
+							
+														{block name="product_info_template_standard_sticky_box_weight_if"}
+															{if $SHOW_PRODUCTS_WEIGHT}
+																{block name="product_info_template_standard_sticky_box_weight"}
+																	<dt>{$txt.text_weight}</dt>
+																	<dd class="products-details-weight-container"><span>{$PRODUCTS_WEIGHT}</span> {$txt.text_weight_unit} {if $PRODUCTS_QUANTITY_UNIT}{$PRODUCTS_QUANTITY_UNIT}{else}{$txt.text_weight_qty_unit}{/if}</dd>
+																{/block}
+															{/if}
+														{/block}
+
+														{block name="product_info_template_standard_sticky_box_min_order_if"}
+															{if $GM_MIN_ORDER}
+																{block name="product_info_template_standard_sticky_box_min_order"}
+																	<dt class="product-details-order-min">{$txt.text_min_order}</dt>
+																	<dd class="product-details-order-min">{$GM_MIN_ORDER}</dd>
+																{/block}
+															{/if}
+														{/block}
+													</dl>
+												{/block}
+											{/if}
+										{/block}
+					
+										{block name="product_info_template_letter_configurator_configurator"}
+											{if $OLI_LC_CONFIGURATOR}
+												<div id="letter-configurator" class="letter-configurator" data-product-id="{$PRODUCTS_ID}">
+													{block name="product_info_template_letter_configurator_configurator_content"}
+														{include file="get_usermod:{$tpl_path}letter_configurator.html"}
+													{/block}
+												</div>
+											{/if}
+										{/block}
+
+										{block name="product_info_template_standard_sticky_box_properties_selection_form"}
+											{$properties_selection_form}
+										{/block}
+					
+										{block name="product_info_template_standard_sticky_box_modifier_groups_selection_form"}
+											{$MODULE_modifier_groups}
+										{/block}
+					
+										{block name="product_info_template_standard_sticky_box_module_product_options"}
+											{$MODULE_product_options}
+										{/block}
+					
+										{block name="product_info_template_standard_sticky_box_customizer"}
+											{include file="get_usermod:{$tpl_path}product_info_customizer_position.html" position=3}
+										{/block}
+					
+										{block name="product_info_template_standard_sticky_box_legal_age"}
+											{include file="get_usermod:{$tpl_path}product_info_legal_age.html"}
+										{/block}
+					
+										{block name="product_info_template_standard_sticky_box_graduated_price_if"}
+											{if $MODULE_graduated_price != '' && $QUANTITY}
+												{block name="product_info_template_standard_sticky_box_graduated_price"}
+													{$MODULE_graduated_price}
+												{/block}
+											{/if}
+										{/block}
+					
+										{block name="product_info_template_standard_sticky_box_cart_error_message"}
+                                            {if $ERROR_MESSAGES != ''}
+                                                <div class="cart-error-msg alert alert-danger" role="alert" style="display: block;">{$ERROR_MESSAGES}</div>
+                                            {else}
+                                                <div class="cart-error-msg alert alert-danger" role="alert"></div>
+                                            {/if}
+										{/block}
+					
+										{block name="product_info_template_standard_sticky_box_price_container"}
+											<div class="price-container">
+												{block name="product_info_template_standard_sticky_box_price_calc_container"}
+													<div class="price-calc-container" id="attributes-calc-price">
+
+														{block name="product_info_template_standard_sticky_box_price_include"}
+															{if $OLI_LC_CONFIGURATOR}
+																<div class="oli-lc-main-price" aria-live="polite">
+																	<div class="oli-lc-main-price__gross-container">
+																		<span class="oli-lc-main-price__gross" id="oli-lc-main-price-gross">Preis nach Konfiguration</span>
+																	</div>
+																	<p class="tax-shipping-text text-small oli-lc-main-price__tax-shipping">
+																		{$PRODUCTS_TAX_INFO}{$PRODUCTS_SHIPPING_LINK}
+																	</p>
+																</div>
+															{else}
+																{include file="get_usermod:{$tpl_path}product_info_price.html"}
+															{/if}
+														{/block}
+							
+														{block name="product_info_template_standard_sticky_box_quantity_if"}
+															{if $QUANTITY}
+																{block name="product_info_template_standard_sticky_box_quantity_unit_if"}
+																	{if $PRODUCTS_QUANTITY_UNIT}
+																		{block name="product_info_template_standard_sticky_box_quantity_unit"}
+                                                                            <label class="quantity-unit-label">
+																			    {$PRODUCTS_QUANTITY_UNIT}:
+                                                                            </label>
+																		{/block}
+																	{/if}
+																{/block}
+															{else}
+																{block name="product_info_template_standard_sticky_box_quantity_unit_else"}{/block}
+															{/if}
+														
+															{block name="product_info_template_standard_sticky_box_product_box_bottom"}
+																{include file="get_usermod:{$tpl_path}product_info_product_box_bottom.html"}
+															{/block}
+														{/block}
+							
+													</div>
+												{/block}
+											</div>
+										{/block}
+					
+									</form>
+								{/block}
+							</div>
+						{/block}
+			
+						{block name="product_info_template_standard_description"}
+							<div class="product-info-description col-md-8" data-gambio-widget="tabs">
+								{include file="get_usermod:{$tpl_path}product_info_product_description.html"
+										 reviews=$MODULE_products_reviews}
+							</div>
+						{/block}
+			
+						{block name="product_info_template_standard_available_if"}
+							{if $PRODUCTS_DATE_AVIABLE != ''}
+								{block name="product_info_template_standard_available"}
+									<div class="products_info_available col-md-8">
+										{$PRODUCTS_DATE_AVIABLE}
+									</div>
+								{/block}
+							{/if}
+						{/block}
+			
+						{block name="product_info_template_standard_social_share"}
+							<div class="product-info-share col-md-8">
+								{include file="get_usermod:{$tpl_path}product_info_social_share.html"}
+							</div>
+						{/block}
+			
+						{block name="product_info_template_standard_reviews_if"}
+							{if $showRating && 'SHOW_RATING_AS_TAB'|gm_get_conf !== 'true'}
+								{if $MODULE_products_reviews != ''}
+									{block name="product_info_template_standard_reviews"}
+										<div id="product-ratings" class="product-info-rating col-md-8">
+											{$MODULE_products_reviews}
+										</div>
+									{/block}
+								{/if}
+							{/if}
+						{/block}
+			
+					</div><!-- // .row -->
+				{/block}
+			</div><!-- // .product-info-content -->
+		{/block}
+	
+		{block name="product_info_template_standard_product_lists"}
+			<div class="product-info-listings col-xs-12 clearfix" data-gambio-widget="product_hover">
+				{include file="get_usermod:{$tpl_path}product_info_product_lists.html"}
+			</div>
+		{/block}
+	
+	</div><!-- // .product-info -->
+{/block}
