@@ -8,11 +8,17 @@ class OliLetterConfiguratorCubicBezierInterpreter
     /** @var OliLetterConfiguratorPointTranslator */
     private $pointTranslator;
 
+    /** @var OliLetterConfiguratorCubicBezierApproximator */
+    private $cubicBezierApproximator;
+
     public function __construct(
-        ?OliLetterConfiguratorPointTranslator $pointTranslator = null
+        ?OliLetterConfiguratorPointTranslator $pointTranslator = null,
+        ?OliLetterConfiguratorCubicBezierApproximator $cubicBezierApproximator = null
     ) {
         $this->pointTranslator = $pointTranslator
             ?: new OliLetterConfiguratorPointTranslator();
+        $this->cubicBezierApproximator = $cubicBezierApproximator
+            ?: new OliLetterConfiguratorCubicBezierApproximator();
     }
 
     /**
