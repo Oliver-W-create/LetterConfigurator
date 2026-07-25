@@ -120,6 +120,9 @@ class OliLetterConfiguratorGeometryService
             $domBoundingBox,
             $pathBoundingBox
         );
+        if ($mergedBoundingBox !== null) {
+            $data['geometry']['bounding_box_svg_units'] = $mergedBoundingBox;
+        }
         $geometryMatches = $aggregatedPathAnalysisResult !== null
             && is_array($domBoundingBox)
             && abs((float)$domBoundingBox['width'] - $aggregatedPathAnalysisResult->getWidth()) <= 0.001
