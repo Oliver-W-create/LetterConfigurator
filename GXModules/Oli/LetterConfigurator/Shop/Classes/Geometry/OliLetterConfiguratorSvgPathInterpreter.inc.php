@@ -78,11 +78,15 @@ class OliLetterConfiguratorSvgPathInterpreter
                         break;
 
                     case 'C':
-                        $this->cubicBezierInterpreter->interpret(
+                        $cubicBezierSegments = $this->cubicBezierInterpreter->interpret(
                             $currentPoint,
                             $pathCommand
                         );
-                        break;
+                        foreach ($cubicBezierSegments as $cubicBezierSegment) {
+                            $geometry->addSegment($cubicBezierSegment);
+                        }
+                        $currentPoint = $cubicBezierSegments[count($cubicBezierSegments) - 1]->getTo();
+                        continue 2;
 
                     case 'Z':
                         $currentPoint = $subPathStart;

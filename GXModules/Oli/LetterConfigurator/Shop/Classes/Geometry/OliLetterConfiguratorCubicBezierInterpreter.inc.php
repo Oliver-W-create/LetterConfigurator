@@ -25,9 +25,7 @@ class OliLetterConfiguratorCubicBezierInterpreter
      * @param OliLetterConfiguratorPoint          $startPoint
      * @param OliLetterConfiguratorSvgPathCommand $pathCommand
      *
-     * @return void
-     *
-     * @throws OliLetterConfiguratorGeometryException
+     * @return OliLetterConfiguratorLineSegment[]
      */
     public function interpret(
         OliLetterConfiguratorPoint $startPoint,
@@ -66,8 +64,12 @@ class OliLetterConfiguratorCubicBezierInterpreter
             );
         }
 
-        throw new OliLetterConfiguratorGeometryException(
-            'SVG path command ' . $pathCommand->getCommand() . ' is not implemented yet.'
+        return $this->cubicBezierApproximator->approximate(
+            $startPoint,
+            $controlPoint1,
+            $controlPoint2,
+            $endPoint,
+            20
         );
     }
 }
