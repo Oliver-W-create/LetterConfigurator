@@ -120,6 +120,9 @@ class OliLetterConfiguratorGeometryService
             $domBoundingBox,
             $pathBoundingBox
         );
+        $activeBoundingBox = $mergedBoundingBox !== null
+            ? $mergedBoundingBox
+            : $domBoundingBox;
         if ($mergedBoundingBox !== null) {
             $data['geometry']['bounding_box_svg_units'] = $mergedBoundingBox;
         }
