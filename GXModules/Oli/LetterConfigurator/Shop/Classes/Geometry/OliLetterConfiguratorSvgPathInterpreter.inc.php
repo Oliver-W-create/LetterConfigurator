@@ -14,10 +14,14 @@ class OliLetterConfiguratorSvgPathInterpreter
     /** @var OliLetterConfiguratorQuadraticBezierInterpreter */
     private $quadraticBezierInterpreter;
 
+    /** @var OliLetterConfiguratorSmoothQuadraticBezierInterpreter */
+    private $smoothQuadraticBezierInterpreter;
+
     public function __construct(
         ?OliLetterConfiguratorCubicBezierInterpreter $cubicBezierInterpreter = null,
         ?OliLetterConfiguratorSmoothCubicBezierInterpreter $smoothCubicBezierInterpreter = null,
-        ?OliLetterConfiguratorQuadraticBezierInterpreter $quadraticBezierInterpreter = null
+        ?OliLetterConfiguratorQuadraticBezierInterpreter $quadraticBezierInterpreter = null,
+        ?OliLetterConfiguratorSmoothQuadraticBezierInterpreter $smoothQuadraticBezierInterpreter = null
     ) {
         $this->cubicBezierInterpreter = $cubicBezierInterpreter
             ?: new OliLetterConfiguratorCubicBezierInterpreter();
@@ -25,6 +29,8 @@ class OliLetterConfiguratorSvgPathInterpreter
             ?: new OliLetterConfiguratorSmoothCubicBezierInterpreter();
         $this->quadraticBezierInterpreter = $quadraticBezierInterpreter
             ?: new OliLetterConfiguratorQuadraticBezierInterpreter();
+        $this->smoothQuadraticBezierInterpreter = $smoothQuadraticBezierInterpreter
+            ?: new OliLetterConfiguratorSmoothQuadraticBezierInterpreter();
     }
 
     /**
@@ -132,6 +138,15 @@ class OliLetterConfiguratorSvgPathInterpreter
                         $previousPathCommand = $pathCommand;
                         $previousCommandStartPoint = $commandStartPoint;
                         continue 2;
+
+                    case 'T':
+                        $this->smoothQuadraticBezierInterpreter->interpret(
+                            $currentPoint,
+                            $pathCommand,
+                            $previousPathCommand,
+                            $previousCommandStartPoint
+                        );
+                        break;
 
                     case 'Z':
                         $currentPoint = $subPathStart;
