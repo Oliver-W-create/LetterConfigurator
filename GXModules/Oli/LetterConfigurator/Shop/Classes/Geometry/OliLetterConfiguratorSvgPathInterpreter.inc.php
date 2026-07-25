@@ -38,8 +38,11 @@ class OliLetterConfiguratorSvgPathInterpreter
 
         $currentPoint = null;
         $subPathStart = null;
+        $previousPathCommand = null;
+        $previousCommandStartPoint = null;
 
         foreach ($commands as $pathCommand) {
+            $commandStartPoint = $currentPoint;
             $command = $pathCommand->getCommand();
             $parameters = $pathCommand->getParameters();
             $relative = $pathCommand->isRelative();
@@ -92,12 +95,16 @@ class OliLetterConfiguratorSvgPathInterpreter
                             $geometry->addSegment($cubicBezierSegment);
                         }
                         $currentPoint = $cubicBezierSegments[count($cubicBezierSegments) - 1]->getTo();
+                        $previousPathCommand = $pathCommand;
+                        $previousCommandStartPoint = $commandStartPoint;
                         continue 2;
 
                     case 'S':
                         $this->smoothCubicBezierInterpreter->interpret(
                             $currentPoint,
-                            $pathCommand
+                            $pathCommand,
+                            $previousPathCommand,
+                            $previousCommandStartPoint
                         );
                         break;
 
@@ -115,6 +122,9 @@ class OliLetterConfiguratorSvgPathInterpreter
                     new OliLetterConfiguratorLineSegment($fromPoint, $currentPoint)
                 );
             }
+
+            $previousPathCommand = $pathCommand;
+            $previousCommandStartPoint = $commandStartPoint;
         }
 
         return $geometry;
