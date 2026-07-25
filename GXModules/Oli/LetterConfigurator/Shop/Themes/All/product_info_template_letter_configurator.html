@@ -26,6 +26,8 @@
 
 				{block name="product_info_template_standard_content_row"}
 					<div class="row">
+						<form action="{$FORM_ACTION_URL}" class="form-horizontal js-product-form{if $GM_GPRINT} customizer{/if} product-info product-info-letter-configurator__form">
+							<input type="hidden" id="update-gallery-hash" name="galleryHash" value="">
 						
 						{block name="product_info_template_standard_product_name"}
 							<div class="product-info-title-mobile {if 'ENABLE_JS_HYPHENATION'|gm_get_conf == 'true'}hyphenate{/if} col-xs-12 visible-xs-block visible-sm-block">
@@ -85,8 +87,6 @@
 								{/block}
 								
 								{block name="product_info_template_standard_sticky_box_form"}
-									<form action="{$FORM_ACTION_URL}" class="form-horizontal js-product-form{if $GM_GPRINT} customizer{/if} product-info">
-										<input type="hidden" id="update-gallery-hash" name="galleryHash" value="">
 										{block name="product_info_template_standard_sticky_box_rating"}
 											<div class="hidden-xs hidden-sm ribbon-spacing">
 												{block name="product_info_template_standard_sticky_box_rating_if"}
@@ -151,104 +151,110 @@
 											{/if}
 										{/block}
 					
-										{block name="product_info_template_letter_configurator_configurator"}
-											{if $OLI_LC_CONFIGURATOR}
-												<div id="letter-configurator" class="letter-configurator" data-product-id="{$PRODUCTS_ID}">
-													{block name="product_info_template_letter_configurator_configurator_content"}
-														{include file="get_usermod:{$tpl_path}letter_configurator.html"}
-													{/block}
-												</div>
-											{/if}
-										{/block}
-
-										{block name="product_info_template_standard_sticky_box_properties_selection_form"}
-											{$properties_selection_form}
-										{/block}
 					
-										{block name="product_info_template_standard_sticky_box_modifier_groups_selection_form"}
-											{$MODULE_modifier_groups}
-										{/block}
-					
-										{block name="product_info_template_standard_sticky_box_module_product_options"}
-											{$MODULE_product_options}
-										{/block}
-					
-										{block name="product_info_template_standard_sticky_box_customizer"}
-											{include file="get_usermod:{$tpl_path}product_info_customizer_position.html" position=3}
-										{/block}
-					
-										{block name="product_info_template_standard_sticky_box_legal_age"}
-											{include file="get_usermod:{$tpl_path}product_info_legal_age.html"}
-										{/block}
-					
-										{block name="product_info_template_standard_sticky_box_graduated_price_if"}
-											{if $MODULE_graduated_price != '' && $QUANTITY}
-												{block name="product_info_template_standard_sticky_box_graduated_price"}
-													{$MODULE_graduated_price}
-												{/block}
-											{/if}
-										{/block}
-					
-										{block name="product_info_template_standard_sticky_box_cart_error_message"}
-                                            {if $ERROR_MESSAGES != ''}
-                                                <div class="cart-error-msg alert alert-danger" role="alert" style="display: block;">{$ERROR_MESSAGES}</div>
-                                            {else}
-                                                <div class="cart-error-msg alert alert-danger" role="alert"></div>
-                                            {/if}
-										{/block}
-					
-										{block name="product_info_template_standard_sticky_box_price_container"}
-											<div class="price-container">
-												{block name="product_info_template_standard_sticky_box_price_calc_container"}
-													<div class="price-calc-container" id="attributes-calc-price">
-
-														{block name="product_info_template_standard_sticky_box_price_include"}
-															{if $OLI_LC_CONFIGURATOR}
-																<div class="oli-lc-main-price" aria-live="polite">
-																	<div class="oli-lc-main-price__gross-container">
-																		<span class="oli-lc-main-price__gross" id="oli-lc-main-price-gross">Preis nach Konfiguration</span>
-																	</div>
-																	<p class="tax-shipping-text text-small oli-lc-main-price__tax-shipping">
-																		{$PRODUCTS_TAX_INFO}{$PRODUCTS_SHIPPING_LINK}
-																	</p>
-																</div>
-															{else}
-																{include file="get_usermod:{$tpl_path}product_info_price.html"}
-															{/if}
-														{/block}
-							
-														{block name="product_info_template_standard_sticky_box_quantity_if"}
-															{if $QUANTITY}
-																{block name="product_info_template_standard_sticky_box_quantity_unit_if"}
-																	{if $PRODUCTS_QUANTITY_UNIT}
-																		{block name="product_info_template_standard_sticky_box_quantity_unit"}
-                                                                            <label class="quantity-unit-label">
-																			    {$PRODUCTS_QUANTITY_UNIT}:
-                                                                            </label>
-																		{/block}
-																	{/if}
-																{/block}
-															{else}
-																{block name="product_info_template_standard_sticky_box_quantity_unit_else"}{/block}
-															{/if}
-														
-															{block name="product_info_template_standard_sticky_box_product_box_bottom"}
-																{include file="get_usermod:{$tpl_path}product_info_product_box_bottom.html"}
-															{/block}
-														{/block}
-							
-													</div>
-												{/block}
-											</div>
-										{/block}
-					
-									</form>
 								{/block}
 							</div>
 						{/block}
 			
+						<div class="product-info-letter-configurator__configurator col-xs-12 clearfix">
+																	{block name="product_info_template_letter_configurator_configurator"}
+																		{if $OLI_LC_CONFIGURATOR}
+																			<div id="letter-configurator" class="letter-configurator" data-product-id="{$PRODUCTS_ID}">
+																				{block name="product_info_template_letter_configurator_configurator_content"}
+																					{include file="get_usermod:{$tpl_path}letter_configurator.html"}
+																				{/block}
+																			</div>
+																		{/if}
+																	{/block}
+
+						</div>
+
+						<div class="product-info-letter-configurator__purchase col-xs-12 clearfix">
+																	{block name="product_info_template_standard_sticky_box_properties_selection_form"}
+																		{$properties_selection_form}
+																	{/block}
+
+																	{block name="product_info_template_standard_sticky_box_modifier_groups_selection_form"}
+																		{$MODULE_modifier_groups}
+																	{/block}
+
+																	{block name="product_info_template_standard_sticky_box_module_product_options"}
+																		{$MODULE_product_options}
+																	{/block}
+
+																	{block name="product_info_template_standard_sticky_box_customizer"}
+																		{include file="get_usermod:{$tpl_path}product_info_customizer_position.html" position=3}
+																	{/block}
+
+																	{block name="product_info_template_standard_sticky_box_legal_age"}
+																		{include file="get_usermod:{$tpl_path}product_info_legal_age.html"}
+																	{/block}
+
+																	{block name="product_info_template_standard_sticky_box_graduated_price_if"}
+																		{if $MODULE_graduated_price != '' && $QUANTITY}
+																			{block name="product_info_template_standard_sticky_box_graduated_price"}
+																				{$MODULE_graduated_price}
+																			{/block}
+																		{/if}
+																	{/block}
+
+																	{block name="product_info_template_standard_sticky_box_cart_error_message"}
+							                                            {if $ERROR_MESSAGES != ''}
+							                                                <div class="cart-error-msg alert alert-danger" role="alert" style="display: block;">{$ERROR_MESSAGES}</div>
+							                                            {else}
+							                                                <div class="cart-error-msg alert alert-danger" role="alert"></div>
+							                                            {/if}
+																	{/block}
+
+																	{block name="product_info_template_standard_sticky_box_price_container"}
+																		<div class="price-container">
+																			{block name="product_info_template_standard_sticky_box_price_calc_container"}
+																				<div class="price-calc-container" id="attributes-calc-price">
+
+																					{block name="product_info_template_standard_sticky_box_price_include"}
+																						{if $OLI_LC_CONFIGURATOR}
+																							<div class="oli-lc-main-price" aria-live="polite">
+																								<div class="oli-lc-main-price__gross-container">
+																									<span class="oli-lc-main-price__gross" id="oli-lc-main-price-gross">Preis nach Konfiguration</span>
+																								</div>
+																								<p class="tax-shipping-text text-small oli-lc-main-price__tax-shipping">
+																									{$PRODUCTS_TAX_INFO}{$PRODUCTS_SHIPPING_LINK}
+																								</p>
+																							</div>
+																						{else}
+																							{include file="get_usermod:{$tpl_path}product_info_price.html"}
+																						{/if}
+																					{/block}
+
+																					{block name="product_info_template_standard_sticky_box_quantity_if"}
+																						{if $QUANTITY}
+																							{block name="product_info_template_standard_sticky_box_quantity_unit_if"}
+																								{if $PRODUCTS_QUANTITY_UNIT}
+																									{block name="product_info_template_standard_sticky_box_quantity_unit"}
+							                                                                            <label class="quantity-unit-label">
+																										    {$PRODUCTS_QUANTITY_UNIT}:
+							                                                                            </label>
+																									{/block}
+																								{/if}
+																							{/block}
+																						{else}
+																							{block name="product_info_template_standard_sticky_box_quantity_unit_else"}{/block}
+																						{/if}
+
+																						{block name="product_info_template_standard_sticky_box_product_box_bottom"}
+																							{include file="get_usermod:{$tpl_path}product_info_product_box_bottom.html"}
+																						{/block}
+																					{/block}
+
+																				</div>
+																			{/block}
+																		</div>
+																	{/block}
+						</div>
+					</form>
+
 						{block name="product_info_template_standard_description"}
-							<div class="product-info-description col-md-8" data-gambio-widget="tabs">
+							<div class="product-info-description col-xs-12" data-gambio-widget="tabs">
 								{include file="get_usermod:{$tpl_path}product_info_product_description.html"
 										 reviews=$MODULE_products_reviews}
 							</div>
@@ -257,7 +263,7 @@
 						{block name="product_info_template_standard_available_if"}
 							{if $PRODUCTS_DATE_AVIABLE != ''}
 								{block name="product_info_template_standard_available"}
-									<div class="products_info_available col-md-8">
+									<div class="products_info_available col-xs-12">
 										{$PRODUCTS_DATE_AVIABLE}
 									</div>
 								{/block}
@@ -265,7 +271,7 @@
 						{/block}
 			
 						{block name="product_info_template_standard_social_share"}
-							<div class="product-info-share col-md-8">
+							<div class="product-info-share col-xs-12">
 								{include file="get_usermod:{$tpl_path}product_info_social_share.html"}
 							</div>
 						{/block}
@@ -274,7 +280,7 @@
 							{if $showRating && 'SHOW_RATING_AS_TAB'|gm_get_conf !== 'true'}
 								{if $MODULE_products_reviews != ''}
 									{block name="product_info_template_standard_reviews"}
-										<div id="product-ratings" class="product-info-rating col-md-8">
+										<div id="product-ratings" class="product-info-rating col-xs-12">
 											{$MODULE_products_reviews}
 										</div>
 									{/block}

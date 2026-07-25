@@ -38,3 +38,82 @@
                 .product-info-letter-configurator .oli-lc-main-price__gross{display:block;width:100%;font-size:28px;font-weight:700;line-height:1.2;text-align:right}
                 .product-info-letter-configurator .oli-lc-main-price .tax-shipping-text{margin:4px 0 0;font-size:12px;color:#777;text-align:right}
                 @media (max-width:480px){.product-info-letter-configurator .oli-lc-configurator__field-row{display:block}.product-info-letter-configurator .oli-lc-configurator__field-row>.oli-lc-configurator__field{width:100%}}
+
+/* M4.0.4 – Full-width configurator layout */
+.product-info-letter-configurator {
+    .product-info-letter-configurator__form {
+        display: contents;
+    }
+
+    .product-info-letter-configurator__top,
+    .product-info-letter-configurator__configurator,
+    .product-info-letter-configurator__purchase,
+    .product-info-description,
+    .products_info_available,
+    .product-info-share,
+    .product-info-rating {
+        position: relative;
+        float: none;
+        clear: both;
+    }
+
+    .product-info-letter-configurator__configurator {
+        width: 100%;
+        margin-top: 32px;
+        padding-top: 0;
+    }
+
+    .letter-configurator {
+        width: 100%;
+        margin: 0;
+    }
+
+    .oli-lc-configurator {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 28px;
+        border: 1px solid #dedede;
+        background: #f7f7f7;
+    }
+
+    .product-info-letter-configurator__purchase {
+        width: 100%;
+        margin: 20px 0 36px;
+        padding: 22px 28px;
+        border: 1px solid #dedede;
+        background: #fff;
+    }
+
+    .product-info-letter-configurator__purchase .price-container {
+        width: 100%;
+        max-width: 520px;
+        margin-left: auto;
+    }
+
+    .product-info-description {
+        margin-top: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .product-info-letter-configurator {
+        .oli-lc-configurator__field-row {
+            display: flex;
+        }
+
+        .oli-lc-svg-preview,
+        .oli-lc-svg-analysis {
+            width: 100%;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .product-info-letter-configurator {
+        .oli-lc-configurator,
+        .product-info-letter-configurator__purchase {
+            padding: 18px 15px;
+        }
+    }
+}
