@@ -147,14 +147,28 @@ class OliLetterConfiguratorSvgPathInterpreter
                         continue 2;
 
                     case 'T':
-                        $this->smoothQuadraticBezierInterpreter->interpret(
+                        $smoothQuadraticBezierSegments = $this->smoothQuadraticBezierInterpreter->interpret(
                             $currentPoint,
                             $pathCommand,
                             $previousPathCommand,
                             $previousCommandStartPoint,
                             $previousQuadraticControlPoint
                         );
-                        break;
+                        foreach ($smoothQuadraticBezierSegments as $smoothQuadraticBezierSegment) {
+                            $geometry->addSegment($smoothQuadraticBezierSegment);
+                        }
+                        $currentPoint = $smoothQuadraticBezierSegments[
+                            count($smoothQuadraticBezierSegments) - 1
+                        ]->getTo();
+                        $previousQuadraticControlPoint =
+                            $this->smoothQuadraticBezierInterpreter->resolveControlPoint(
+                                $commandStartPoint,
+                                $previousPathCommand,
+                                $previousQuadraticControlPoint
+                            );
+                        $previousPathCommand = $pathCommand;
+                        $previousCommandStartPoint = $commandStartPoint;
+                        continue 2;
 
                     case 'Z':
                         $currentPoint = $subPathStart;

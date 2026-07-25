@@ -5,14 +5,24 @@
  */
 class OliLetterConfiguratorSmoothQuadraticBezierInterpreter
 {
+    private const APPROXIMATION_SEGMENTS = 20;
+
+    private const QUADRATIC_TO_CUBIC_FACTOR = 2.0 / 3.0;
+
     /** @var OliLetterConfiguratorPointTranslator */
     private $pointTranslator;
 
+    /** @var OliLetterConfiguratorCubicBezierApproximator */
+    private $cubicBezierApproximator;
+
     public function __construct(
-        ?OliLetterConfiguratorPointTranslator $pointTranslator = null
+        ?OliLetterConfiguratorPointTranslator $pointTranslator = null,
+        ?OliLetterConfiguratorCubicBezierApproximator $cubicBezierApproximator = null
     ) {
         $this->pointTranslator = $pointTranslator
             ?: new OliLetterConfiguratorPointTranslator();
+        $this->cubicBezierApproximator = $cubicBezierApproximator
+            ?: new OliLetterConfiguratorCubicBezierApproximator();
     }
 
     /**
@@ -22,9 +32,7 @@ class OliLetterConfiguratorSmoothQuadraticBezierInterpreter
      * @param OliLetterConfiguratorPoint|null          $previousCommandStartPoint
      * @param OliLetterConfiguratorPoint|null          $previousQuadraticControlPoint
      *
-     * @return void
-     *
-     * @throws OliLetterConfiguratorGeometryException
+     * @return OliLetterConfiguratorLineSegment[]
      */
     public function interpret(
         OliLetterConfiguratorPoint $startPoint,
@@ -40,8 +48,25 @@ class OliLetterConfiguratorSmoothQuadraticBezierInterpreter
         );
         $endPoint = $this->resolveEndPoint($startPoint, $pathCommand);
 
-        throw new OliLetterConfiguratorGeometryException(
-            'SVG path command T is not implemented yet.'
+        $cubicControlPoint1 = new OliLetterConfiguratorPoint(
+            $startPoint->getX()
+                + self::QUADRATIC_TO_CUBIC_FACTOR * ($controlPoint->getX() - $startPoint->getX()),
+            $startPoint->getY()
+                + self::QUADRATIC_TO_CUBIC_FACTOR * ($controlPoint->getY() - $startPoint->getY())
+        );
+        $cubicControlPoint2 = new OliLetterConfiguratorPoint(
+            $endPoint->getX()
+                + self::QUADRATIC_TO_CUBIC_FACTOR * ($controlPoint->getX() - $endPoint->getX()),
+            $endPoint->getY()
+                + self::QUADRATIC_TO_CUBIC_FACTOR * ($controlPoint->getY() - $endPoint->getY())
+        );
+
+        return $this->cubicBezierApproximator->approximate(
+            $startPoint,
+            $cubicControlPoint1,
+            $cubicControlPoint2,
+            $endPoint,
+            self::APPROXIMATION_SEGMENTS
         );
     }
 
