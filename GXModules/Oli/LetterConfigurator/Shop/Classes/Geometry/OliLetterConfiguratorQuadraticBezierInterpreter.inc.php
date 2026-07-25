@@ -36,22 +36,14 @@ class OliLetterConfiguratorQuadraticBezierInterpreter
         OliLetterConfiguratorSvgPathCommand $pathCommand
     ) {
         $parameters = $pathCommand->getParameters();
+        $controlPoint = $this->resolveControlPoint($startPoint, $pathCommand);
         if ($pathCommand->isRelative()) {
-            $controlPoint = $this->pointTranslator->translate(
-                $startPoint,
-                $parameters[0],
-                $parameters[1]
-            );
             $endPoint = $this->pointTranslator->translate(
                 $startPoint,
                 $parameters[2],
                 $parameters[3]
             );
         } else {
-            $controlPoint = new OliLetterConfiguratorPoint(
-                $parameters[0],
-                $parameters[1]
-            );
             $endPoint = new OliLetterConfiguratorPoint(
                 $parameters[2],
                 $parameters[3]
@@ -77,6 +69,31 @@ class OliLetterConfiguratorQuadraticBezierInterpreter
             $cubicControlPoint2,
             $endPoint,
             self::APPROXIMATION_SEGMENTS
+        );
+    }
+
+    /**
+     * @param OliLetterConfiguratorPoint          $startPoint
+     * @param OliLetterConfiguratorSvgPathCommand $pathCommand
+     *
+     * @return OliLetterConfiguratorPoint
+     */
+    public function resolveControlPoint(
+        OliLetterConfiguratorPoint $startPoint,
+        OliLetterConfiguratorSvgPathCommand $pathCommand
+    ) {
+        $parameters = $pathCommand->getParameters();
+        if ($pathCommand->isRelative()) {
+            return $this->pointTranslator->translate(
+                $startPoint,
+                $parameters[0],
+                $parameters[1]
+            );
+        }
+
+        return new OliLetterConfiguratorPoint(
+            $parameters[0],
+            $parameters[1]
         );
     }
 }

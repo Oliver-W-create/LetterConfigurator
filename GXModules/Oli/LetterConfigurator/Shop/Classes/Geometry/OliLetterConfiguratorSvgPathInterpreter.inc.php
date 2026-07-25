@@ -52,6 +52,7 @@ class OliLetterConfiguratorSvgPathInterpreter
         $subPathStart = null;
         $previousPathCommand = null;
         $previousCommandStartPoint = null;
+        $previousQuadraticControlPoint = null;
 
         foreach ($commands as $pathCommand) {
             $commandStartPoint = $currentPoint;
@@ -109,6 +110,7 @@ class OliLetterConfiguratorSvgPathInterpreter
                         $currentPoint = $cubicBezierSegments[count($cubicBezierSegments) - 1]->getTo();
                         $previousPathCommand = $pathCommand;
                         $previousCommandStartPoint = $commandStartPoint;
+                        $previousQuadraticControlPoint = null;
                         continue 2;
 
                     case 'S':
@@ -124,6 +126,7 @@ class OliLetterConfiguratorSvgPathInterpreter
                         $currentPoint = $smoothCubicBezierSegments[count($smoothCubicBezierSegments) - 1]->getTo();
                         $previousPathCommand = $pathCommand;
                         $previousCommandStartPoint = $commandStartPoint;
+                        $previousQuadraticControlPoint = null;
                         continue 2;
 
                     case 'Q':
@@ -135,6 +138,10 @@ class OliLetterConfiguratorSvgPathInterpreter
                             $geometry->addSegment($quadraticBezierSegment);
                         }
                         $currentPoint = $quadraticBezierSegments[count($quadraticBezierSegments) - 1]->getTo();
+                        $previousQuadraticControlPoint = $this->quadraticBezierInterpreter->resolveControlPoint(
+                            $commandStartPoint,
+                            $pathCommand
+                        );
                         $previousPathCommand = $pathCommand;
                         $previousCommandStartPoint = $commandStartPoint;
                         continue 2;
@@ -144,7 +151,8 @@ class OliLetterConfiguratorSvgPathInterpreter
                             $currentPoint,
                             $pathCommand,
                             $previousPathCommand,
-                            $previousCommandStartPoint
+                            $previousCommandStartPoint,
+                            $previousQuadraticControlPoint
                         );
                         break;
 
@@ -165,6 +173,9 @@ class OliLetterConfiguratorSvgPathInterpreter
 
             $previousPathCommand = $pathCommand;
             $previousCommandStartPoint = $commandStartPoint;
+            if ($command !== 'Q' && $command !== 'T') {
+                $previousQuadraticControlPoint = null;
+            }
         }
 
         return $geometry;
