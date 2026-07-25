@@ -12,7 +12,7 @@ class OliLetterConfiguratorCubicBezierApproximator
      * @param OliLetterConfiguratorPoint $endPoint
      * @param int                        $segmentCount
      *
-     * @return OliLetterConfiguratorPoint[]
+     * @return OliLetterConfiguratorLineSegment[]
      */
     public function approximate(
         OliLetterConfiguratorPoint $startPoint,
@@ -43,6 +43,14 @@ class OliLetterConfiguratorCubicBezierApproximator
             $points[] = new OliLetterConfiguratorPoint($x, $y);
         }
 
-        return $points;
+        $segments = [];
+        for ($index = 1; $index < count($points); $index++) {
+            $segments[] = new OliLetterConfiguratorLineSegment(
+                $points[$index - 1],
+                $points[$index]
+            );
+        }
+
+        return $segments;
     }
 }
