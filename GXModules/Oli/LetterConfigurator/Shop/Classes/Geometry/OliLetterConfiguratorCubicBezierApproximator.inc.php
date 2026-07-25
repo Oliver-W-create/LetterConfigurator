@@ -13,6 +13,8 @@ class OliLetterConfiguratorCubicBezierApproximator
      * @param int                        $segmentCount
      *
      * @return OliLetterConfiguratorLineSegment[]
+     *
+     * @throws OliLetterConfiguratorGeometryException
      */
     public function approximate(
         OliLetterConfiguratorPoint $startPoint,
@@ -21,6 +23,12 @@ class OliLetterConfiguratorCubicBezierApproximator
         OliLetterConfiguratorPoint $endPoint,
         int $segmentCount
     ) {
+        if ($segmentCount < 1) {
+            throw new OliLetterConfiguratorGeometryException(
+                'Cubic Bézier approximation requires at least one segment.'
+            );
+        }
+
         $points = [];
 
         for ($index = 0; $index <= $segmentCount; $index++) {

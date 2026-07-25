@@ -5,6 +5,8 @@
  */
 class OliLetterConfiguratorCubicBezierInterpreter
 {
+    private const APPROXIMATION_SEGMENTS = 20;
+
     /** @var OliLetterConfiguratorPointTranslator */
     private $pointTranslator;
 
@@ -69,7 +71,7 @@ class OliLetterConfiguratorCubicBezierInterpreter
             $controlPoint1,
             $controlPoint2,
             $endPoint,
-            20
+            self::APPROXIMATION_SEGMENTS
         );
     }
 }
