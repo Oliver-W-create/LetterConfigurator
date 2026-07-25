@@ -17,11 +17,15 @@ class OliLetterConfiguratorSvgPathInterpreter
     /** @var OliLetterConfiguratorSmoothQuadraticBezierInterpreter */
     private $smoothQuadraticBezierInterpreter;
 
+    /** @var OliLetterConfiguratorArcInterpreter */
+    private $arcInterpreter;
+
     public function __construct(
         ?OliLetterConfiguratorCubicBezierInterpreter $cubicBezierInterpreter = null,
         ?OliLetterConfiguratorSmoothCubicBezierInterpreter $smoothCubicBezierInterpreter = null,
         ?OliLetterConfiguratorQuadraticBezierInterpreter $quadraticBezierInterpreter = null,
-        ?OliLetterConfiguratorSmoothQuadraticBezierInterpreter $smoothQuadraticBezierInterpreter = null
+        ?OliLetterConfiguratorSmoothQuadraticBezierInterpreter $smoothQuadraticBezierInterpreter = null,
+        ?OliLetterConfiguratorArcInterpreter $arcInterpreter = null
     ) {
         $this->cubicBezierInterpreter = $cubicBezierInterpreter
             ?: new OliLetterConfiguratorCubicBezierInterpreter();
@@ -31,6 +35,8 @@ class OliLetterConfiguratorSvgPathInterpreter
             ?: new OliLetterConfiguratorQuadraticBezierInterpreter();
         $this->smoothQuadraticBezierInterpreter = $smoothQuadraticBezierInterpreter
             ?: new OliLetterConfiguratorSmoothQuadraticBezierInterpreter();
+        $this->arcInterpreter = $arcInterpreter
+            ?: new OliLetterConfiguratorArcInterpreter();
     }
 
     /**
@@ -169,6 +175,13 @@ class OliLetterConfiguratorSvgPathInterpreter
                         $previousPathCommand = $pathCommand;
                         $previousCommandStartPoint = $commandStartPoint;
                         continue 2;
+
+                    case 'A':
+                        $this->arcInterpreter->interpret(
+                            $currentPoint,
+                            $pathCommand
+                        );
+                        break;
 
                     case 'Z':
                         $currentPoint = $subPathStart;
