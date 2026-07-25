@@ -8,11 +8,17 @@ class OliLetterConfiguratorSvgPathInterpreter
     /** @var OliLetterConfiguratorCubicBezierInterpreter */
     private $cubicBezierInterpreter;
 
+    /** @var OliLetterConfiguratorSmoothCubicBezierInterpreter */
+    private $smoothCubicBezierInterpreter;
+
     public function __construct(
-        ?OliLetterConfiguratorCubicBezierInterpreter $cubicBezierInterpreter = null
+        ?OliLetterConfiguratorCubicBezierInterpreter $cubicBezierInterpreter = null,
+        ?OliLetterConfiguratorSmoothCubicBezierInterpreter $smoothCubicBezierInterpreter = null
     ) {
         $this->cubicBezierInterpreter = $cubicBezierInterpreter
             ?: new OliLetterConfiguratorCubicBezierInterpreter();
+        $this->smoothCubicBezierInterpreter = $smoothCubicBezierInterpreter
+            ?: new OliLetterConfiguratorSmoothCubicBezierInterpreter();
     }
 
     /**
@@ -87,6 +93,13 @@ class OliLetterConfiguratorSvgPathInterpreter
                         }
                         $currentPoint = $cubicBezierSegments[count($cubicBezierSegments) - 1]->getTo();
                         continue 2;
+
+                    case 'S':
+                        $this->smoothCubicBezierInterpreter->interpret(
+                            $currentPoint,
+                            $pathCommand
+                        );
+                        break;
 
                     case 'Z':
                         $currentPoint = $subPathStart;
