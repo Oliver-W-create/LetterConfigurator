@@ -1,4 +1,4 @@
-{* M4.0.3 – Letter Configurator HTML/Smarty partial *}
+{* M4-S.5 – Responsive quick-configurator layout *}
 
 <div class="oli-lc-configurator" aria-labelledby="oli-lc-configurator-title"
     {if $OLI_LC_CONFIGURATOR.pricing}
@@ -16,94 +16,152 @@
     data-text-max-length="{$OLI_LC_CONFIGURATOR.limits.text_max_length|intval}"
     data-dimension-min="{$OLI_LC_CONFIGURATOR.limits.dimension_min_mm|escape}"
     data-dimension-max="{$OLI_LC_CONFIGURATOR.limits.dimension_max_mm|escape}">
-{if $OLI_LC_CONFIGURATOR.cart_error}
+
+    {if $OLI_LC_CONFIGURATOR.cart_error}
         <div class="oli-lc-configurator__alert" role="alert">{$OLI_LC_CONFIGURATOR.cart_error|escape}</div>
     {/if}
 
     <input type="hidden" name="oli_lc_product_template_id" value="{$OLI_LC_CONFIGURATOR.product_template_id|intval}">
-    <h2 class="oli-lc-configurator__title" id="oli-lc-configurator-title">Produkt konfigurieren</h2>
-    {if $OLI_LC_CONFIGURATOR.description}
-        <p class="oli-lc-configurator__description">{$OLI_LC_CONFIGURATOR.description|escape}</p>
-    {/if}
 
-    <div class="oli-lc-configurator__field">
-        <label for="oli-lc-text">Text</label>
-        <input class="form-control" type="text" id="oli-lc-text" name="oli_lc_text" required maxlength="255" autocomplete="off" aria-describedby="oli-lc-text-error">
-        <p class="oli-lc-configurator__error" id="oli-lc-text-error">Bitte einen Text mit maximal 255 Zeichen eingeben.</p>
-    </div>
+    <header class="oli-lc-configurator__header">
+        <p class="oli-lc-configurator__eyebrow">Schnell-Konfigurator</p>
+        <h2 class="oli-lc-configurator__title" id="oli-lc-configurator-title">Konturgeschnittene Buchstaben konfigurieren</h2>
+        {if $OLI_LC_CONFIGURATOR.description}
+            <p class="oli-lc-configurator__description">{$OLI_LC_CONFIGURATOR.description|escape}</p>
+        {/if}
+    </header>
 
-    <div class="oli-lc-configurator__field-row">
-        <div class="oli-lc-configurator__field">
-            <label for="oli-lc-width">Breite (mm)</label>
-            <input class="form-control" type="number" id="oli-lc-width" name="oli_lc_width" required min="1" max="100000" step="1" inputmode="decimal" aria-describedby="oli-lc-width-error">
-            <p class="oli-lc-configurator__error" id="oli-lc-width-error">Bitte eine Breite zwischen 1 und 100.000 mm eingeben.</p>
-        </div>
-        <div class="oli-lc-configurator__field">
-            <label for="oli-lc-height">Höhe (mm)</label>
-            <input class="form-control" type="number" id="oli-lc-height" name="oli_lc_height" required min="1" max="100000" step="1" inputmode="decimal" aria-describedby="oli-lc-height-error">
-            <p class="oli-lc-configurator__error" id="oli-lc-height-error">Bitte eine Höhe zwischen 1 und 100.000 mm eingeben.</p>
-        </div>
-    </div>
+    <div class="oli-lc-configurator__controls">
+            <section class="oli-lc-configurator__section" aria-labelledby="oli-lc-section-text">
+                <div class="oli-lc-configurator__section-heading">
+                    <span class="oli-lc-configurator__step">1</span>
+                    <div>
+                        <h3 id="oli-lc-section-text">Text und Schrift</h3>
+                        <p>Text eingeben und die gewünschte Schrift auswählen.</p>
+                    </div>
+                </div>
 
-    <div class="oli-lc-configurator__field">
-        <label for="oli-lc-material">Material</label>
-        <select class="form-control" id="oli-lc-material" name="oli_lc_material" required>
-            <option value="">Bitte auswählen</option>
-            {foreach $OLI_LC_CONFIGURATOR.materials as $material}
-                <option value="{$material.material_id|intval}" data-material-id="{$material.material_id|intval}">{$material.name|escape}</option>
-            {/foreach}
-        </select>
-        <p class="oli-lc-configurator__error">Bitte ein Material auswählen.</p>
-    </div>
+                <div class="oli-lc-configurator__field">
+                    <label for="oli-lc-text">Text</label>
+                    <textarea class="form-control" id="oli-lc-text" name="oli_lc_text" required maxlength="255" rows="3" autocomplete="off" aria-describedby="oli-lc-text-note oli-lc-text-error">Dein
+3D-Text</textarea>
+                    <p class="oli-lc-configurator__note" id="oli-lc-text-note">Ein- und mehrzeilige Eingabe; maximal 255 Zeichen.</p>
+                    <p class="oli-lc-configurator__error" id="oli-lc-text-error">Bitte einen Text mit maximal 255 Zeichen eingeben.</p>
+                </div>
 
-    <div class="oli-lc-configurator__field">
-        <label for="oli-lc-method">Fertigungsart</label>
-        <select class="form-control" id="oli-lc-method" name="oli_lc_method" required>
-            <option value="">Bitte auswählen</option>
-            {foreach $OLI_LC_CONFIGURATOR.production_methods as $method}
-                <option value="{$method.production_method_id|intval}" data-method-id="{$method.production_method_id|intval}">{$method.name|escape}</option>
-            {/foreach}
-        </select>
-        <p class="oli-lc-configurator__error">Bitte eine Fertigungsart auswählen.</p>
-    </div>
+                <fieldset class="oli-lc-configurator__field oli-lc-configurator__alignment">
+                    <legend>Textausrichtung</legend>
+                    <div class="oli-lc-configurator__alignment-options" role="radiogroup" aria-label="Textausrichtung">
+                        <input class="sr-only" type="radio" id="oli-lc-alignment-left" name="oli_lc_text_alignment" value="left">
+                        <label for="oli-lc-alignment-left" title="Linksbündig" aria-label="Linksbündig">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v2H4V5zm0 4h11v2H4V9zm0 4h16v2H4v-2zm0 4h11v2H4v-2z"/></svg>
+                        </label>
 
-    <div class="oli-lc-configurator__field">
-        <label for="oli-lc-color">Farbe</label>
-        <select class="form-control" id="oli-lc-color" name="oli_lc_color" required>
-            <option value="">Bitte auswählen</option>
-            {foreach $OLI_LC_CONFIGURATOR.colors as $color}
-                <option value="{$color.color_id|intval}" data-material-id="{$color.material_id|intval}">{$color.name|escape}</option>
-            {/foreach}
-        </select>
-        <p class="oli-lc-configurator__error">Bitte eine Farbe auswählen.</p>
-    </div>
+                        <input class="sr-only" type="radio" id="oli-lc-alignment-center" name="oli_lc_text_alignment" value="center" checked>
+                        <label for="oli-lc-alignment-center" title="Zentriert" aria-label="Zentriert">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v2H4V5zm3 4h10v2H7V9zm-3 4h16v2H4v-2zm3 4h10v2H7v-2z"/></svg>
+                        </label>
 
-    <div class="oli-lc-configurator__field">
-        <label for="oli-lc-thickness">Materialstärke</label>
-        <select class="form-control" id="oli-lc-thickness" name="oli_lc_thickness" required>
-            <option value="">Bitte auswählen</option>
-            {foreach $OLI_LC_CONFIGURATOR.thicknesses as $thickness}
-                <option value="{$thickness.thickness_id|intval}" data-material-id="{$thickness.material_id|intval}" data-method-id="{$thickness.production_method_id|intval}">{$thickness.display_name|escape}</option>
-            {/foreach}
-        </select>
-        <p class="oli-lc-configurator__error">Bitte eine Materialstärke auswählen.</p>
-    </div>
+                        <input class="sr-only" type="radio" id="oli-lc-alignment-right" name="oli_lc_text_alignment" value="right">
+                        <label for="oli-lc-alignment-right" title="Rechtsbündig" aria-label="Rechtsbündig">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v2H4V5zm5 4h11v2H9V9zm-5 4h16v2H4v-2zm5 4h11v2H9v-2z"/></svg>
+                        </label>
+                    </div>
+                </fieldset>
 
-    <div class="oli-lc-configurator__field" id="oli-lc-svg-field">
-        <label for="oli-lc-svg">SVG-Datei (optional)</label>
-        <input class="form-control" type="file" id="oli-lc-svg" name="oli_lc_svg" accept=".svg,image/svg+xml" aria-describedby="oli-lc-svg-note oli-lc-svg-error">
-        <p class="oli-lc-configurator__note" id="oli-lc-svg-note">Maximal 2 MB. Die Datei wird lokal analysiert und noch nicht in den Warenkorb übernommen.</p>
-        <p class="oli-lc-configurator__error" id="oli-lc-svg-error">Bitte eine gültige, sichere SVG-Datei mit maximal 2 MB auswählen.</p>
+                <div class="oli-lc-configurator__field">
+                    <label for="oli-lc-font">Schriftart</label>
+                    <select class="form-control" id="oli-lc-font" name="oli_lc_font">
+                        <option value="">Bitte auswählen</option>
+                        {foreach $OLI_LC_CONFIGURATOR.fonts as $font}
+                            <option value="{$font.font_id|intval}">{$font.display_name|escape}</option>
+                        {/foreach}
+                    </select>
+                    {if !$OLI_LC_CONFIGURATOR.fonts}
+                        <p class="oli-lc-configurator__note">Aktuell sind noch keine freigegebenen Schriften hinterlegt.</p>
+                    {/if}
+                </div>
+            </section>
+
+            <section class="oli-lc-configurator__section" aria-labelledby="oli-lc-section-material">
+                <div class="oli-lc-configurator__section-heading">
+                    <span class="oli-lc-configurator__step">2</span>
+                    <div>
+                        <h3 id="oli-lc-section-material">Material und Ausführung</h3>
+                        <p>Die Auswahl wird automatisch auf verfügbare Kombinationen begrenzt.</p>
+                    </div>
+                </div>
+
+                <div class="oli-lc-configurator__field-grid">
+                    <div class="oli-lc-configurator__field">
+                        <label for="oli-lc-material">Material</label>
+                        <select class="form-control" id="oli-lc-material" name="oli_lc_material" required>
+                            <option value="">Bitte auswählen</option>
+                            {foreach $OLI_LC_CONFIGURATOR.materials as $material}
+                                <option value="{$material.material_id|intval}" data-material-id="{$material.material_id|intval}">{$material.name|escape}</option>
+                            {/foreach}
+                        </select>
+                        <p class="oli-lc-configurator__error">Bitte ein Material auswählen.</p>
+                    </div>
+
+                    <div class="oli-lc-configurator__field">
+                        <label for="oli-lc-method">Fertigungsart</label>
+                        <select class="form-control" id="oli-lc-method" name="oli_lc_method" required>
+                            <option value="">Bitte auswählen</option>
+                            {foreach $OLI_LC_CONFIGURATOR.production_methods as $method}
+                                <option value="{$method.production_method_id|intval}" data-method-id="{$method.production_method_id|intval}">{$method.name|escape}</option>
+                            {/foreach}
+                        </select>
+                        <p class="oli-lc-configurator__error">Bitte eine Fertigungsart auswählen.</p>
+                    </div>
+
+                    <div class="oli-lc-configurator__field">
+                        <label for="oli-lc-thickness">Materialstärke</label>
+                        <select class="form-control" id="oli-lc-thickness" name="oli_lc_thickness" required>
+                            <option value="">Bitte auswählen</option>
+                            {foreach $OLI_LC_CONFIGURATOR.thicknesses as $thickness}
+                                <option value="{$thickness.thickness_id|intval}" data-material-id="{$thickness.material_id|intval}" data-method-id="{$thickness.production_method_id|intval}" data-color-ids="{$thickness.color_ids|escape}" data-all-colors="{if $thickness.all_colors}1{else}0{/if}">{$thickness.display_name|escape}</option>
+                            {/foreach}
+                        </select>
+                        <p class="oli-lc-configurator__error">Bitte eine Materialstärke auswählen.</p>
+                    </div>
+
+                    <div class="oli-lc-configurator__field">
+                        <label for="oli-lc-color">Farbe</label>
+                        <select class="form-control" id="oli-lc-color" name="oli_lc_color" required>
+                            <option value="">Bitte auswählen</option>
+                            {foreach $OLI_LC_CONFIGURATOR.colors as $color}
+                                <option value="{$color.color_id|intval}" data-material-id="{$color.material_id|intval}">{$color.name|escape}</option>
+                            {/foreach}
+                        </select>
+                        <p class="oli-lc-configurator__error">Bitte eine Farbe auswählen.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="oli-lc-configurator__section" aria-labelledby="oli-lc-section-size">
+                <div class="oli-lc-configurator__section-heading">
+                    <span class="oli-lc-configurator__step">3</span>
+                    <div>
+                        <h3 id="oli-lc-section-size">Größe</h3>
+                        <p>Die endgültige Umschaltung zwischen Buchstabenhöhe und maximaler Gesamtbreite folgt im nächsten Funktionsschritt.</p>
+                    </div>
+                </div>
+
+                <div class="oli-lc-configurator__field-row">
+                    <div class="oli-lc-configurator__field">
+                        <label for="oli-lc-height">Buchstabenhöhe (mm)</label>
+                        <input class="form-control" type="number" id="oli-lc-height" name="oli_lc_height" required min="1" max="100000" step="1" inputmode="decimal" aria-describedby="oli-lc-height-error">
+                        <p class="oli-lc-configurator__error" id="oli-lc-height-error">Bitte eine Höhe zwischen 1 und 100.000 mm eingeben.</p>
+                    </div>
+                    <div class="oli-lc-configurator__field">
+                        <label for="oli-lc-width">Maximale Gesamtbreite (mm)</label>
+                        <input class="form-control" type="number" id="oli-lc-width" name="oli_lc_width" required min="1" max="100000" step="1" inputmode="decimal" aria-describedby="oli-lc-width-error">
+                        <p class="oli-lc-configurator__error" id="oli-lc-width-error">Bitte eine Breite zwischen 1 und 100.000 mm eingeben.</p>
+                    </div>
+                </div>
+            </section>
     </div>
-    <div class="oli-lc-svg-preview" id="oli-lc-svg-preview" aria-live="polite">
-        <div id="oli-lc-svg-preview-canvas"></div>
-        <p class="oli-lc-svg-preview__meta" id="oli-lc-svg-preview-meta"></p>
-    </div>
-    <section class="oli-lc-svg-analysis" id="oli-lc-svg-analysis" aria-live="polite">
-        <h3 class="oli-lc-svg-analysis__title">SVG-Analyse</h3>
-        <dl class="oli-lc-svg-analysis__grid" id="oli-lc-svg-analysis-grid"></dl>
-        <div class="oli-lc-svg-analysis__warnings" id="oli-lc-svg-analysis-warnings"></div>
-    </section>
 
     <div class="oli-lc-price" id="oli-lc-price" aria-live="polite">
         <p class="oli-lc-price__message" id="oli-lc-price-message">Bitte Text, Maße und die passende Ausführung auswählen.</p>

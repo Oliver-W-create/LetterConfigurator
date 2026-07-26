@@ -15,9 +15,6 @@
                         var colorSelect = root.querySelector('#oli-lc-color');
                         var thicknessSelect = root.querySelector('#oli-lc-thickness');
                         var textInput = root.querySelector('#oli-lc-text');
-                        var alignmentInputs = Array.prototype.slice.call(root.querySelectorAll('input[name="oli_lc_text_alignment"]'));
-                        var previewText = document.querySelector('#oli-lc-preview-text');
-                        var previewStatus = document.querySelector('#oli-lc-preview-status');
                         var widthInput = root.querySelector('#oli-lc-width');
                         var heightInput = root.querySelector('#oli-lc-height');
                         var priceBox = root.querySelector('#oli-lc-price');
@@ -34,128 +31,6 @@
                         var svgAnalysisWarnings = root.querySelector('#oli-lc-svg-analysis-warnings');
                         if (!materialSelect || !methodSelect || !colorSelect || !thicknessSelect || !textInput || !widthInput || !heightInput) {
                             return;
-                        }
-
-                        var exampleText = 'Dein\n3D-Text';
-                        var exampleTextPending = textInput.value === exampleText;
-                        var textPreviewFrame = null;
-                        var lastObservedTextValue = textInput.value;
-                        var previewValueWatcher = null;
-
-                        function selectedAlignment() {
-                            var selected = alignmentInputs.filter(function (input) { return input.checked; })[0];
-                            return selected ? selected.value : 'center';
-                        }
-
-                        function fitPreviewText() {
-                            if (!previewText) {
-                                return;
-                            }
-
-                            var plate = previewText.parentElement;
-                            if (!plate || !plate.clientWidth || !plate.clientHeight) {
-                                return;
-                            }
-
-                            var computedPlate = window.getComputedStyle ? window.getComputedStyle(plate) : null;
-                            var paddingLeft = computedPlate ? parseFloat(computedPlate.paddingLeft) || 0 : 0;
-                            var paddingRight = computedPlate ? parseFloat(computedPlate.paddingRight) || 0 : 0;
-                            var paddingTop = computedPlate ? parseFloat(computedPlate.paddingTop) || 0 : 0;
-                            var paddingBottom = computedPlate ? parseFloat(computedPlate.paddingBottom) || 0 : 0;
-                            var availableWidth = Math.max(1, plate.clientWidth - paddingLeft - paddingRight - 4);
-                            var availableHeight = Math.max(1, plate.clientHeight - paddingTop - paddingBottom - 4);
-                            var mobile = window.matchMedia && window.matchMedia('(max-width: 600px)').matches;
-                            var maximum = mobile ? 44 : 76;
-                            var minimum = 6;
-                            var lines = String(previewText.textContent || '').replace(/\r\n?/g, '\n').split('\n');
-                            var computedText = window.getComputedStyle ? window.getComputedStyle(previewText) : null;
-                            var fontFamily = computedText && computedText.fontFamily ? computedText.fontFamily : 'sans-serif';
-                            var fontWeight = computedText && computedText.fontWeight ? computedText.fontWeight : '700';
-                            var canvas = fitPreviewText.canvas || (fitPreviewText.canvas = document.createElement('canvas'));
-                            var context = canvas.getContext && canvas.getContext('2d');
-                            var referenceSize = 100;
-                            var widestAtReference = 1;
-
-                            if (context) {
-                                context.font = fontWeight + ' ' + referenceSize + 'px ' + fontFamily;
-                                lines.forEach(function (line) {
-                                    widestAtReference = Math.max(widestAtReference, context.measureText(line || ' ').width);
-                                });
-                            } else {
-                                widestAtReference = Math.max(1, Math.max.apply(null, lines.map(function (line) { return Math.max(1, line.length) * 55; })));
-                            }
-
-                            var sizeByWidth = availableWidth * referenceSize / widestAtReference;
-                            var lineHeightFactor = 0.98;
-                            var sizeByHeight = availableHeight / Math.max(1, lines.length * lineHeightFactor);
-                            var fitted = Math.floor(Math.min(maximum, sizeByWidth, sizeByHeight));
-                            fitted = Math.max(minimum, fitted);
-
-                            previewText.style.fontSize = fitted + 'px';
-                            previewText.style.lineHeight = lineHeightFactor;
-                        }
-
-                        function updateTextPreview() {
-                            if (!previewText) {
-                                return;
-                            }
-                            var text = textInput.value;
-                            previewText.textContent = text.trim() ? text : exampleText;
-                            previewText.setAttribute('data-alignment', selectedAlignment());
-                            if (previewStatus) {
-                                previewStatus.textContent = text === exampleText ? 'Beispiel' : 'Live';
-                            }
-                            window.setTimeout(fitPreviewText, 0);
-                        }
-
-                        function clearExampleTextOnce() {
-                            if (!exampleTextPending || textInput.value !== exampleText) {
-                                return;
-                            }
-                            textInput.value = '';
-                            exampleTextPending = false;
-                            updateTextPreview();
-                        }
-
-                        function scheduleTextPreviewUpdate() {
-                            if (textPreviewFrame !== null && window.cancelAnimationFrame) {
-                                window.cancelAnimationFrame(textPreviewFrame);
-                            }
-                            var update = function () {
-                                textPreviewFrame = null;
-                                exampleTextPending = false;
-                                lastObservedTextValue = textInput.value;
-                                updateTextPreview();
-                                calculatePrice(false);
-                            };
-                            if (window.requestAnimationFrame) {
-                                textPreviewFrame = window.requestAnimationFrame(update);
-                            } else {
-                                window.setTimeout(update, 0);
-                            }
-                        }
-
-
-                        function syncTextValueFromMobileBrowser() {
-                            var currentValue = textInput.value;
-                            if (currentValue === lastObservedTextValue) {
-                                return;
-                            }
-                            lastObservedTextValue = currentValue;
-                            exampleTextPending = false;
-                            updateTextPreview();
-                            calculatePrice(false);
-                        }
-
-                        function startPreviewValueWatcher() {
-                            if (previewValueWatcher !== null) {
-                                return;
-                            }
-                            previewValueWatcher = window.setInterval(syncTextValueFromMobileBrowser, 100);
-                        }
-
-                        function stopPreviewValueWatcher() {
-                            syncTextValueFromMobileBrowser();
                         }
 
 
@@ -407,9 +282,7 @@
                                     value: option.value,
                                     text: option.text,
                                     materialId: option.getAttribute('data-material-id') || '',
-                                    methodId: option.getAttribute('data-method-id') || '',
-                                    colorIds: option.getAttribute('data-color-ids') || '',
-                                    allColors: option.getAttribute('data-all-colors') === '1'
+                                    methodId: option.getAttribute('data-method-id') || ''
                                 };
                             });
                         }
@@ -445,8 +318,6 @@
                                 if (item.methodId) {
                                     option.setAttribute('data-method-id', item.methodId);
                                 }
-                                option.setAttribute('data-color-ids', item.colorIds || '');
-                                option.setAttribute('data-all-colors', item.allColors ? '1' : '0');
                                 select.appendChild(option);
                             });
 
@@ -474,30 +345,17 @@
                             }, 'Bitte auswählen');
 
                             selectedMethod = methodSelect.value;
+                            rebuild(colorSelect, colorOptions, function (option) {
+                                return !!selectedMaterial && option.materialId === selectedMaterial;
+                            }, selectedMaterial ? 'Bitte auswählen' : 'Zuerst Material auswählen');
+                            colorSelect.disabled = !selectedMaterial;
+
                             rebuild(thicknessSelect, thicknessOptions, function (option) {
                                 return !!selectedMaterial && !!selectedMethod
                                     && option.materialId === selectedMaterial
                                     && option.methodId === selectedMethod;
-                            }, selectedMaterial && selectedMethod
-                                ? 'Bitte auswählen'
-                                : 'Zuerst Material und Fertigungsart auswählen');
+                            }, selectedMaterial && selectedMethod ? 'Bitte auswählen' : 'Zuerst Material und Fertigungsart auswählen');
                             thicknessSelect.disabled = !(selectedMaterial && selectedMethod);
-
-                            var selectedThickness = thicknessSelect.value;
-                            var selectedThicknessOption = thicknessOptions.filter(function (option) {
-                                return option.value === selectedThickness;
-                            })[0] || null;
-
-                            rebuild(colorSelect, colorOptions, function (option) {
-                                if (!selectedMaterial || !selectedThicknessOption || option.materialId !== selectedMaterial) {
-                                    return false;
-                                }
-                                return selectedThicknessOption.allColors
-                                    || (',' + selectedThicknessOption.colorIds + ',').indexOf(',' + option.value + ',') !== -1;
-                            }, selectedThickness
-                                ? 'Bitte auswählen'
-                                : 'Zuerst Materialstärke auswählen');
-                            colorSelect.disabled = !selectedThickness;
                         }
 
                         function numberValue(name) {
@@ -636,53 +494,9 @@
 
                         materialSelect.addEventListener('change', updateAll);
                         methodSelect.addEventListener('change', updateAll);
-                        thicknessSelect.addEventListener('change', function () { updateSelections(); calculatePrice(false); });
                         colorSelect.addEventListener('change', function () { calculatePrice(false); });
-                        textInput.addEventListener('focus', function () {
-                            clearExampleTextOnce();
-                            lastObservedTextValue = textInput.value;
-                            startPreviewValueWatcher();
-                        });
-                        textInput.addEventListener('blur', stopPreviewValueWatcher);
-                        textInput.addEventListener('pointerdown', clearExampleTextOnce);
-                        textInput.addEventListener('touchstart', clearExampleTextOnce, {passive: true});
-                        textInput.addEventListener('input', scheduleTextPreviewUpdate);
-                        textInput.addEventListener('beforeinput', function () {
-                            window.setTimeout(scheduleTextPreviewUpdate, 0);
-                            window.setTimeout(syncTextValueFromMobileBrowser, 60);
-                        });
-                        textInput.addEventListener('compositionstart', startPreviewValueWatcher);
-                        textInput.addEventListener('compositionupdate', syncTextValueFromMobileBrowser);
-                        textInput.addEventListener('compositionend', function () {
-                            syncTextValueFromMobileBrowser();
-                            scheduleTextPreviewUpdate();
-                        });
-                        textInput.addEventListener('keyup', scheduleTextPreviewUpdate);
-                        textInput.addEventListener('change', scheduleTextPreviewUpdate);
-                        textInput.addEventListener('paste', function () {
-                            window.setTimeout(scheduleTextPreviewUpdate, 0);
-                            window.setTimeout(syncTextValueFromMobileBrowser, 60);
-                        });
-                        document.addEventListener('input', function (event) {
-                            if (event.target === textInput) {
-                                syncTextValueFromMobileBrowser();
-                                scheduleTextPreviewUpdate();
-                            }
-                        }, true);
-                        document.addEventListener('change', function (event) {
-                            if (event.target === textInput) {
-                                syncTextValueFromMobileBrowser();
-                                scheduleTextPreviewUpdate();
-                            }
-                        }, true);
-                        alignmentInputs.forEach(function (input) {
-                            input.addEventListener('change', updateTextPreview);
-                        });
-                        window.addEventListener('resize', fitPreviewText);
-                        window.addEventListener('orientationchange', function () { window.setTimeout(fitPreviewText, 150); });
-                        if (document.fonts && document.fonts.ready) {
-                            document.fonts.ready.then(fitPreviewText);
-                        }
+                        thicknessSelect.addEventListener('change', function () { calculatePrice(false); });
+                        textInput.addEventListener('input', function () { calculatePrice(false); });
                         widthInput.addEventListener('input', function () { calculatePrice(false); });
                         heightInput.addEventListener('input', function () { calculatePrice(false); });
                         if (svgInput) {
@@ -700,8 +514,6 @@
                                 }
                             });
                         }
-                        startPreviewValueWatcher();
-                        updateTextPreview();
                         updateAll();
                         validationState(false);
                     }

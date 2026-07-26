@@ -1,0 +1,58 @@
+[
+  {
+    "id": "BOX_HEADING_OLI_LETTER_CONFIGURATOR",
+    "sort": 49,
+    "class": "fa fa-cubes",
+    "title": "Buchstaben-Konfigurator",
+    "items": [
+      {
+        "sort": 10,
+        "link": "admin.php",
+        "link_param": "do=LetterConfiguratorStatus",
+        "title": "Übersicht"
+      },
+      {
+        "sort": 20,
+        "link": "admin.php",
+        "link_param": "do=LetterConfiguratorMaterials",
+        "title": "Materialien"
+      },
+      {
+        "sort": 30,
+        "link": "admin.php",
+        "link_param": "do=LetterConfiguratorColors",
+        "title": "Farben"
+      },
+      {
+        "sort": 40,
+        "link": "admin.php",
+        "link_param": "do=LetterConfiguratorThicknesses",
+        "title": "Materialstärken"
+      },
+      {
+        "sort": 50,
+        "link": "admin.php",
+        "link_param": "do=LetterConfiguratorProductionMethods",
+        "title": "Fertigungsarten"
+      },
+      {
+        "sort": 60,
+        "link": "admin.php",
+        "link_param": "do=LetterConfiguratorPriceProfiles",
+        "title": "Preisprofile"
+      },
+      {
+        "sort": 70,
+        "link": "admin.php",
+        "link_param": "do=LetterConfiguratorProducts",
+        "title": "Produkte"
+      },
+      {
+        "sort": 80,
+        "link": "admin.php",
+        "link_param": "do=LetterConfiguratorAssignments",
+        "title": "Artikelzuordnungen"
+      }
+    ]
+  }
+]

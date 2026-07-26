@@ -1,0 +1,197 @@
+.lc-form .form-group { margin-left:0; margin-right:0; }
+.lc-form .control-label { text-align:left; padding-left:0; }
+.lc-form .form-control { width:100%; }
+.lc-form__footer { display:flex; justify-content:flex-end; gap:8px; margin-top:18px; padding-top:16px; border-top:1px solid var(--lc-border); }
+.lc-field-help { display:block; margin-top:6px; color:var(--lc-muted); font-size:12px; }
+
+/* M3.6 color controls */
+.lc-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 24px;
+}
+.lc-color-input {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+.lc-color-input input[type="color"] {
+    width: 52px;
+    min-width: 52px;
+    height: 34px;
+    padding: 2px;
+    border: 1px solid #d2d6de;
+    background: #fff;
+}
+.lc-color-swatch {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,.2);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+    vertical-align: middle;
+}
+@media (max-width: 900px) {
+    .lc-form-grid { grid-template-columns: 1fr; }
+}
+
+/* M3.7.1 multiple color assignment */
+.lc-color-assignment { margin-top: 18px; }
+.lc-checkbox-grid { display:grid; grid-template-columns:repeat(4,minmax(160px,1fr)); gap:10px; margin-top:10px; }
+.lc-check-card { display:flex; align-items:center; gap:10px; min-height:54px; margin:0; padding:10px 12px; border:1px solid var(--lc-border); border-radius:5px; background:#fff; cursor:pointer; }
+.lc-check-card:hover { border-color:#9eabb7; }
+.lc-check-card input { margin:0; flex:0 0 auto; }
+.lc-check-card > span { display:flex; flex-direction:column; min-width:0; }
+.lc-check-card small { display:block; margin-top:2px; color:var(--lc-muted); font-weight:400; }
+.lc-check-card--all { max-width:520px; background:#f7f9fb; }
+.lc-color-option { flex-direction:row !important; align-items:center; gap:14px; }
+.lc-check-card[hidden] { display:none !important; }
+.lc-color-option__text { display:flex; flex-direction:column; min-width:0; }
+.lc-color-option__name { display:block; }
+.lc-check-card .lc-color-option__code { display:block; margin-top:6px; }
+.lc-checkbox-grid.is-disabled { opacity:.55; }
+.lc-color-tags { line-height:1.5; }
+@media (max-width:1200px) { .lc-checkbox-grid { grid-template-columns:repeat(3,minmax(160px,1fr)); } }
+@media (max-width:900px) { .lc-checkbox-grid { grid-template-columns:repeat(2,minmax(150px,1fr)); } }
+@media (max-width:560px) { .lc-checkbox-grid { grid-template-columns:1fr; } }
+
+
+/* M3.12.3 contour price calculator */
+.lc-pricing-box { border:1px solid var(--lc-border); border-radius:6px; background:#f8fafc; padding:18px; margin-bottom:20px; }
+.lc-pricing-box--wide { grid-column:1 / -1; }
+.lc-pricing-box__title { margin:0 0 15px; font-size:16px; font-weight:600; }
+.lc-pricing-box__primary { max-width:420px; }
+.lc-pricing-box__calculator { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; padding-top:15px; margin-top:15px; border-top:1px solid var(--lc-border); }
+.lc-pricing-box__footer { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-top:8px; }
+.lc-pricing-box__footer .lc-field-help { margin:0; }
+@media (max-width:900px) { .lc-pricing-box__calculator { grid-template-columns:1fr; gap:0; } .lc-pricing-box__footer { align-items:stretch; flex-direction:column; } }
+
+/* M3.12.5 price profile two-column layout */
+.lc-profile-columns {
+    display:grid;
+    grid-template-columns:minmax(0, 1.15fr) minmax(340px, .85fr);
+    gap:32px;
+    align-items:start;
+}
+.lc-profile-column { min-width:0; }
+.lc-profile-column--pricing {
+    padding-left:32px;
+    border-left:1px solid var(--lc-border);
+}
+.lc-form-grid--single { grid-template-columns:1fr; gap:0; }
+.lc-pricing-stack > .form-group { margin-bottom:20px; }
+.lc-checkbox-grid--compact { grid-template-columns:repeat(2,minmax(150px,1fr)); }
+.lc-profile-active { margin-top:24px; }
+.lc-contour-panel {
+    margin:4px 0 22px;
+    padding:18px;
+    border:1px solid #d8dee5;
+    border-radius:5px;
+    background:#f8fafc;
+}
+.lc-contour-panel__price { margin-bottom:14px; }
+.lc-auto-calculation-toggle {
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin:0;
+    padding:11px 0;
+    border-top:1px solid var(--lc-border);
+    font-weight:600;
+    cursor:pointer;
+}
+.lc-auto-calculation-toggle input { margin:0; }
+.lc-contour-calculator {
+    padding-top:12px;
+    border-top:1px solid var(--lc-border);
+}
+.lc-contour-calculator[hidden] { display:none !important; }
+.lc-contour-calculator .form-group { margin-bottom:14px; }
+.lc-contour-formula {
+    padding:10px 12px;
+    border-radius:4px;
+    background:#eef2f5;
+    color:var(--lc-muted);
+    font-size:12px;
+    line-height:1.45;
+}
+#lc-contour-price.is-calculated {
+    background:#f1f5f8;
+    font-weight:600;
+}
+@media (max-width:1100px) {
+    .lc-profile-columns { grid-template-columns:1fr; gap:8px; }
+    .lc-profile-column--pricing { padding-left:0; border-left:0; }
+}
+@media (max-width:700px) {
+    .lc-checkbox-grid--compact { grid-template-columns:1fr; }
+}
+
+/* M3.13.2 – product template material selection */
+.lc-product-template-form > .lc-card + .lc-card {
+    margin-top: 18px;
+}
+
+.lc-product-material-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    column-gap: 18px;
+    row-gap: 16px;
+    margin-top: 16px;
+}
+
+.lc-checkbox-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--lc-border);
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.lc-checkbox-card:hover {
+    background: #f7f9fb;
+}
+
+.lc-checkbox-card input {
+    margin: 0;
+}
+
+.lc-checkbox-card span {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lc-checkbox-card--inactive {
+    opacity: .65;
+}
+
+/* M3.13.3.1 – grouped price sections */
+.lc-price-section {
+    margin-bottom:18px;
+    padding:18px;
+    border:1px solid var(--lc-border);
+    border-radius:6px;
+    background:#f8fafc;
+}
+.lc-price-section:last-child { margin-bottom:0; }
+.lc-price-section__title { margin:0 0 16px; font-size:15px; font-weight:600; }
+.lc-price-section > .form-group:last-child { margin-bottom:0; }
+
+/* M3.14.2 – product template color selection */
+.lc-radio-stack { display:flex; flex-direction:column; gap:10px; margin:14px 0; }
+.lc-radio-stack label { margin:0; font-weight:400; }
+.lc-product-color-selection[hidden] { display:none !important; }
+.lc-color-swatch { display:inline-block; width:16px; height:16px; margin-right:8px; border:1px solid #b8c2cc; border-radius:3px; vertical-align:-3px; }
+.lc-checkbox-card[hidden] { display:none !important; }
+
+/* M3.14.3 – product template thickness selection and color spacing */
+.lc-product-color-selection .lc-color-swatch { margin-right: 10px; }
+.lc-product-thickness-selection[hidden] { display:none !important; }
+.lc-thickness-empty { margin-top:14px; }

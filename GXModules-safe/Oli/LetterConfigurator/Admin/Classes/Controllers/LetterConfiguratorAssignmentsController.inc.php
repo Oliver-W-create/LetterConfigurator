@@ -13,9 +13,9 @@ class LetterConfiguratorAssignmentsController extends AdminHttpViewController
         $title = new NonEmptyStringType('Buchstaben-Konfigurator – Artikelzuordnungen');
         $template = $this->getTemplateFile('GXModules/Oli/LetterConfigurator/Admin/Html/letter_configurator_assignments.html');
         $editId = (int)$this->_getQueryParameter('edit_id');
-        $editAssignment = ['assignment_id' => 0, 'products_id' => 0, 'product_template_id' => 0, 'configurator_type' => 'contour_text', 'is_active' => 1];
+        $editAssignment = ['assignment_id' => 0, 'products_id' => 0, 'product_template_id' => 0, 'is_active' => 1];
         if ($editId > 0) {
-            $r = xtc_db_query("SELECT `assignment_id`,`products_id`,`product_template_id`,`configurator_type`,`is_active` FROM `oli_lc_product_assignments` WHERE `assignment_id`=".$editId." LIMIT 1");
+            $r = xtc_db_query("SELECT `assignment_id`,`products_id`,`product_template_id`,`is_active` FROM `oli_lc_product_assignments` WHERE `assignment_id`=".$editId." LIMIT 1");
             if ($row = xtc_db_fetch_array($r)) { $editAssignment = $row; }
         }
 
@@ -89,21 +89,13 @@ class LetterConfiguratorAssignmentsController extends AdminHttpViewController
             xtc_db_query("UPDATE `oli_lc_product_assignments` SET `products_id`=".$productsId.",`product_template_id`=".$templateId.",`is_active`=".$active." WHERE `assignment_id`=".$id." LIMIT 1");
             $msg='Artikelzuordnung wurde aktualisiert.';
         } else {
-            xtc_db_query("INSERT INTO `oli_lc_product_assignments` (`products_id`,`product_template_id`,`configurator_type`,`is_active`) VALUES (".$productsId.",".$templateId.",'contour_text',".$active.")");
+            xtc_db_query("INSERT INTO `oli_lc_product_assignments` (`products_id`,`product_template_id`,`is_active`) VALUES (".$productsId.",".$templateId.",".$active.")");
             $msg='Artikelzuordnung wurde angelegt.';
         }
         $GLOBALS['messageStack']->add_session($msg,'info'); return $this->redirect();
     }
     public function actionToggle(){ $this->_validatePageToken(); $this->ensureSchema(); $id=(int)$this->_getPostData('assignment_id'); if($id>0){xtc_db_query("UPDATE `oli_lc_product_assignments` SET `is_active`=IF(`is_active`=1,0,1) WHERE `assignment_id`=".$id." LIMIT 1");$GLOBALS['messageStack']->add_session('Status wurde geändert.','info');} return $this->redirect(); }
     public function actionDelete(){ $this->_validatePageToken(); $this->ensureSchema(); $id=(int)$this->_getPostData('assignment_id'); if($id>0){xtc_db_query("DELETE FROM `oli_lc_product_assignments` WHERE `assignment_id`=".$id." LIMIT 1");$GLOBALS['messageStack']->add_session('Artikelzuordnung wurde gelöscht.','info');} return $this->redirect(); }
-    private function ensureSchema()
-    {
-        xtc_db_query("CREATE TABLE IF NOT EXISTS `oli_lc_product_assignments` (`assignment_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,`products_id` INT UNSIGNED NOT NULL,`product_template_id` INT UNSIGNED NOT NULL,`configurator_type` VARCHAR(64) NOT NULL DEFAULT 'contour_text',`is_active` TINYINT(1) NOT NULL DEFAULT 1,`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,`updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,PRIMARY KEY (`assignment_id`),UNIQUE KEY `uq_oli_lc_assignment_product` (`products_id`),KEY `idx_oli_lc_assignment_template` (`product_template_id`),KEY `idx_oli_lc_assignment_active` (`is_active`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-
-        $columnResult = xtc_db_query("SHOW COLUMNS FROM `oli_lc_product_assignments` LIKE 'configurator_type'");
-        if (xtc_db_num_rows($columnResult) === 0) {
-            xtc_db_query("ALTER TABLE `oli_lc_product_assignments` ADD `configurator_type` VARCHAR(64) NOT NULL DEFAULT 'contour_text' AFTER `product_template_id`");
-        }
-    }
+    private function ensureSchema(){ xtc_db_query("CREATE TABLE IF NOT EXISTS `oli_lc_product_assignments` (`assignment_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,`products_id` INT UNSIGNED NOT NULL,`product_template_id` INT UNSIGNED NOT NULL,`is_active` TINYINT(1) NOT NULL DEFAULT 1,`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,`updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,PRIMARY KEY (`assignment_id`),UNIQUE KEY `uq_oli_lc_assignment_product` (`products_id`),KEY `idx_oli_lc_assignment_template` (`product_template_id`),KEY `idx_oli_lc_assignment_active` (`is_active`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"); }
     private function redirect($id=0){ $q='do=LetterConfiguratorAssignments'.($id>0?'&edit_id='.$id:''); return MainFactory::create('RedirectHttpControllerResponse',xtc_href_link('admin.php',$q)); }
 }

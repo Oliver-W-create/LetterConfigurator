@@ -1,0 +1,369 @@
+{extends file="get_usermod:layouts/main/layout.html"}
+
+{block name="content"}
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/admin.css?v=3.14.4">
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/admin.js?v=3.14.4" defer></script>
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/table.js?v=3.14.4" defer></script>
+
+<div class="lc-admin lc-admin--full-width" data-lc-table>
+    <header class="lc-page-header">
+        <div>
+            <h1 class="lc-page-title">Produkte</h1>
+            <p class="lc-page-subtitle">Produktvorlagen legen fest, welche Stammdaten später im Konfigurator angeboten werden.</p>
+        </div>
+        <div><span class="label label-info">M3.14.4</span></div>
+    </header>
+
+    <div class="lc-grid lc-grid--stack">
+        <section class="lc-card">
+            <div class="lc-card__header">
+                <h2 class="lc-card__title">Vorhandene Produktvorlagen</h2>
+                <div class="lc-toolbar">
+                    <div class="lc-toolbar__group"></div>
+                    <div class="lc-toolbar__group">
+                        <div class="lc-search">
+                            <input class="form-control" type="search" data-lc-table-search placeholder="Produkte durchsuchen …" aria-label="Produkte durchsuchen">
+                            <span class="lc-search__icon">⌕</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lc-card__body lc-card__body--flush">
+                <div class="lc-table-wrap">
+                    <table class="table lc-table">
+                        <thead>
+                        <tr>
+                            <th class="lc-table__sort lc-table__sort-order" data-lc-sort>Sortierung</th>
+                            <th class="lc-table__sort" data-lc-sort>Produkt</th>
+                            <th class="lc-table__sort" data-lc-sort>Materialien</th>
+                            <th class="lc-table__sort" data-lc-sort>Fertigungsarten</th>
+                            <th class="lc-table__sort" data-lc-sort>Farben</th>
+                            <th class="lc-table__sort" data-lc-sort>Materialstärken</th>
+                            <th class="lc-table__sort" data-lc-sort>Preisprofil</th>
+                            <th class="lc-table__sort" data-lc-sort>Status</th>
+                            <th class="lc-table__actions">Aktionen</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {if empty($content.products)}
+                            <tr><td colspan="9" class="lc-empty">Noch keine Produktvorlagen vorhanden.</td></tr>
+                        {else}
+                            {foreach $content.products as $product}
+                                <tr data-lc-row>
+                                    <td class="lc-table__sort-order" data-sort-value="{$product.sort_order|escape}">{$product.sort_order|escape}</td>
+                                    <td>
+                                        <strong>{$product.name|escape}</strong>
+                                        {if $product.description}<div class="lc-muted">{$product.description|escape|nl2br}</div>{/if}
+                                    </td>
+                                    <td>{if $product.material_names}{$product.material_names|escape}{else}<span class="lc-muted">Keine Materialien</span>{/if}</td>
+                                    <td>{if $product.production_method_names}{$product.production_method_names|escape}{else}<span class="lc-muted">Keine Fertigungsarten</span>{/if}</td>
+                                    <td>{if $product.color_names}{$product.color_names|escape}{else}<span class="lc-muted">Keine Farben</span>{/if}</td>
+                                    <td>{if $product.thickness_names}{$product.thickness_names|escape}{else}<span class="lc-muted">Keine Materialstärken</span>{/if}</td>
+                                    <td>{if $product.price_profile_name}{$product.price_profile_name|escape}{else}<span class="lc-muted">Kein Preisprofil</span>{/if}</td>
+                                    <td data-sort-value="{$product.is_active|escape}">
+                                        {if $product.is_active == 1}
+                                            <span class="lc-status lc-status--active">Aktiv</span>
+                                        {else}
+                                            <span class="lc-status lc-status--inactive">Inaktiv</span>
+                                        {/if}
+                                    </td>
+                                    <td class="lc-table__actions">
+                                        <a class="btn btn-default btn-sm" href="{$product.edit_url}">Bearbeiten</a>
+                                        <form action="{$content.action_toggle}" method="post" style="display:inline;">
+                                            <input type="hidden" name="pageToken" value="{$content.pageToken}">
+                                            <input type="hidden" name="product_template_id" value="{$product.product_template_id|escape}">
+                                            <button type="submit" class="btn btn-default btn-sm">{if $product.is_active == 1}Deaktivieren{else}Aktivieren{/if}</button>
+                                        </form>
+                                        <form action="{$content.action_delete}" method="post" style="display:inline;" onsubmit="return confirm('Produktvorlage wirklich löschen?');">
+                                            <input type="hidden" name="pageToken" value="{$content.pageToken}">
+                                            <input type="hidden" name="product_template_id" value="{$product.product_template_id|escape}">
+                                            <button type="submit" class="btn btn-danger btn-sm">Löschen</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {/foreach}
+                        {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <form action="{$content.action_save}" method="post" class="lc-form lc-product-template-form">
+            <input type="hidden" name="pageToken" value="{$content.pageToken}">
+            <input type="hidden" name="product[product_template_id]" value="{$content.editProduct.product_template_id|escape}">
+
+            <section class="lc-card">
+                <div class="lc-card__header">
+                    <h2 class="lc-card__title">Grunddaten</h2>
+                </div>
+                <div class="lc-card__body">
+                    <div class="form-group">
+                        <label class="control-label" for="lc-product-sort">Sortierung</label>
+                        <input type="number" class="form-control" id="lc-product-sort" name="product[sort_order]" value="{$content.editProduct.sort_order|escape}">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="lc-product-name">Produktname *</label>
+                        <input class="form-control" id="lc-product-name" name="product[name]" maxlength="150" required value="{$content.editProduct.name|escape}">
+                        <span class="lc-field-help">Interne Bezeichnung der Produktvorlage, zum Beispiel „Acrylbuchstaben“.</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="lc-product-description">Kurzbeschreibung</label>
+                        <textarea class="form-control" id="lc-product-description" name="product[description]" rows="4">{$content.editProduct.description|escape}</textarea>
+                        <span class="lc-field-help">Kurze interne Beschreibung des vorgesehenen Produkts und seiner Verwendung.</span>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="product[is_active]" value="0">
+                        <label><input type="checkbox" name="product[is_active]" value="1" {if $content.editProduct.is_active == 1}checked{/if}> Produktvorlage ist aktiv</label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="lc-card">
+                <div class="lc-card__header">
+                    <h2 class="lc-card__title">Materialien</h2>
+                </div>
+                <div class="lc-card__body">
+                    <p class="lc-field-help">Wählen Sie alle Materialien aus, die Kunden bei dieser Produktvorlage später verwenden dürfen.</p>
+                    {if empty($content.materials)}
+                        <div class="alert alert-warning">Es sind noch keine Materialien vorhanden. Legen Sie zuerst unter „Materialien“ mindestens einen Datensatz an.</div>
+                    {else}
+                        <div class="lc-product-material-grid">
+                            {foreach $content.materials as $material}
+                                <label class="lc-checkbox-card{if $material.is_active != 1} lc-checkbox-card--inactive{/if}">
+                                    <input type="checkbox" name="material_ids[]" value="{$material.material_id|escape}" data-lc-material-checkbox {if $material.is_selected == 1}checked{/if}>
+                                    <span>
+                                        <strong>{$material.name|escape}</strong>
+                                        {if $material.is_active != 1}<small class="lc-muted">Inaktiv</small>{/if}
+                                    </span>
+                                </label>
+                            {/foreach}
+                        </div>
+                    {/if}
+                </div>
+            </section>
+
+            <section class="lc-card">
+                <div class="lc-card__header">
+                    <h2 class="lc-card__title">Fertigungsarten</h2>
+                </div>
+                <div class="lc-card__body">
+                    <p class="lc-field-help">Wählen Sie alle Fertigungsarten aus, die für diese Produktvorlage zulässig sind.</p>
+                    {if empty($content.productionMethods)}
+                        <div class="alert alert-warning">Es sind keine aktiven Fertigungsarten vorhanden. Legen Sie zuerst unter „Fertigungsarten“ mindestens einen aktiven Datensatz an.</div>
+                    {else}
+                        <div class="lc-product-material-grid">
+                            {foreach $content.productionMethods as $method}
+                                <label class="lc-checkbox-card">
+                                    <input type="checkbox" name="production_method_ids[]" value="{$method.production_method_id|escape}" data-lc-production-method-checkbox {if $method.is_selected == 1}checked{/if}>
+                                    <span>
+                                        <strong>{$method.name|escape}</strong>
+                                        <small class="lc-muted">{if $method.range_mode == 'single'}Stärke: Einzelwert{else}Stärke: Von–bis{/if}</small>
+                                    </span>
+                                </label>
+                            {/foreach}
+                        </div>
+                    {/if}
+                </div>
+            </section>
+
+            <section class="lc-card" data-lc-product-colors>
+                <div class="lc-card__header"><h2 class="lc-card__title">Farben</h2></div>
+                <div class="lc-card__body">
+                    <p class="lc-field-help">Legen Sie fest, ob alle Farben der gewählten Materialien oder nur bestimmte Farben angeboten werden.</p>
+                    <div class="lc-radio-stack">
+                        <label><input type="radio" name="color_mode" value="all" {if $content.editProduct.color_mode != 'selected'}checked{/if}> Alle Farben der gewählten Materialien zulassen</label>
+                        <label><input type="radio" name="color_mode" value="selected" {if $content.editProduct.color_mode == 'selected'}checked{/if}> Nur ausgewählte Farben zulassen</label>
+                    </div>
+                    <div class="lc-product-color-selection" data-lc-color-selection>
+                        {if empty($content.colors)}
+                            <div class="alert alert-warning">Es sind noch keine aktiven Farben vorhanden.</div>
+                        {else}
+                            <div class="lc-product-material-grid">
+                                {foreach $content.colors as $color}
+                                    <label class="lc-checkbox-card" data-lc-color-card data-material-id="{$color.material_id|escape}">
+                                        <input type="checkbox" name="color_ids[]" value="{$color.color_id|escape}" {if $color.is_selected == 1}checked{/if}>
+                                        <span>
+                                            <strong><i class="lc-color-swatch" style="background:{$color.hex_value|default:'#ffffff'|escape};"></i>{$color.name|escape}</strong>
+                                            <small class="lc-muted">{$color.material_name|escape}</small>
+                                        </span>
+                                    </label>
+                                {/foreach}
+                            </div>
+                            <div class="alert alert-warning lc-color-empty" data-lc-color-empty hidden>Für die aktuell gewählten Materialien sind keine aktiven Farben vorhanden.</div>
+                        {/if}
+                    </div>
+                </div>
+            </section>
+
+            <section class="lc-card" data-lc-product-thicknesses>
+                <div class="lc-card__header"><h2 class="lc-card__title">Materialstärken</h2></div>
+                <div class="lc-card__body">
+                    <p class="lc-field-help">Legen Sie fest, ob alle passenden Materialstärken oder nur bestimmte Stärken angeboten werden.</p>
+                    <div class="lc-radio-stack">
+                        <label><input type="radio" name="thickness_mode" value="all" {if $content.editProduct.thickness_mode != 'selected'}checked{/if}> Alle passenden Materialstärken zulassen</label>
+                        <label><input type="radio" name="thickness_mode" value="selected" {if $content.editProduct.thickness_mode == 'selected'}checked{/if}> Nur ausgewählte Materialstärken zulassen</label>
+                    </div>
+                    <div class="lc-product-thickness-selection" data-lc-thickness-selection>
+                        {if empty($content.thicknesses)}
+                            <div class="alert alert-warning">Es sind noch keine aktiven Materialstärken vorhanden.</div>
+                        {else}
+                            <div class="lc-product-material-grid">
+                                {foreach $content.thicknesses as $thickness}
+                                    <label class="lc-checkbox-card" data-lc-thickness-card data-material-id="{$thickness.material_id|escape}" data-production-method-id="{$thickness.production_method_id|escape}">
+                                        <input type="checkbox" name="thickness_ids[]" value="{$thickness.thickness_id|escape}" {if $thickness.is_selected == 1}checked{/if}>
+                                        <span>
+                                            <strong>{$thickness.display_name|escape}</strong>
+                                            <small class="lc-muted">{$thickness.material_name|escape} · {$thickness.production_method_name|escape}</small>
+                                        </span>
+                                    </label>
+                                {/foreach}
+                            </div>
+                            <div class="alert alert-warning lc-thickness-empty" data-lc-thickness-empty hidden>Für die aktuell gewählten Materialien und Fertigungsarten sind keine aktiven Materialstärken vorhanden.</div>
+                        {/if}
+                    </div>
+                </div>
+            </section>
+
+            <section class="lc-card" data-lc-product-price-profile>
+                <div class="lc-card__header"><h2 class="lc-card__title">Preisprofil</h2></div>
+                <div class="lc-card__body">
+                    <p class="lc-field-help">Es werden nur aktive Preisprofile angezeigt, die zu mindestens einem ausgewählten Material und einer ausgewählten Fertigungsart passen.</p>
+                    <div class="form-group">
+                        <label class="control-label" for="lc-product-price-profile">Preisprofil</label>
+                        <select class="form-control" id="lc-product-price-profile" name="price_profile_id" data-lc-price-profile-select required>
+                            <option value="0">Bitte Preisprofil auswählen</option>
+                            {foreach $content.priceProfiles as $profile}
+                                <option value="{$profile.price_profile_id|escape}" data-material-id="{$profile.material_id|escape}" data-production-method-id="{$profile.production_method_id|escape}" {if $profile.is_selected == 1}selected{/if}>
+                                    {$profile.name|escape}{if $profile.material_name} · {$profile.material_name|escape}{/if}{if $profile.production_method_name} · {$profile.production_method_name|escape}{/if}
+                                </option>
+                            {/foreach}
+                        </select>
+                        <span class="lc-field-help" data-lc-price-profile-help>Wählen Sie zuerst Materialien und Fertigungsarten aus.</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="lc-form__footer">
+                {if $content.editProduct.product_template_id}<a href="{$content.action_cancel}" class="btn btn-default">Abbrechen</a>{/if}
+                <button type="submit" class="btn btn-primary">Speichern</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="alert alert-info lc-note"><strong>M3.14.4:</strong> Farben, Materialstärken und Preisprofile werden automatisch nach den gewählten Materialien und Fertigungsarten gefiltert.</div>
+{literal}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var materialInputs = document.querySelectorAll('[data-lc-material-checkbox]');
+    var methodInputs = document.querySelectorAll('[data-lc-production-method-checkbox]');
+
+    function selectedValues(inputs) {
+        var values = {};
+        inputs.forEach(function (input) {
+            if (input.checked) { values[input.value] = true; }
+        });
+        return values;
+    }
+
+    function setupFilteredSelection(rootSelector, selectionSelector, modeName, cardSelector, emptySelector, filterCallback) {
+        var root = document.querySelector(rootSelector);
+        if (!root) { return function () {}; }
+        var selection = root.querySelector(selectionSelector);
+        var modeInputs = root.querySelectorAll('input[name="' + modeName + '"]');
+        var cards = root.querySelectorAll(cardSelector);
+        var emptyNotice = root.querySelector(emptySelector);
+
+        function update() {
+            var checkedMode = root.querySelector('input[name="' + modeName + '"]:checked');
+            var selectedMode = checkedMode ? checkedMode.value === 'selected' : false;
+            if (selection) { selection.hidden = !selectedMode; }
+            if (!selectedMode) { return; }
+
+            var visible = 0;
+            cards.forEach(function (card) {
+                var show = filterCallback(card);
+                var checkbox = card.querySelector('input[type="checkbox"]');
+                card.hidden = !show;
+                card.style.display = show ? '' : 'none';
+                if (checkbox) {
+                    checkbox.disabled = !show;
+                    if (!show) { checkbox.checked = false; }
+                }
+                if (show) { visible += 1; }
+            });
+            if (emptyNotice) { emptyNotice.hidden = visible > 0; }
+        }
+
+        modeInputs.forEach(function (input) { input.addEventListener('change', update); });
+        return update;
+    }
+
+    var updateColors = setupFilteredSelection(
+        '[data-lc-product-colors]',
+        '[data-lc-color-selection]',
+        'color_mode',
+        '[data-lc-color-card]',
+        '[data-lc-color-empty]',
+        function (card) {
+            return !!selectedValues(materialInputs)[card.getAttribute('data-material-id')];
+        }
+    );
+
+    var updateThicknesses = setupFilteredSelection(
+        '[data-lc-product-thicknesses]',
+        '[data-lc-thickness-selection]',
+        'thickness_mode',
+        '[data-lc-thickness-card]',
+        '[data-lc-thickness-empty]',
+        function (card) {
+            var materials = selectedValues(materialInputs);
+            var methods = selectedValues(methodInputs);
+            return !!materials[card.getAttribute('data-material-id')] && !!methods[card.getAttribute('data-production-method-id')];
+        }
+    );
+
+    var priceProfileSelect = document.querySelector('[data-lc-price-profile-select]');
+    var priceProfileHelp = document.querySelector('[data-lc-price-profile-help]');
+
+    function updatePriceProfiles() {
+        if (!priceProfileSelect) { return; }
+        var materials = selectedValues(materialInputs);
+        var methods = selectedValues(methodInputs);
+        var visibleCount = 0;
+        var selectedOption = priceProfileSelect.options[priceProfileSelect.selectedIndex];
+
+        Array.prototype.forEach.call(priceProfileSelect.options, function (option, index) {
+            if (index === 0) { return; }
+            var show = !!materials[option.getAttribute('data-material-id')] && !!methods[option.getAttribute('data-production-method-id')];
+            option.hidden = !show;
+            option.disabled = !show;
+            if (show) { visibleCount += 1; }
+        });
+
+        if (selectedOption && selectedOption.value !== '0' && selectedOption.disabled) {
+            priceProfileSelect.value = '0';
+        }
+        if (priceProfileHelp) {
+            priceProfileHelp.textContent = visibleCount > 0
+                ? 'Es stehen ' + visibleCount + ' passende Preisprofile zur Auswahl.'
+                : 'Für die gewählten Materialien und Fertigungsarten ist kein aktives Preisprofil vorhanden.';
+        }
+    }
+
+    materialInputs.forEach(function (input) {
+        input.addEventListener('change', function () { updateColors(); updateThicknesses(); updatePriceProfiles(); });
+    });
+    methodInputs.forEach(function (input) {
+        input.addEventListener('change', function () { updateThicknesses(); updatePriceProfiles(); });
+    });
+
+    updateColors();
+    updateThicknesses();
+    updatePriceProfiles();
+});
+</script>
+{/literal}
+
+</div>
+{/block}

@@ -1,0 +1,13 @@
+:root {
+    --lc-bg: #f5f7f9;
+    --lc-card-bg: #ffffff;
+    --lc-border: #dfe4e8;
+    --lc-text: #263238;
+    --lc-muted: #6b7780;
+    --lc-primary: #337ab7;
+    --lc-success: #3c8c40;
+    --lc-warning: #a66a00;
+    --lc-danger: #b23838;
+    --lc-radius: 4px;
+    --lc-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+}

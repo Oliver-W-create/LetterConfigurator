@@ -1,0 +1,251 @@
+{extends file="get_usermod:layouts/main/layout.html"}
+{block name="content"}
+<link rel="stylesheet" href="../GXModules/Oli/LetterConfigurator/Admin/Assets/Css/admin.css?v=3.13.3.2">
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/admin.js?v=3.13.3.2" defer></script>
+<script src="../GXModules/Oli/LetterConfigurator/Admin/Assets/Javascript/table.js?v=3.13.3.2" defer></script>
+<div class="lc-admin lc-admin--full-width">
+    <header class="lc-page-header">
+        <div>
+            <h1 class="lc-page-title">Preisprofile</h1>
+            <p class="lc-page-subtitle">Modulare Preisbausteine für Material, Bearbeitung und Grundkosten verwalten.</p>
+        </div>
+        <span class="label label-info">M3.13.3.2</span>
+    </header>
+
+    <div class="lc-stack">
+        <section class="lc-card">
+            <div class="lc-card__header">
+                <h2 class="lc-card__title">Vorhandene Preisprofile</h2>
+                <div class="lc-toolbar"><div class="lc-toolbar__group"></div><div class="lc-toolbar__group"><div class="lc-search"><input class="form-control" type="search" data-lc-table-search placeholder="Preisprofile durchsuchen …" aria-label="Preisprofile durchsuchen"><span class="lc-search__icon">⌕</span></div></div></div>
+            </div>
+            <div class="lc-card__body lc-card__body--flush">
+                <div class="lc-table-wrap">
+                    <table class="table lc-table">
+                        <thead><tr><th class="lc-table__sort lc-table__sort-order" data-lc-sort>Sortierung</th><th class="lc-table__sort" data-lc-sort>Name</th><th>Material</th><th>Fertigungsart</th><th>Preisbausteine (netto zzgl. USt.)</th><th>Status</th><th class="lc-table__actions">Aktionen</th></tr></thead>
+                        <tbody>
+                        {if empty($content.profiles)}
+                            <tr><td colspan="7" class="lc-empty">Noch keine Preisprofile vorhanden.</td></tr>
+                        {else}
+                            {foreach $content.profiles as $profile}
+                            <tr>
+                                <td class="lc-table__sort-order" data-sort-value="{$profile.sort_order|escape}">{$profile.sort_order|escape}</td>
+                                <td><strong>{$profile.name|escape}</strong><br><small>{$profile.mode_label|escape}</small></td>
+                                <td>{$profile.material_name|escape}</td>
+                                <td>{$profile.production_method_label|escape}</td>
+                                <td>
+                                    {if $profile.area_price_per_m2 > 0}<div>Fläche: {$profile.area_price_per_m2_display|escape} €/m²</div>{/if}
+                                    {if $profile.contour_price_per_mm > 0}<div>Kontur: {$profile.contour_price_per_m|escape} €/m</div>{/if}
+                                    {if $profile.price_per_character > 0}<div>Zeichen: {$profile.price_per_character_display|escape} €/Zeichen</div>{/if}
+                                    {if $profile.fixed_price > 0}<div>Festbetrag: {$profile.fixed_price_display|escape} €</div>{/if}
+                                    {if $profile.area_price_per_m2 <= 0 && $profile.contour_price_per_mm <= 0 && $profile.price_per_character <= 0 && $profile.fixed_price <= 0}<span class="text-muted">Keine variablen Bausteine</span>{/if}
+                                </td>
+                                <td>{if $profile.is_active == 1}<span class="lc-status lc-status--active">Aktiv</span>{else}<span class="lc-status lc-status--inactive">Inaktiv</span>{/if}</td>
+                                <td class="lc-table__actions"><a class="btn btn-default btn-sm" href="{$profile.edit_url}">Bearbeiten</a><form action="{$content.action_toggle}" method="post" style="display:inline;"><input type="hidden" name="pageToken" value="{$content.pageToken}"><input type="hidden" name="price_profile_id" value="{$profile.price_profile_id|escape}"><button type="submit" class="btn btn-default btn-sm">{if $profile.is_active == 1}Deaktivieren{else}Aktivieren{/if}</button></form></td>
+                            </tr>
+                            {/foreach}
+                        {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="lc-card" id="lc-price-profile-form">
+            <div class="lc-card__header"><h2 class="lc-card__title">{if $content.editProfile.price_profile_id}Preisprofil bearbeiten{else}Preisprofil anlegen{/if}</h2></div>
+            <div class="lc-card__body">
+                {if empty($content.materials)}<div class="alert alert-warning">Bitte zuerst mindestens ein Material anlegen.</div>{/if}
+                <div class="alert alert-info">
+                    <strong>Flächenberechnung:</strong> Der Flächenpreis basiert ausschließlich auf den vom Kunden eingegebenen Gesamtmaßen: Breite × Höhe in mm, umgerechnet in m². Die tatsächliche SVG-Fläche einzelner Buchstaben wird nicht zur Verkaufspreisberechnung verwendet.
+                </div>
+                <div class="alert alert-warning"><strong>3D-Druck-Kalkulation:</strong> Preisprofile für 3D-Druck werden in einem eigenen folgenden Meilenstein um Volumen-, Maschinenzeit- und Materialverbrauchsdaten erweitert. Konturpreise gelten ausschließlich für konturgeschnittene Buchstaben.</div>
+                <form action="{$content.action_save}" method="post" class="form-horizontal lc-form">
+                    <input type="hidden" name="pageToken" value="{$content.pageToken}">
+                    <input type="hidden" name="profile[price_profile_id]" value="{$content.editProfile.price_profile_id|escape}">
+                    <div class="lc-profile-columns">
+                        <div class="lc-profile-column lc-profile-column--master-data">
+                            <h3 class="lc-section-title">Grunddaten</h3>
+                            <div class="lc-form-grid lc-form-grid--single">
+                                <div class="form-group"><label class="control-label" for="lc-price-sort">Sortierung</label><input type="number" class="form-control" id="lc-price-sort" name="profile[sort_order]" value="{$content.editProfile.sort_order|escape}"></div>
+                                <div class="form-group"><label class="control-label" for="lc-price-name">Name *</label><input class="form-control" id="lc-price-name" name="profile[name]" required value="{$content.editProfile.name|escape}"></div>
+                                <div class="form-group"><label class="control-label" for="lc-price-material">Material *</label><select class="form-control" id="lc-price-material" name="profile[material_id]" required><option value="">Bitte auswählen</option>{foreach $content.materials as $material}<option value="{$material.material_id|escape}" {if $content.editProfile.material_id == $material.material_id}selected{/if}>{$material.name|escape}{if $material.is_active != 1} (inaktiv){/if}</option>{/foreach}</select></div>
+                                <div class="form-group"><label class="control-label" for="lc-price-production-method">Fertigungsart *</label><select class="form-control" id="lc-price-production-method" name="profile[production_method]" required>{foreach $content.productionMethods as $method}<option value="{$method.method_key|escape}" data-engine="{$method.engine_key|escape}" data-machine-cost="{$method.machine_cost_per_hour|escape}" data-machine-name="{$method.machine_name|escape}" {if $content.editProfile.production_method == $method.method_key}selected{/if}>{$method.name|escape}{if $method.is_active != 1} (inaktiv){/if}</option>{/foreach}</select></div>
+                            </div>
+
+                            <h3 class="lc-section-title">Zuordnungen</h3>
+                            <div class="form-group lc-color-assignment"><label class="control-label">Farben</label><div class="lc-checkbox-grid lc-checkbox-grid--compact" id="lc-price-colors">{foreach $content.colors as $color}<label class="lc-check-card" data-material-id="{$color.material_id|escape}"><input type="checkbox" name="profile[color_ids][]" value="{$color.color_id|escape}" {if $color.is_selected == 1}checked{/if}><span class="lc-color-option"><span class="lc-color-swatch lc-color-swatch--small" style="background-color: {$color.hex_value|default:'#FFFFFF'|escape};"></span><span class="lc-color-option__text"><strong class="lc-color-option__name">{$color.name|escape}</strong><small class="lc-color-option__code">{if $color.is_active != 1}Inaktiv{/if}</small></span></span></label>{/foreach}</div><span class="lc-field-help">Keine Auswahl bedeutet: Profil gilt für alle Farben des Materials.</span></div>
+
+                            <div class="form-group lc-color-assignment"><label class="control-label">Materialstärken</label><div class="lc-checkbox-grid lc-checkbox-grid--compact" id="lc-price-thicknesses">{foreach $content.thicknesses as $thickness}<label class="lc-check-card" data-material-id="{$thickness.material_id|escape}" data-production-method="{$thickness.production_method|escape}"><input type="checkbox" name="profile[thickness_ids][]" value="{$thickness.thickness_id|escape}" {if $thickness.is_selected == 1}checked{/if}><span><strong>{if $thickness.thickness_min_mm == $thickness.thickness_max_mm}{$thickness.thickness_min_display|escape} mm{else}{$thickness.thickness_min_display|escape}–{$thickness.thickness_max_display|escape} mm{/if}</strong><small>{$thickness.production_method|escape}{if $thickness.is_active != 1} · inaktiv{/if}</small></span></label>{/foreach}</div><span class="lc-field-help">Keine Auswahl bedeutet: Profil gilt für alle Stärken des Materials.</span></div>
+
+                            <div class="form-group lc-profile-active"><input type="hidden" name="profile[is_active]" value="0"><label><input type="checkbox" name="profile[is_active]" value="1" {if $content.editProfile.is_active == 1}checked{/if}> Preisprofil ist aktiv</label></div>
+                        </div>
+
+                        <div class="lc-profile-column lc-profile-column--pricing">
+                            <h3 class="lc-section-title">Preisberechnung</h3>
+                            <div class="alert alert-info">Alle Preisangaben sind Nettopreise zuzüglich gesetzlicher Umsatzsteuer.</div>
+                            <div class="lc-pricing-stack">
+                                <section class="lc-price-section">
+                                    <h4 class="lc-price-section__title">Materialkosten</h4>
+                                    <div class="form-group">
+                                        <label class="control-label">Materialpreis (€/m²) – netto zzgl. USt.</label>
+                                        <input type="number" min="0" step="0.01" class="form-control" name="profile[area_price_per_m2]" value="{$content.editProfile.area_price_per_m2|escape}">
+                                        <span class="lc-field-help">Basis: Gesamtbreite × Gesamthöhe aus der Kundeneingabe.</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Verschnitt (%)</label>
+                                        <input type="number" min="0" step="1" class="form-control" name="profile[waste_percent]" value="{$content.editProfile.waste_percent|escape}">
+                                        <span class="lc-field-help">Prozentualer Materialaufschlag für Verschnitt und Produktionsreserve.</span>
+                                    </div>
+                                </section>
+
+                                <section class="lc-price-section">
+                                    <h4 class="lc-price-section__title">Fertigungskosten</h4>
+                                    <div class="form-group lc-contour-panel__price">
+                                        <label class="control-label" for="lc-contour-price">Konturpreis (€/m) – netto zzgl. USt.</label>
+                                        <input type="number" min="0" step="0.01" class="form-control" id="lc-contour-price" name="profile[contour_price_per_m]" value="{$content.editProfile.contour_price_per_m|escape}">
+                                        <span class="lc-field-help">Direkt als Preis pro Meter eingeben oder automatisch aus den Maschinendaten berechnen lassen.</span>
+                                    </div>
+                                    <label class="lc-auto-calculation-toggle" for="lc-auto-contour-price">
+                                        <input type="checkbox" id="lc-auto-contour-price" {if $content.editProfile.cutting_speed_mm_s > 0 || $content.editProfile.machine_cost_per_hour > 0}checked{/if}>
+                                        <span>Konturpreis automatisch berechnen</span>
+                                    </label>
+                                    <div class="lc-contour-calculator" id="lc-contour-calculator">
+                                        <div class="form-group">
+                                            <label class="control-label" for="lc-machine-cost">Maschinenkosten (€/Std.) – netto zzgl. USt.</label>
+                                            <input type="number" min="0" step="0.01" class="form-control" id="lc-machine-cost" name="profile[machine_cost_per_hour]" value="{$content.editProfile.machine_cost_per_hour|escape}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label" for="lc-cutting-speed">Schnittgeschwindigkeit (mm/s)</label>
+                                            <input type="number" min="0" step="0.01" class="form-control" id="lc-cutting-speed" name="profile[cutting_speed_mm_s]" value="{$content.editProfile.cutting_speed_mm_s|escape}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label" for="lc-cutting-passes">Anzahl Durchgänge</label>
+                                            <input type="number" min="1" step="1" class="form-control" id="lc-cutting-passes" name="profile[cutting_passes]" value="{$content.editProfile.cutting_passes|escape}">
+                                        </div>
+                                        <div class="lc-contour-formula">Berechnung je Meter: ((Maschinenkosten ÷ 3600) ÷ Schnittgeschwindigkeit × Anzahl Durchgänge) × 1000</div>
+                                    </div>
+                                </section>
+
+                                <section class="lc-price-section">
+                                    <h4 class="lc-price-section__title">Zusatzkosten</h4>
+                                    <div class="form-group">
+                                        <label class="control-label">Zeichenpreis (€/Zeichen) – netto zzgl. USt.</label>
+                                        <input type="number" min="0" step="0.01" class="form-control" name="profile[price_per_character]" value="{$content.editProfile.price_per_character|escape}">
+                                        <span class="lc-field-help">Zusätzlicher Preis für jedes Zeichen des eingegebenen Textes, zum Beispiel für Entgraten oder Nachbearbeitung.</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Grundpreis (€) – netto zzgl. USt.</label>
+                                        <input type="number" min="0" step="0.01" class="form-control" name="profile[fixed_price]" value="{$content.editProfile.fixed_price|escape}">
+                                        <span class="lc-field-help">Einmaliger Betrag unabhängig von Größe, Material und Anzahl der Zeichen.</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Mindestpreis (€) – netto zzgl. USt.</label>
+                                        <input type="number" min="0" step="0.01" class="form-control" name="profile[minimum_price]" value="{$content.editProfile.minimum_price|escape}">
+                                        <span class="lc-field-help">Liegt der berechnete Gesamtpreis darunter, wird stattdessen dieser Mindestpreis berechnet.</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Rüstkosten (€) – netto zzgl. USt.</label>
+                                        <input type="number" min="0" step="0.01" class="form-control" name="profile[setup_fee]" value="{$content.editProfile.setup_fee|escape}">
+                                        <span class="lc-field-help">Einmalige Kosten für das Einrichten der Maschine und den Produktionsstart.</span>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lc-form__footer">{if $content.editProfile.price_profile_id}<a href="{$content.action_cancel}" class="btn btn-default">Abbrechen</a>{/if}<button type="submit" class="btn btn-primary" {if empty($content.materials)}disabled{/if}>Speichern</button></div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{literal}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var material = document.getElementById('lc-price-material');
+    var productionMethod = document.getElementById('lc-price-production-method');
+    if (!material) { return; }
+    var cards = Array.prototype.slice.call(document.querySelectorAll('#lc-price-colors [data-material-id], #lc-price-thicknesses [data-material-id]'));
+    function updateAssignments() {
+        var materialId = material.value;
+        cards.forEach(function (card) {
+            var methodMatches = !card.hasAttribute('data-production-method') || card.getAttribute('data-production-method') === productionMethod.value;
+            var visible = materialId !== '' && card.getAttribute('data-material-id') === materialId && methodMatches;
+            card.hidden = !visible;
+            var input = card.querySelector('input');
+            input.disabled = !visible;
+            if (!visible) { input.checked = false; }
+        });
+    }
+    material.addEventListener('change', updateAssignments);
+    var machineCostInput = document.getElementById('lc-machine-cost');
+    var initialProductionMethod = productionMethod.value;
+    var machineCostTouched = false;
+    if (machineCostInput) {
+        machineCostInput.addEventListener('input', function () { machineCostTouched = true; });
+    }
+    function prefillMachineCost(force) {
+        var option = productionMethod.options[productionMethod.selectedIndex];
+        if (!option || !machineCostInput) { return; }
+        var defaultCost = option.getAttribute('data-machine-cost') || '0';
+        if (force || !machineCostTouched || parseFloat(machineCostInput.value || '0') === 0) {
+            machineCostInput.value = defaultCost;
+            machineCostTouched = false;
+            calculateContourPrice();
+        }
+    }
+    productionMethod.addEventListener('change', function () { updateAssignments(); prefillMachineCost(true); });
+    updateAssignments();
+
+    var autoContour = document.getElementById('lc-auto-contour-price');
+    var contourCalculator = document.getElementById('lc-contour-calculator');
+    var contourPrice = document.getElementById('lc-contour-price');
+    var calculationInputs = [
+        document.getElementById('lc-cutting-speed'),
+        document.getElementById('lc-cutting-passes'),
+        document.getElementById('lc-machine-cost')
+    ];
+
+    function parseNumber(input) {
+        return parseFloat((input.value || '').replace(',', '.')) || 0;
+    }
+
+    function calculateContourPrice() {
+        if (!autoContour.checked) { return; }
+        var cuttingSpeed = parseNumber(calculationInputs[0]);
+        var passes = parseNumber(calculationInputs[1]);
+        var machineCost = parseNumber(calculationInputs[2]);
+        contourPrice.value = cuttingSpeed > 0
+            ? (((machineCost / 3600) / cuttingSpeed * passes) * 1000).toFixed(2)
+            : '0.00';
+    }
+
+    function updateContourCalculator() {
+        var automatic = autoContour.checked;
+        contourCalculator.hidden = !automatic;
+        contourPrice.readOnly = automatic;
+        contourPrice.classList.toggle('is-calculated', automatic);
+        calculationInputs.forEach(function (input) {
+            input.disabled = !automatic;
+        });
+        if (automatic) {
+            prefillMachineCost(false);
+            calculateContourPrice();
+        }
+    }
+
+    if (autoContour && contourCalculator && contourPrice) {
+        autoContour.addEventListener('change', updateContourCalculator);
+        calculationInputs.forEach(function (input) {
+            input.addEventListener('input', calculateContourPrice);
+            input.addEventListener('change', calculateContourPrice);
+        });
+        updateContourCalculator();
+    }
+
+    if (machineCostInput && (!machineCostInput.value || parseFloat(machineCostInput.value) === 0)) {
+        prefillMachineCost(false);
+    }
+});
+</script>
+{/literal}
+{/block}

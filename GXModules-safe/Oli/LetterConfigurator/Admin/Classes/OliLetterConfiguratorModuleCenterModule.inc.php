@@ -8,8 +8,8 @@
 
 class OliLetterConfiguratorModuleCenterModule extends AbstractModuleCenterModule
 {
-    private const MODULE_VERSION = '4-S.3.0';
-    private const SCHEMA_VERSION = '4-S.3';
+    private const MODULE_VERSION = '4-S.1.0';
+    private const SCHEMA_VERSION = '4-S.1';
     /**
      * @return void
      */
@@ -90,11 +90,6 @@ class OliLetterConfiguratorModuleCenterModule extends AbstractModuleCenterModule
      */
     private function ensureCurrentSchema(): void
     {
-        $this->addColumnIfMissing(
-            'oli_lc_product_assignments',
-            'configurator_type',
-            "`configurator_type` VARCHAR(64) NOT NULL DEFAULT 'contour_text' AFTER `product_template_id`"
-        );
         $this->addColumnIfMissing(
             'oli_lc_product_templates',
             'thickness_mode',
@@ -303,7 +298,6 @@ class OliLetterConfiguratorModuleCenterModule extends AbstractModuleCenterModule
                 `assignment_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
                 `products_id` INT UNSIGNED NOT NULL,
                 `product_template_id` INT UNSIGNED NOT NULL,
-                `configurator_type` VARCHAR(64) NOT NULL DEFAULT 'contour_text',
                 `is_active` TINYINT(1) NOT NULL DEFAULT 1,
                 `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

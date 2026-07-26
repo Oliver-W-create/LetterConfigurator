@@ -200,7 +200,7 @@ class OliLetterConfiguratorShoppingCart extends OliLetterConfiguratorShoppingCar
         }
 
         $sql = "SELECT pt.price_profile_id, pt.color_mode, pt.thickness_mode, m.name material_name, pm.name method_name, c.name color_name, " .
-               "t.color_id AS legacy_color_id, t.thickness_min_mm, t.thickness_max_mm, pm.range_mode " .
+               "t.thickness_min_mm, t.thickness_max_mm, pm.range_mode " .
                "FROM oli_lc_product_assignments a " .
                "JOIN oli_lc_product_templates pt ON pt.product_template_id=a.product_template_id AND pt.is_active=1 " .
                "JOIN oli_lc_product_template_materials ptm ON ptm.product_template_id=pt.product_template_id AND ptm.material_id={$materialId} " .
@@ -216,20 +216,6 @@ class OliLetterConfiguratorShoppingCart extends OliLetterConfiguratorShoppingCar
         }
         if ($row['color_mode'] === 'selected' && !$this->relationExists('oli_lc_product_template_colors', $templateId, 'color_id', $colorId)) return null;
         if ($row['thickness_mode'] === 'selected' && !$this->relationExists('oli_lc_product_template_thicknesses', $templateId, 'thickness_id', $thicknessId)) return null;
-        $colorRestriction = xtc_db_query(
-            "SELECT 1 FROM oli_lc_thickness_colors WHERE thickness_id={$thicknessId} LIMIT 1"
-        );
-        if (xtc_db_num_rows($colorRestriction) > 0) {
-            $allowedColor = xtc_db_query(
-                "SELECT 1 FROM oli_lc_thickness_colors WHERE thickness_id={$thicknessId} AND color_id={$colorId} LIMIT 1"
-            );
-            if (xtc_db_num_rows($allowedColor) === 0) {
-                return null;
-            }
-        } elseif ((int)($row['legacy_color_id'] ?? 0) > 0 && (int)$row['legacy_color_id'] !== $colorId) {
-            // Backward compatibility for thicknesses created before the relation table was introduced.
-            return null;
-        }
 
         $profileResult = xtc_db_query("SELECT configuration_json FROM oli_lc_price_profiles WHERE price_profile_id=" . (int)$row['price_profile_id'] . " AND is_active=1 LIMIT 1");
         if (!$profile = xtc_db_fetch_array($profileResult)) return null;
